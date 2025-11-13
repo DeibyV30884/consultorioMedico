@@ -42,7 +42,7 @@
     </head>
     <body>
         <header th:fragment="header" class="header">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-info py-2">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
                 <div class="container-fluid px-4">
                     
                     <a th:href="@{/}" class="navbar-brand">
@@ -58,13 +58,13 @@
                             
                             <li class="nav-item dropdown me-2">  
                                 <a class="nav-link dropdown-toggle text-white px-4 py-2" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">IDIOMA</a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" th:href="@{/(lang=es)} ">Español</a></li>
-                                    <li><a class="dropdown-item" th:href="@{/(lang=en)}">English</a></li>
+                                <ul class="dropdown-menu bg-secondary ">
+                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/(lang=es)} ">Español</a></li>
+                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/(lang=en)}">English</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
-                               <a class="btn btn-dark text-white fw-bold" th:href="@{/login}">USUARIO</a>
+                               <a class="btn btn-secondary text-white fw-bold" th:href="@{/login}">INICIAR SESIÓN</a>
                             </li>
                         </ul>
                     </div>
@@ -77,8 +77,8 @@
                         <div class="row align-items-center h-100">
                             <div class="col-lg-7">
                                 
-                                <h1 class="display-4 fw-bold text-info mb-4">
-                                    Tu bienestar, nuestra prioridad 
+                                <h1 class="display-4 fw-bold text-dark mb-4">
+                                    Tu Bienestar, Nuestra Prioridad 
                                 </h1>
                                 <p class="lead text-dark">
                                     En nuestra clínica encontrarás un espacio dedicado a tu bienestar.<br>
@@ -133,7 +133,7 @@
             
         </header>
 
-        <footer th:fragment="footer" class="p-4 bg-info text-white">
+        <footer th:fragment="footer" class="p-4 bg-dark text-white">
             <p class="text-center mb-0 fw-bold">SISTEMA DE CONSULTAS MÉDICAS GRUPO 5</p>
         </footer>
     </body>
