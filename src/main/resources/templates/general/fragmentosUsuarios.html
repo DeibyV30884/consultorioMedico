@@ -63,8 +63,23 @@
                                     <li><a class="dropdown-item bg-dark text-white" th:href="@{/(lang=en)}">English</a></li>
                                 </ul>
                             </li>
-                            <li class="nav-item">
-                               <a class="btn btn-secondary text-white fw-bold" th:href="@{/login}">SALIR</a>
+                            <li class="nav-item px-2" sec:authorize="!isAuthenticated()">
+                                <a class="nav-menu-link nav-link"
+                                   th:href="@{/login}">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </a> 
+                            </li>
+                            
+                            <li class="nav-item text-white my-auto" sec:authorize="isAuthenticated()">
+                                <i class="fas fa-user"></i>
+                                <span sec:authentication="name"></span>
+                            </li>
+                            <li class="nav-item my-auto" sec:authorize="isAuthenticated()">
+                                <form method="post" th:action="@{/logout}">
+                                    <button class="btn btn-dark">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </div>
