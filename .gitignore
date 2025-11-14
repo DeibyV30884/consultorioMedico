@@ -1,3 +1,4 @@
 /target/
 src/main/java/com/proyecto/consultorioMedico/service/FirebaseStorageService.java
 src/main/resources/firebase/consultorio-medico-4f8a2-firebase-adminsdk-fbsvc-ef5a77f89d.json
+nb-configuration.xml
