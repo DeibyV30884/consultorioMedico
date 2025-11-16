@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"      
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
     <head th:fragment="head">
-        <title>Consultorio Medico</title>
+        <title>[[#{app.titulo}]]</title>
         <meta charset="UTF-8"/>
         <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
         <link th:href="@{/webjars/font-awesome/css/all.css}" rel="stylesheet"/>
@@ -57,14 +57,14 @@
                         <ul class="navbar-nav align-items-center">
                             
                             <li class="nav-item dropdown me-2">  
-                                <a class="nav-link dropdown-toggle text-white px-4 py-2" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">IDIOMA</a>
+                                <a class="nav-link dropdown-toggle text-white px-4 py-2" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">[[#{header.idioma}]]</a>
                                 <ul class="dropdown-menu bg-secondary ">
-                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/(lang=es)} ">Español</a></li>
-                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/(lang=en)}">English</a></li>
+                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/(lang=es)} ">[[#{header.idioma.espanol}]]</a></li>
+                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/(lang=en)}">[[#{header.idioma.ingles}]]</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
-                               <a class="btn btn-secondary text-white fw-bold" th:href="@{/login}">INICIAR SESIÓN</a>
+                               <a class="btn btn-secondary text-white fw-bold" th:href="@{/login}">[[#{header.login}]]</a>
                             </li>
                         </ul>
                     </div>
@@ -78,14 +78,10 @@
                             <div class="col-lg-7">
                                 
                                 <h1 class="display-4 fw-bold text-dark mb-4">
-                                    Tu Bienestar, Nuestra Prioridad 
+                                    [[#{h1.titulo}]]
                                 </h1>
                                 <p class="lead text-dark">
-                                    En nuestra clínica encontrarás un espacio dedicado a tu bienestar.<br>
-                                    Contamos con profesionales experimentados y comprometido<br>
-                                    con la excelencia en cada consulta. Ofrecemos una amplia <br>
-                                    variedad de tratamientos y servicios médicos que se adaptan<br>
-                                    a tus necesidades, priorizando siempre tu salud y comodidad.
+                                    [[#{descripcion}]]
                                 </p>
                             </div>
                         </div>
@@ -134,7 +130,7 @@
         </header>
 
         <footer th:fragment="footer" class="p-4 bg-dark text-white">
-            <p class="text-center mb-0 fw-bold">SISTEMA DE CONSULTAS MÉDICAS GRUPO 5</p>
+            <p class="text-center mb-0 fw-bold">[[#{footer.texto}]]</p>
         </footer>
     </body>
 </html>
