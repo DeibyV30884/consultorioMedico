@@ -21,4 +21,16 @@ public class SecretariaController {
         model.addAttribute("titulo", "perfil" );
         return "secretaria/perfil";  
     } 
+    
+    @GetMapping("/citas")
+    public String citas (Model model) {
+        model.addAttribute("titulo", "citas" );
+        return "secretaria/citas";  
+    } 
+    
+    @GetMapping("/pacientes")
+    public String pacientes (Model model) {
+        model.addAttribute("titulo", "pacientes" );
+        return "secretaria/pacientes";  
+    } 
 }

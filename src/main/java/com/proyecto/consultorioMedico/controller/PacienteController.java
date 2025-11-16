@@ -22,7 +22,7 @@ public class PacienteController {
         return "paciente/perfil";
     }
     
-    @GetMapping("/tratamientos ")
+    @GetMapping("/tratamientos")
     public String tratamientos(Model model) {
         model.addAttribute("titulo", "Mis tratamientos");
         return "paciente/tratamientos";
