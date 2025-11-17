@@ -28,4 +28,10 @@ public class PacienteController {
         return "paciente/tratamientos";
     }
     
+    @GetMapping("/citas")
+    public String citas (Model model) {
+        model.addAttribute("titulo", "citas" );
+        return "paciente/citas";
+    }
+    
 }
