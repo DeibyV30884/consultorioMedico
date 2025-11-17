@@ -25,7 +25,7 @@ public class InicioSegunRol implements AuthenticationSuccessHandler {
             String role = authorities.get(i).getAuthority();
             
             if (role.equals("ROLE_ADMINISTRADOR")) { 
-                response.sendRedirect("/admin/inicio");
+                response.sendRedirect("/admin/reportes");
                 return;
             } else if (role.equals("ROLE_MEDICO")) { 
                 response.sendRedirect("/medico/inicio");
