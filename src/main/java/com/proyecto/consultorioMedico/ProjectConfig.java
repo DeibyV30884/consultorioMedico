@@ -85,6 +85,11 @@ public class ProjectConfig implements WebMvcConfigurer {
                                 "/error/**", "/webjars/**", "/js/**", "/img/**")
                         .permitAll()
                         
+                        // Rutas de los Pacientes
+                        .requestMatchers("/paciente/inicio", "/paciente/tratamientos", 
+                                "/paciente/perfil", "/cita/mis-citas")
+                        .hasRole("CLIENTE")
+                        
                         // Rutas de los Administrador
                         .requestMatchers("/admin/**", "/usuario/**", "/rol/**", 
                                 "/ruta/**", "/constante/**")
@@ -96,13 +101,8 @@ public class ProjectConfig implements WebMvcConfigurer {
                         .hasRole("MEDICO")
                         
                         // Rutas de los Secretaria
-                        .requestMatchers("/secretaria/**", "/paciente/**", "/cita/**")
+                        .requestMatchers("/secretaria/**", "/pacientes/**", "/citas/**")
                         .hasRole("SECRETARIA")
-                        
-                        // Rutas de los Pacientes
-                        .requestMatchers("/paciente/inicio", "/paciente/tratamientos", 
-                                "/paciente/perfil", "/cita/mis-citas")
-                        .hasRole("CLIENTE")
                         
                         .anyRequest().authenticated()
                 )

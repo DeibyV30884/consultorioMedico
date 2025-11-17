@@ -22,13 +22,13 @@ public class SecretariaController {
         model.addAttribute("titulo", "Panel de Secretaría");
         return "secretaria/inicio";
     }
-
-    @GetMapping("/pacientes")
-    public String pacientes(Model model) {
-        model.addAttribute("titulo", "Pacientes");
-        return "secretaria/pacientes";
-    }
-
+    
+    @GetMapping("/perfil")
+        public String perfil (Model model) {
+            model.addAttribute("titulo", "perfil" );
+            return "secretaria/perfil";  
+        } 
+    
     @GetMapping("/citas")
     public String citas(Model model) {
         List<Cita> lista = citaService.getCitas();
@@ -36,10 +36,10 @@ public class SecretariaController {
         model.addAttribute("totalCitas", lista.size());
         return "secretaria/citas";
     }
-
-    @GetMapping("/perfil")
-    public String perfil(Model model) {
-        model.addAttribute("titulo", "perfil");
-        return "secretaria/perfil";
-    }
+    
+    @GetMapping("/pacientes")
+    public String pacientes (Model model) {
+        model.addAttribute("titulo", "pacientes" );
+        return "secretaria/pacientes";  
+    } 
 }

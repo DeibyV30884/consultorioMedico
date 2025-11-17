@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
+      xmlns:th="http://www.thymeleaf.org"      
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-    <head th:replace="~{general/fragmentos :: head}">
-        <title>Consultorio Medico</title>
-        <meta charset="UTF-8"/>
-    </head>
-    <body>    
-        <header th:replace="~{general/fragmentosLogin :: header}"/>
-        <aside th:replace="~{secretaria/fragmentos :: aside}"/>
-        
+    <head th:replace="~{general/fragmentosUsuarios :: head}"/>
+    <body>
+        <header th:replace="~{general/fragmentosUsuarios :: header}"/>
+        <aside th:replace="~{secretaria/fragmentos :: sidebar}"/>
+        <footer th:replace="~{general/fragmentos :: footer}"/>    
     </body>
-    <footer th:replace="~{general/fragmentos :: footer}"/>
 </html>

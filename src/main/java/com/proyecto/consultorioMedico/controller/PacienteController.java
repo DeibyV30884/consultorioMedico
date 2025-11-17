@@ -22,10 +22,16 @@ public class PacienteController {
         return "paciente/perfil";
     }
     
-    @GetMapping("/tratamientos ")
+    @GetMapping("/tratamientos")
     public String tratamientos(Model model) {
         model.addAttribute("titulo", "Mis tratamientos");
         return "paciente/tratamientos";
+    }
+    
+    @GetMapping("/citas")
+    public String citas (Model model) {
+        model.addAttribute("titulo", "citas" );
+        return "paciente/citas";
     }
     
 }

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping ("/admin")
 public class AdminController {
     
-    @GetMapping("/inicio")
+    @GetMapping("/reportes")
     public String inicio(Model model) {
         model.addAttribute("titulo", "Panel de Administracion");
-        return "admin/inicio"; 
+        return "admin/reportes"; 
     }
     
     @GetMapping("/usuarios")

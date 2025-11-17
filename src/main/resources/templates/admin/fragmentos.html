@@ -10,22 +10,17 @@
             <nav class="h-100">
                 <ul class="nav flex-column">
                     <li class="nav-item border-bottom border-secondary" > 
-                        <a th:href="@{/secretaria/inicio}" class= "nav-link text-secondary text-center py-4">
-                            [[#{sidebar.inicio}]]</a>
+                        <a th:href="@{/admin/reportes}" class= "nav-link text-secondary text-center py-4">
+                            [[#{sidebar.reportes}]]</a>
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/secretaria/pacientes}" class= "nav-link text-secondary text-center py-4">
-                            [[#{sidebar.pacientes}]]</a>
+                        <a th:href="@{/admin/usuarios}" class= "nav-link text-secondary text-center py-4">
+                            [[#{sidebar.usuarios}]]</a>
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/secretaria/citas}" class= "nav-link text-secondary text-center py-4">
-                            [[#{sidebar.citas}]]</a>
-                    </li>
-
-                    <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/secretaria/perfil}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{/admin/perfil}" class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.perfil}]]</a>
                     </li>
                 </ul>
@@ -35,4 +30,3 @@
         
     </body>
 </html>
-

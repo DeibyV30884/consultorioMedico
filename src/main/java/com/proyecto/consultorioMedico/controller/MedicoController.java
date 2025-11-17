@@ -21,4 +21,10 @@ public class MedicoController {
         model.addAttribute("titulo", "perfil" );
         return "medico/perfil";
     }
+    
+    @GetMapping("/expedientes")
+    public String expedientes (Model model) {
+        model.addAttribute("titulo", "expedientes" );
+        return "medico/expedientes";
+    }
 }
