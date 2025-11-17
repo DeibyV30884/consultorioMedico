@@ -13,49 +13,46 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;// para fechaHora
-import java.util.List;
 import lombok.Data;
 
 /**
  *
  * @author Alejandro
  */
-
 @Data
 @Entity
-@Table(name="cita")
-public class Cita implements Serializable{
-   
+@Table(name = "cita")
+public class Cita implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name ="id_cita")
+    @Column(name = "id_cita")
     private Integer idCita;
-    
+
     @Column(name = "fecha_hora")
-    private LocalDateTime  fechaHora;
-    
+    private LocalDateTime fechaHora;
+
     //estado
     @Enumerated(EnumType.STRING)
     @Column(name = "estado")
     private EstadoCita estado;
+
     
-    @Column (columnDefinition = "TEXT")
     private String tratamiento;
-    
-    @Column(unique = true, nullable = false, length = 50 )
-    private String tipoConsulta; 
-    
-    
-//    @ManyToOne
-//    @JoinColumn(name = "id_paciente")
-//    private Paciente paciente;
+
+    @Column(unique = true, nullable = false, length = 50)
+    private String tipoConsulta;
+
+    @ManyToOne
+    @JoinColumn(name = "id_paciente")
+    private Paciente paciente;
+
+    @ManyToOne
+    @JoinColumn(name = "id_medico")
+    private Medico medico;
 }
-
-
-    

@@ -1,11 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
 import com.proyecto.consultorioMedico.service.CitaService;
+import com.proyecto.consultorioMedico.service.MedicoService;
+import com.proyecto.consultorioMedico.service.PacienteService;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -22,54 +20,53 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  *
  * @author Alejandro
  */
-
 @Controller
 @RequestMapping("/cita")
 public class CitaController {
+
     @Autowired
     private CitaService citaService;//-> CRUD
 
-//    @Autowired
-//    private FirebaseStorageService firebaseStorageService;
 
     @Autowired
     private MessageSource messageSource;
 
     @GetMapping("/listado") // https:localhost/cita/listado
     public String inicio(Model model) {
-        var citas = citaService.getCitas(false);
+        var citas = citaService.getCitas();
         model.addAttribute("citas", citas);
         model.addAttribute("totalCitas", citas.size());
-        return "/cita/listado"; //las vistas que yo voy a crear en el html
+        return "redirect:/secretaria/citas"; //las vistas que yo voy a crear en el html
     }
 
     @PostMapping("/modificar")// https:localhost/cita/modificar
     public String modificar(Cita cita, Model model) {
         cita = citaService.getCita(cita);
         model.addAttribute("cita", cita);
-        return "/cita/modifica";
+        return "secretaria/modifica";
     }
 
     @PostMapping("/guardar")
-    public String guardar(Cita cita,
-            @RequestParam MultipartFile imagenFile,
-            RedirectAttributes redirectAttributes) {
-//        if (!imagenFile.isEmpty()) { // Si no está vacío... pasaron una imagen...
-//            citaService.save(cita);
-//            String rutaImagen = firebaseStorageService
-//                    .cargaImagen(
-//                            imagenFile,
-//                            "cita",
-//                            cita.getIdCita());
-//            cita.setRutaImagen(rutaImagen);
-//        }
-        citaService.save(cita);
-        redirectAttributes.addFlashAttribute("todoOk",
-                messageSource.getMessage("mensaje.actualizado",
-                        null,
-                        Locale.getDefault()));
-        return "redirect:/cita/listado";
-    }
+public String guardar(Cita citaFormulario, RedirectAttributes redirectAttributes) {
+
+    // Cargar la cita real desde la BD
+    Cita citaReal = citaService.getCita(citaFormulario);
+
+    // Actualizar SOLO los campos que se pueden editar
+    citaReal.setFechaHora(citaFormulario.getFechaHora());
+    citaReal.setEstado(citaFormulario.getEstado());
+    citaReal.setTratamiento(citaFormulario.getTratamiento());
+
+    citaService.save(citaReal);
+
+    redirectAttributes.addFlashAttribute("todoOk",
+            messageSource.getMessage("mensaje.actualizado",
+                    null,
+                    Locale.getDefault()));
+
+    return "redirect:/secretaria/citas";
+}
+
 
     @PostMapping("/eliminar")
     public String eliminar(Cita cita, RedirectAttributes redirectAttributes) {
@@ -96,6 +93,6 @@ public class CitaController {
                             null,
                             Locale.getDefault()));
         }
-        return "redirect:/cita/listado";
+        return "redirect:/secretaria/citas";
     }
 }
