@@ -27,7 +27,8 @@ CREATE TABLE usuario (
   username VARCHAR(30) NOT NULL UNIQUE,
   password VARCHAR(512) NOT NULL,
   nombre VARCHAR(20) NOT NULL,
-  apellidos VARCHAR(30) NOT NULL,
+  apellido1 VARCHAR(30) NOT NULL,
+  apellido2 VARCHAR(30),
   correo VARCHAR(75) NULL UNIQUE,
   telefono VARCHAR(25) NULL,
   ruta_imagen VARCHAR(1024),
@@ -214,11 +215,11 @@ CREATE TABLE constante (
 -- INSERCIÓN DE DATOS
 
 -- Inserción de usuarios
-INSERT INTO usuario (username, password, nombre, apellidos, correo, telefono, activo) VALUES 
-('admin', '1234', 'Carlos', 'Rodriguez', 'admin@consultorio.com', '8888-8888', TRUE),
-('dr.perez', '1234', 'Juan', 'Pérez Ramírez', 'jperez@consultorio.com', '8777-7777', TRUE),
-('secretaria', '1234', 'Ana', 'Gutierres López', 'anag2004@gmail.com', '0909-3490', TRUE),
-('paciente1', '1111', 'Erick', 'Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE);
+INSERT INTO usuario (username, password, nombre, apellido1, apellido2, correo, telefono, activo) VALUES 
+('admin', '1234', 'Carlos', 'Rodriguez','Ramírez', 'admin@consultorio.com', '8888-8888', TRUE),
+('dr.perez', '1234', 'Juan', 'Pérez','Ramírez','jperez@consultorio.com', '8777-7777', TRUE),
+('secretaria', '1234', 'Ana', 'Gutierres','López', 'anag2004@gmail.com', '0909-3490', TRUE),
+('paciente1', '1111', 'Erick', 'Johnson','Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE);
 
 -- Inserción de roles
 INSERT INTO rol (nombre, descripcion) VALUES 
@@ -235,20 +236,20 @@ INSERT INTO usuario_rol (id_usuario, id_rol) VALUES
 (4, 2); -- paciente1 es CLIENTE
 
 -- Inserción de administrador
-INSERT INTO administrador (id_usuario, nombre, apellido_1) VALUES
-(1, 'Carlos', 'Rodriguez');
+INSERT INTO administrador (id_usuario, nombre, apellido_1, apellido_2) VALUES
+(1, 'Carlos', 'Rodriguez', 'Rodriguez');
 
 -- Inserción de médicos
 INSERT INTO medico (id_usuario, nombre, apellido_1, apellido_2, especialidad) VALUES
 (2, 'Juan', 'Pérez', 'Ramírez', 'Medicina General');
 
 -- Inserción de secretaria
-INSERT INTO secretaria (id_usuario, nombre, apellido_1) VALUES
-(3, 'Ana', 'Gutierres');
+INSERT INTO secretaria (id_usuario, nombre, apellido_1, apellido_2) VALUES
+(3, 'Ana', 'Gutierres', 'Pérez');
 
 -- Inserción de pacientes
 INSERT INTO paciente (id_usuario, nombre, apellido_1, apellido_2, fecha_nacimiento, correo_electronico, telefono, ocupacion, estado_civil) VALUES
-(4, 'Erick', 'Johnson', NULL, '1990-05-15', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
+(4, 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
 (NULL, 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casado'),
 (NULL, 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
 (NULL, 'Ana', 'Venegas', 'Castro', '1992-03-18', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltero'),
