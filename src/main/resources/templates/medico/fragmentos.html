@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"      
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"/>
+    <body>
+        <aside th:fragment="sidebar" class="sidebar bg-dark border-end border-secondary">
+
+
+            <nav class="h-100">
+                <ul class="nav flex-column">
+                    <li class="nav-item border-bottom border-secondary" > 
+                        <a th:href="@{/medico/inicio}" class= "nav-link text-secondary text-center py-4">
+                            [[#{sidebar.inicio}]]</a>
+                    </li>
+
+                    <li class="nav-item border-bottom border-secondary"> 
+                        <a th:href="@{/medico/expedientes}" class= "nav-link text-secondary text-center py-4">
+                            [[#{sidebar.expedientes}]]</a>
+                    </li>
+
+                    <li class="nav-item border-bottom border-secondary"> 
+                        <a th:href="@{/medico/perfil}" class= "nav-link text-secondary text-center py-4">
+                            [[#{sidebar.perfil}]]</a>
+                    </li>
+                </ul>
+
+            </nav>
+        </aside>
+        
+    </body>
+</html>

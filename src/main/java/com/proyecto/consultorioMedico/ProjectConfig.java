@@ -1,6 +1,8 @@
 package com.proyecto.consultorioMedico;
 
+import com.proyecto.consultorioMedico.security.InicioSegunRol;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,9 @@ import org.thymeleaf.templatemode.TemplateMode;
 @Configuration
 public class ProjectConfig implements WebMvcConfigurer {
 
+    @Autowired
+    private InicioSegunRol inicioSegunRol; 
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index");
@@ -34,7 +39,7 @@ public class ProjectConfig implements WebMvcConfigurer {
     @Bean
     public SpringResourceTemplateResolver templateResolver_0() {
         SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setPrefix("classpath:/templates");
+        resolver.setPrefix("classpath:/templates/");
         resolver.setSuffix(".html");
         resolver.setTemplateMode(TemplateMode.HTML);
         resolver.setOrder(0);
@@ -80,6 +85,11 @@ public class ProjectConfig implements WebMvcConfigurer {
                                 "/error/**", "/webjars/**", "/js/**", "/img/**")
                         .permitAll()
                         
+                        // Rutas de los Pacientes
+                        .requestMatchers("/paciente/inicio", "/paciente/tratamientos", 
+                                "/paciente/perfil", "/cita/mis-citas")
+                        .hasRole("CLIENTE")
+                        
                         // Rutas de los Administrador
                         .requestMatchers("/admin/**", "/usuario/**", "/rol/**", 
                                 "/ruta/**", "/constante/**")
@@ -91,19 +101,14 @@ public class ProjectConfig implements WebMvcConfigurer {
                         .hasRole("MEDICO")
                         
                         // Rutas de los Secretaria
-                        .requestMatchers("/secretaria/**", "/paciente/**", "/cita/**")
+                        .requestMatchers("/secretaria/**", "/pacientes/**", "/citas/**")
                         .hasRole("SECRETARIA")
-                        
-                        // Rutas de los Pacientes
-                        .requestMatchers("/paciente/inicio", "/paciente/tratamientos", 
-                                "/paciente/perfil", "/cita/mis-citas")
-                        .hasRole("CLIENTE")
                         
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(inicioSegunRol) //desde aqui manejan los perfiles separados de inicio despues del login
                         .permitAll()
                 )
                 .logout((logout) -> logout
