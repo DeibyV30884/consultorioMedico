@@ -32,7 +32,179 @@
 
             </nav>
         </aside>
-        
+
+        <section th:fragment="listado" class="p-3">
+
+            <div class="row p-3">
+                <div class="col-md-9">
+                    <div class="card p-2">
+                        <div class="card-header"><h4>[[#{cita.listado}]]</h4></div>
+                        <div class="card-body">
+
+                            <div th:if="${citas != null and !citas.empty}">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>[[#{cita.paciente}]]</th>
+                                            <th>[[#{cita.medico}]]</th>
+                                            <th>[[#{cita.fecha}]]</th>
+                                            <th>[[#{cita.estado}]]</th>
+                                            <th>[[#{cita.tipo}]]</th>
+                                            <th>[[#{cita.tratamiento}]]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="c : ${citas}">
+                                            <td>[[${c.idCita}]]</td>
+                                            <td>[[${c.paciente.nombre}]]</td>
+                                            <td>[[${c.medico.nombre}]]</td>
+                                            <td>[[${#temporals.format(c.fechaHora, 'yyyy-MM-dd HH:mm')}]]</td>
+                                            <td>[[${c.estado}]]</td>
+                                            <td>[[${c.tipoConsulta}]]</td>
+                                            <td>[[${c.tratamiento}]]</td>
+
+                                            <td>
+                                                <div class="d-flex align-items-start">
+
+                                                    <button type="button"
+                                                            class="btn btn-danger me-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal"
+                                                            th:attr="data-bs-id=${c.idCita}, data-bs-descripcion=${c.tipoConsulta}">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                        [[#{accion.eliminar}]]
+                                                    </button>
+
+
+
+                                                    <!-- BOTÓN MODIFICAR -->
+                                                    <form th:action="@{/cita/modificar}" method="post">
+                                                        <input type="hidden" name="idCita" th:value="${c.idCita}" />
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="fa-solid fa-pencil"></i>
+                                                            [[#{accion.actualizar}]]
+                                                        </button>
+                                                    </form>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div th:if="${citas == null or citas.empty}" class="text-center p-2">
+                                <span>[[#{lista.vacia}]]</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3 Fragmento que se utiliza en la página modifca.html -->
+        <section th:fragment="editar">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+
+                    <form method="POST" th:action="@{/cita/guardar}" 
+                          th:object="${cita}" class="was-validated">
+
+                        <input type="hidden" th:field="*{idCita}"/>
+
+                        <div class="row py-4 mb-4 bg-light">
+                            <div class="col-md-4 d-grid">
+                                <a th:href="@{/secretaria/citas}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                                </a>
+                            </div>
+
+                            <div class="col-md-4 d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="card">
+                                    <div class="card-header"><h4>[[#{accion.actualizar}]]</h4></div>
+                                    <div class="card-body">
+
+                                        <!-- FECHA -->
+                                        <div class="mb-3">
+                                            <label>[[#{cita.fecha}]]</label>
+                                            <input type="datetime-local" class="form-control"
+                                                   th:field="*{fechaHora}" required />
+                                        </div>
+
+                                        <!-- ESTADO -->
+                                        <div class="mb-3">
+                                            <label>[[#{cita.estado}]]</label>
+                                            <select class="form-select" th:field="*{estado}" required>
+                                                <option th:each="e : ${T(com.proyecto.consultorioMedico.domain.EstadoCita).values()}"
+                                                        th:value="${e}" 
+                                                        th:text="${e}">
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <!-- TRATAMIENTO -->
+                                        <div class="mb-3">
+                                            <label>[[#{cita.tratamiento}]]</label>
+                                            <textarea class="form-control" th:field="*{tratamiento}"></textarea>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 fragmento que se utiliza para confirmar que se desea eliminar una cita -->
+        <section th:fragment="confirmarEliminar">
+            <div class="modal fade" 
+                 id="confirmModal" 
+                 tabindex="-1" 
+                 aria-labelledby="modalLabel" 
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered custom-modal-animation">
+                    <div class="modal-content animate-slide-up">
+                        <form th:action="@{/cita/eliminar}" th:object="${cita}" method="post">
+                            <input type="hidden" name="idCita" id="modalId"/>
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title" id="modalLabel">
+                                    <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>[[#{accion.confirmar.texto1}]] <span id="modalDescripcion"></span>?</p>
+                                <h6>[[#{accion.confirmar.texto2}]]</h6>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </body>
 </html>
 
