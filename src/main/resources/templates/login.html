@@ -65,6 +65,11 @@
                             <div th:if="${param.error != null}">
                                 <h5>[[#{login.mensaje.datos.invalidos}]]</h5>
                             </div>
+
+                            <div th:if="${todoOk != null}">
+                                <h5>[[${todoOk}]]</h5>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>

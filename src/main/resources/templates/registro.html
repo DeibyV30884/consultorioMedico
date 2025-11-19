@@ -2,69 +2,125 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
     <head th:replace="~{general/fragmentos :: head}">
-        <title>Registro</title>
+        <title>[[#{registro.titulo}]]</title>
         <meta charset="UTF-8"/>
     </head>
     <body>
         <header th:replace="~{general/fragmentosLogin :: header}"/>
-        
+
         <main>
             <div class="container-fluid">
                 <div class="row" style="min-height: 704px;">
-                    
-                    <div class="col-md-10 bg-white d-flex align-items-center justify-content-center" >
+
+                    <div class="col-md-6 bg-dark d-flex align-items-center justify-content-center">
+                        <div class="text-center">
+                            <img src="/img/logo.png" alt="Consultorio Logo " style="max-width: 600px; width: 90%;"/>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 bg-white d-flex align-items-center justify-content-center">
                         <div style="width: 100%; max-width: 600px; padding: 20px;">
                             <div class="card border border-warning">
                                 <div class="card-header bg-dark text-white text-center">
-                                    <h1 class="mb-0 ">[[#{h1.login}]]</h1>
+                                    <h1 class="mb-0"> [[#{registro.h1}]]</h1>
                                 </div>
-                                
+
                                 <div class="card-body p-4">
-                                    <form method="POST" th:action="@{/login}">
-                                        
+                                    <form method="POST" th:action="@{/registro/guardar}">
+
                                         <div class="form-group mb-3">
-                                    <label class="mb-2" for="username"><i class="fas fa-user-lock"></i> [[#{login.usuario}]]</label>
-                                        <input class="form-control" type="text" name="username" id="username"/></div>
-                                        
-                                        <!-- Queda como prevista, el correo no se valida en el login con los usuarios quemados desde el projectConfig -->
-                                        <div class="form-group mb-3">
-                                            <label class="mb-2" for="username"> <i class="fas fa-envelope"></i> [[#{login.correo}]]
-                                            </label>
-                                            <input class="form-control" type="text" name="username" id="username" required/>
+                                            <label class="mb-2" for="username">
+                                                <i class="fas fa-user"></i> [[#{formulario.registo.nombre.usuario}]]</label>
+
+                                            <input class="form-control" type="text" name="username" id="username" required minlength="4" maxlength="30"/>
                                         </div>
-                                        
+
                                         <div class="form-group mb-3">
-                                            <label class="mb-2" for="password"> <i class="fas fa-lock"></i> [[#{login.contrasena}]]
-                                            </label><input class="form-control" type="password" name="password" id="password" required/>
+                                            <label class="mb-2" for="password">
+                                                <i class="fas fa-lock"></i> [[#{formulario.registo.contrasena}]]</label>
+
+                                            <input class="form-control" type="password" name="password" id="password"  required minlength="8"/>
                                         </div>
-                                        
+
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="confirmarPassword">
+                                                <i class="fas fa-lock"></i> [[#{formulario.registo.confirmar.contrasena}]] </label>
+
+                                            <input class="form-control" type="password" name="confirmarPassword" id="confirmarPassword" required/>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="nombre">
+                                                <i class="fas fa-id-card"></i>[[#{formulario.registo.nombre}]]</label>
+
+                                            <input class="form-control" type="text" name="nombre"  id="nombre" required maxlength="50"/>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="apellido1">
+                                                <i class="fas fa-id-card"></i> [[#{formulario.registo.apellido1}]]</label>
+
+                                            <input class="form-control" type="text" name="apellido1" id="apellido1" required maxlength="30"/>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="apellido2">
+                                                <i class="fas fa-id-card"></i> [[#{formulario.registo.apellido2}]]</label>
+
+
+                                            <input class="form-control" type="text" name="apellido2" id="apellido2" required maxlength="30"/>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="correo">
+                                                <i class="fas fa-envelope"></i> [[#{formulario.registo.correo}]]</label>
+
+                                            <input class="form-control" type="email" name="correo" id="correo" required maxlength="75"/>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="telefono">
+                                                <i class="fas fa-phone"></i> [[#{formulario.registo.telefono}]]</label>
+
+                                            <input class="form-control" type="tel" name="telefono" id="telefono" required maxlength="25"/>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="fechaNacimiento">
+                                                <i class="fas fa-calendar"></i> [[#{formulario.registo.fecha.nacimiento}]]</label>
+
+                                            <input class="form-control" type="date" name="fechaNacimiento"  id="fechaNacimiento" required/>
+                                        </div>
+
                                         <div class="text-center my-3">
-                                            <button class="btn btn-secondary w-100" type="submit"><i class="fas fa-sign-in-alt"></i> [[#{header.login}]]</button>
+                                            <button class="btn btn-warning w-100" type="submit">
+                                                <i class="fas fa-user-plus"></i> [[#{formulario.registo.btn.registrarse}]]
+                                            </button>
                                         </div>
-                                        
-                                        <div class="text-center my-2">
-                                            <a th:href="@{/registro/recordar}" class=" text-warning">[[#{login.olvidar.contrasena}]] </a>
-                                        </div>
-                                        
+
                                         <hr class="my-3"/>
-                                        <div class="text-center ">
-                                            <span class="text-muted">[[#{login.mensaje.registrarse}]]</span>
-                                            <a th:href="@{/registro} " class="text-warning fw-bold ">[[#{login.registrarse}]] </a>
+
+                                        <div class="text-center">
+                                            <span class="text-muted">[[#{formulario.registo.pregunta}]]</span>
+                                            <a th:href="@{/login}" class="text-warning fw-bold">[[#{formulario.registo.iniciar.sesion}]]</a>
                                         </div>
                                     </form>
                                 </div>
                             </div>
-                            
-                            
-                            <div th:if="${param.error != null}">
-                                <h5>[[#{login.mensaje.datos.invalidos}]]</h5>
+
+                            <div th:if="${error != null}">
+                                <h5>[[${error}]]</h5>
+                            </div>
+
+                            <div th:if="${mensaje != null}">
+                                <h5>[[${mensaje}]]</h5>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-        </main>       
+        </main>  
         <footer th:replace="~{general/fragmentos :: footer}"/>
     </body>
 </html>
