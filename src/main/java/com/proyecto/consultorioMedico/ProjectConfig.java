@@ -82,7 +82,7 @@ public class ProjectConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests((request) -> request
                         // Rutas publicas
                         .requestMatchers("/", "/index", "/login", "/registro", 
-                                "/error/**", "/webjars/**", "/js/**", "/img/**")
+                                "/registro/guardar" ,"/error/**", "/webjars/**", "/js/**", "/img/**")
                         .permitAll()
                         
                         // Rutas de los Pacientes
