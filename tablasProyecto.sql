@@ -14,7 +14,7 @@ CREATE USER 'usuario_reportes'@'%' IDENTIFIED BY 'Reportes.123';
 
 -- Asignación de permisos
 GRANT SELECT, INSERT, UPDATE, DELETE ON consultorio_medico.* TO 'usuario_consultorio'@'%';
-GRANT SELECT ON consultorio_cerdas.* TO 'usuario_reportes'@'%';
+GRANT SELECT ON consultorio_medico.* TO 'usuario_reportes'@'%';
 FLUSH PRIVILEGES;
 
 USE consultorio_medico;
@@ -27,8 +27,8 @@ CREATE TABLE usuario (
   username VARCHAR(30) NOT NULL UNIQUE,
   password VARCHAR(512) NOT NULL,
   nombre VARCHAR(20) NOT NULL,
-  apellido1 VARCHAR(30) NOT NULL,
-  apellido2 VARCHAR(30),
+  apellido_1 VARCHAR(30) NOT NULL,
+  apellido_2 VARCHAR(30),
   correo VARCHAR(75) NULL UNIQUE,
   telefono VARCHAR(25) NULL,
   ruta_imagen VARCHAR(1024),
@@ -215,7 +215,7 @@ CREATE TABLE constante (
 -- INSERCIÓN DE DATOS
 
 -- Inserción de usuarios
-INSERT INTO usuario (username, password, nombre, apellido1, apellido2, correo, telefono, activo) VALUES 
+INSERT INTO usuario (username, password, nombre, apellido_1, apellido_2, correo, telefono, activo) VALUES 
 ('admin', '1234', 'Carlos', 'Rodriguez','Ramírez', 'admin@consultorio.com', '8888-8888', TRUE),
 ('dr.perez', '1234', 'Juan', 'Pérez','Ramírez','jperez@consultorio.com', '8777-7777', TRUE),
 ('secretaria', '1234', 'Ana', 'Gutierres','López', 'anag2004@gmail.com', '0909-3490', TRUE),
