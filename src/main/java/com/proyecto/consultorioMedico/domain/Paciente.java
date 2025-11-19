@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
@@ -21,22 +22,47 @@ public class Paciente implements Serializable {
     @Column(name = "id_usuario")
     private Integer idUsuario;
     
-    @Column(nullable = false, length = 50)
-    private String nombre; 
+     @Column(name = "nombre", length = 50, nullable = false)
+    private String nombre;
     
-    @Column(name = "apellido_1", nullable = false, length = 30)
+   @Column(name = "apellido_1", length = 30, nullable = false)
     private String apellido1;
-    
-    @Column(name = "apellido_2", length = 30) 
+
+    @Column(name = "apellido_2", length = 30)
     private String apellido2;
-    
+
+    @Column(name = "fecha_nacimiento")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate fechaNacimiento;
+
     @Column(name = "correo_electronico", length = 75)
     private String correoElectronico;
-    
-    @Column(name =  "fecha_nacimiento")
-    private LocalDate fechaNacimiento;
-    
-    @Column(length = 25)
-    private String telefono; 
+
+    @Column(name = "ocupacion", length = 50)
+    private String ocupacion;
+
+    @Column(name = "estado_civil", length = 20)
+    private String estadoCivil;
+
+    @Column(name = "telefono", length = 25)
+    private String telefono;
+
+    @Column(name = "antecedentes_heredo_familiares", columnDefinition = "TEXT")
+    private String antecedentesHeredoFamiliares;
+
+    @Column(name = "antecedentes_personales", columnDefinition = "TEXT")
+    private String antecedentesPersonales;
+
+    @Column(name = "antecedentes_quirurgicos", columnDefinition = "TEXT")
+    private String antecedentesQuirurgicos;
+
+    @Column(name = "antecedentes_gineco_obstetricos", columnDefinition = "TEXT")
+    private String antecedentesGinecoObstetricos;
+
+    @Column(name = "fecha_creacion", updatable = false)
+    private LocalDateTime fechaCreacion;
+
+    @Column(name = "fecha_modificacion")
+    private LocalDateTime fechaModificacion;
     
 }

@@ -1,0 +1,284 @@
+<div th:fragment="pacientesFragment">
+
+
+    <div th:if="${paciente.idPaciente == null}">
+
+        <!-- Modal Agregar Paciente -->
+        <div class="modal fade" id="agregarPacienteModal" tabindex="-1" 
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                            <i class="fa-solid fa-user-plus"></i> [[#{accion.agregar}]]
+                        </h1>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form th:action='@{/secretaria/pacientes/guardar}' th:object='${paciente}'
+                          class='was-validated' method="post">
+                        <div class="modal-body row g-3">
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.nombre}]]</label>
+                                <input type="text" name='nombre' class='form-control' required/>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.apellido1}]]</label>
+                                <input type="text" name='apellido1' class='form-control' required/>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.apellido2}]]</label>
+                                <input type="text" name='apellido2' class='form-control'/>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.fechaNacimiento}]]</label>
+                                <input type="date" name='fechaNacimiento' class='form-control'/>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.correoElectronico}]]</label>
+                                <input type="email" name='correoElectronico' class='form-control'/>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.telefono}]]</label>
+                                <input type="text" name='telefono' class='form-control'/>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.ocupacion}]]</label>
+                                <input type="text" name='ocupacion' class='form-control'/>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.estadoCivil}]]</label>
+                                <input type="text" name='estadoCivil' class='form-control'/>
+                            </div>
+
+                          
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fa-solid fa-xmark"></i> [[#{accion.Cerrar}]]
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-floppy-disk"></i> [[#{accion.Guardar}]]
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <form method="POST" th:action="@{/secretaria/pacientes/queryNombre}" class="was-validated">
+                <div class="card p-3">
+
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-10">
+                            <label for="texto">[[#{accion.BuscarPaciente}]]</label>
+                            <input type="text" class="form-control" th:name="texto" />
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-search"></i> [[#{accion.buscar}]]
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="btn btn-secondary mb-3"
+                        data-bs-toggle="modal" data-bs-target="#agregarPacienteModal">
+                    <i class="fa-solid fa-plus"></i> [[#{accion.agregar}]]
+                </button>
+            </div>
+        </div>
+
+        <!-- Listado -->
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card p-2">
+                    <div class="card-header"><h4>[[#{paciente.listado}]]</h4></div>
+                    <div class="card-body">
+
+                        <div th:if="${pacientes != null and !pacientes.empty}">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>[[#{paciente.nombre}]]</th>
+                                        <th>[[#{paciente.apellido1}]]</th>
+                                        <th>[[#{paciente.apellido2}]]</th>
+                                        <th>[[#{paciente.fechaNacimiento}]]</th>
+                                        <th>[[#{paciente.correoElectronico}]]</th>
+                                        <th>[[#{paciente.telefono}]]</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr th:each="a : ${pacientes}">
+                                        <td>[[${a.idPaciente}]]</td>
+                                        <td>[[${a.nombre}]]</td>
+                                        <td>[[${a.apellido1}]]</td>
+                                        <td>[[${a.apellido2}]]</td>
+                                        <td>[[${a.fechaNacimiento}]]</td>
+                                        <td>[[${a.correoElectronico}]]</td>
+                                        <td>[[${a.telefono}]]</td>
+                                        <td>
+                                            <div class="d-flex align-items-start">
+
+                                                <button type="button" class="btn btn-danger me-2"
+                                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                        th:data-bs-id="${a.idPaciente}"
+                                                        th:data-bs-descripcion="${a.nombre}">
+                                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                                </button>
+
+                                                <form th:action="@{/secretaria/pacientes/modificar}" method="post">
+                                                    <input type="hidden" name="idPaciente" th:value="${a.idPaciente}"/>
+                                                    <button type="submit" class="btn btn-success">
+                                                        <i class="fa-solid fa-pencil"></i> [[#{accion.actualizar}]]
+                                                    </button>
+                                                </form>
+
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <section th:if="${paciente.idPaciente != null}">
+        <div class="row">
+            <div class="col-md-2"></div>
+
+            <div class="col-md-8">
+                <form method="POST"
+                      th:action="@{/secretaria/pacientes/guardar}"
+                      th:object="${paciente}"
+                      class="was-validated">
+
+                    <input type="hidden" th:field="*{idPaciente}"/>
+
+                    <div class="row py-4 mb-4 bg-light">
+                        <div class="col-md-4 d-grid">
+                            <a th:href="@{/secretaria/pacientes}" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                            </a>
+                        </div>
+                        <div class="col-md-4 d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> [[#{accion.Guardar}]]
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>[[#{accion.actualizar}]]</h4>
+                        </div>
+
+                        <div class="card-body row g-3">
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.nombre}]]</label>
+                                <input type="text" class="form-control" th:field="*{nombre}" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.apellido1}]]</label>
+                                <input type="text" class="form-control" th:field="*{apellido1}" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.apellido2}]]</label>
+                                <input type="text" class="form-control" th:field="*{apellido2}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.fechaNacimiento}]]</label>
+                                <input type="date" class="form-control" th:field="*{fechaNacimiento}">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.correoElectronico}]]</label>
+                                <input type="email" class="form-control" th:field="*{correoElectronico}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.telefono}]]</label>
+                                <input type="text" class="form-control" th:field="*{telefono}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.ocupacion}]]</label>
+                                <input type="text" class="form-control" th:field="*{ocupacion}">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.estadoCivil}]]</label>
+                                <input type="text" class="form-control" th:field="*{estadoCivil}">
+                            </div>                        
+
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered custom-modal-animation">
+            <div class="modal-content bg-dark text-white animate-slide-up">
+
+                <form th:action="@{/secretaria/pacientes/eliminar}" th:object="${paciente}" method="post">
+                    <input type="hidden" name="idPaciente" id="modalId"/>
+
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title"><i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>[[#{accion.confirmar.texto1}]] <span id="modalDescripcion"></span>?</p>
+                        <h6>[[#{accion.confirmar.texto2}]]</h6>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
