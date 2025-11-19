@@ -20,12 +20,12 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public boolean existeUsername(String username) {
-        return usuarioRepository.findByUsername(username).isPresent();
+    return usuarioRepository.findByUsernameNativo(username).isPresent();
     }
 
     @Transactional(readOnly = true)
     public boolean existeCorreo(String correo) {
-        return usuarioRepository.findByCorreo(correo).isPresent();
+     return usuarioRepository.findByCorreoNativo(correo).isPresent();
     }
 
 }

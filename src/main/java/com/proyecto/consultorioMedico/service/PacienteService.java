@@ -16,4 +16,9 @@ public class PacienteService {
     public void save(Paciente paciente) {
         pacienteRepository.save(paciente);
     }
-}
+    
+    @Transactional(readOnly = true)
+    public Paciente getPaciente(Paciente paciente) {
+        return pacienteRepository.findById(paciente.getIdPaciente()).orElse(null);
+    }
+} 
