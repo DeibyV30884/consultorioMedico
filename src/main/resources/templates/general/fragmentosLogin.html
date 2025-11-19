@@ -40,8 +40,8 @@
                             <li class="nav-item dropdown me-2">  
                                 <a class="nav-link dropdown-toggle text-white px-4 py-2" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">[[#{header.idioma}]]</a>
                                 <ul class="dropdown-menu bg-secondary ">
-                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/login(lang=es)} ">[[#{header.idioma.espanol}]]</a></li>
-                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{/login(lang=en)}">[[#{header.idioma.ingles}]]</a></li>
+                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{''(lang=es)}">[[#{header.idioma.espanol}]]</a></li>
+                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{''(lang=en)}">[[#{header.idioma.ingles}]]</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item text-white my-auto" sec:authorize="isAuthenticated()">
