@@ -33,4 +33,10 @@ public class Paciente implements Serializable {
     @Column(name = "correo_electronico", length = 75)
     private String correoElectronico;
     
+    @Column(name =  "fecha_nacimiento")
+    private LocalDate fechaNacimiento;
+    
+    @Column(length = 25)
+    private String telefono; 
+    
 }

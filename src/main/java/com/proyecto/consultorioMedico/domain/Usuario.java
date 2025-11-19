@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -49,4 +50,14 @@ public class Usuario implements Serializable {
     
     @Column(name = "fecha_modificacion", insertable = false, updatable = false)
     private LocalDateTime fechaModificacion;
+    
+   //many to many previendo que un usuario pueda tener 2 roles, como un medico que tambien sea administrador 
+    @ManyToMany
+    @JoinTable(
+        name = "usuario_rol", 
+        joinColumns = @JoinColumn( name = "id_usuario"),
+        inverseJoinColumns = @JoinColumn( name = "id_rol")
+    )
+    
+    private List<Rol> roles;
 }
