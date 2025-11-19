@@ -31,15 +31,14 @@ public class CitaController {
     @Autowired
     private MessageSource messageSource;
 
-    @GetMapping("/listado") // https:localhost/cita/listado
+    @GetMapping("/listado") 
     public String inicio(Model model) {
         var citas = citaService.getCitas();
         model.addAttribute("citas", citas);
-        model.addAttribute("totalCitas", citas.size());
-        return "redirect:/secretaria/citas"; //las vistas que yo voy a crear en el html
+        return "redirect:/secretaria/citas"; 
     }
 
-    @PostMapping("/modificar")// https:localhost/cita/modificar
+    @PostMapping("/modificar")
     public String modificar(Cita cita, Model model) {
         cita = citaService.getCita(cita);
         model.addAttribute("cita", cita);
