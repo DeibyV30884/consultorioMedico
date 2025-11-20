@@ -47,11 +47,6 @@ public class PacienteService {
             return false;
         }
     }
-
-    @Transactional(readOnly = true)
-    public Paciente getPaciente(Paciente paciente) {
-        return pacienteRepository.findById(paciente.getIdPaciente()).orElse(null);
-    }
     
      public List<Paciente> buscarPaciente(String texto) {
         return pacienteRepository.buscarPaciente(texto);
