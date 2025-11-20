@@ -44,7 +44,7 @@ public class SecretariaController {
     
     @GetMapping("/pacientes")
     public String pacientes(Model model) {
-        var pacientes = pacienteService.getPacientes(false);
+        var pacientes = pacienteService.getPacientes();
         model.addAttribute("pacientes", pacientes);
         model.addAttribute("paciente", new Paciente());
         model.addAttribute("titulo", "pacientes");
