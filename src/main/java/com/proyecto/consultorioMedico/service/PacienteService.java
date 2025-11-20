@@ -1,3 +1,8 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
 package com.proyecto.consultorioMedico.service;
 
 import com.proyecto.consultorioMedico.domain.Paciente;
@@ -7,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ *
+ * @author Camila
+ */
 @Service
 public class PacienteService {
 
@@ -28,14 +37,24 @@ public class PacienteService {
         pacienteRepository.save(paciente);
     }
 
-    @Transactional
-    public boolean delete(Paciente paciente) {
-        try {
+    @Transactional 
+    public boolean delete(Paciente paciente){ 
+        try{
             pacienteRepository.delete(paciente);
-            pacienteRepository.flush();
+            pacienteRepository.flush(); 
             return true;
-        } catch (Exception e) {
+        } catch (Exception e){ 
             return false;
         }
     }
+
+    @Transactional(readOnly = true)
+    public Paciente getPaciente(Paciente paciente) {
+        return pacienteRepository.findById(paciente.getIdPaciente()).orElse(null);
+    }
+    
+     public List<Paciente> buscarPaciente(String texto) {
+        return pacienteRepository.buscarPaciente(texto);
+    }
+
 }

@@ -55,7 +55,7 @@
                                         <hr class="my-3"/>
                                         <div class="text-center ">
                                             <span class="text-muted">[[#{login.mensaje.registrarse}]]</span>
-                                            <a th:href="@{/registro/crearcuenta} " class="text-warning fw-bold ">[[#{login.registrarse}]] </a>
+                                            <a th:href="@{/registro} " class="text-warning fw-bold ">[[#{login.registrarse}]] </a>
                                         </div>
                                     </form>
                                 </div>
@@ -65,6 +65,11 @@
                             <div th:if="${param.error != null}">
                                 <h5>[[#{login.mensaje.datos.invalidos}]]</h5>
                             </div>
+
+                            <div th:if="${todoOk != null}">
+                                <h5>[[${todoOk}]]</h5>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
