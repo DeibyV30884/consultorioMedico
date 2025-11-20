@@ -1,5 +1,8 @@
 package com.proyecto.consultorioMedico.controller;
 
+import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.service.CitaService;
+import java.util.List;
 import com.proyecto.consultorioMedico.service.PacienteService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SecretariaController {
 
     @Autowired
+    private CitaService citaService;
+  
+    @Autowired
     private PacienteService pacienteService;
 
     @GetMapping("/inicio")
@@ -23,17 +29,19 @@ public class SecretariaController {
     }
 
     @GetMapping("/perfil")
-    public String perfil(Model model) {
-        model.addAttribute("titulo", "perfil");
-        return "secretaria/perfil";
-    }
-
+        public String perfil (Model model) {
+            model.addAttribute("titulo", "perfil" );
+            return "secretaria/perfil";  
+        } 
+    
     @GetMapping("/citas")
     public String citas(Model model) {
-        model.addAttribute("titulo", "citas");
+        List<Cita> lista = citaService.getCitas();
+        model.addAttribute("citas", lista);
+        model.addAttribute("totalCitas", lista.size());
         return "secretaria/citas";
     }
-
+    
     @GetMapping("/pacientes")
     public String pacientes(Model model) {
         var pacientes = pacienteService.getPacientes(false);
