@@ -20,7 +20,7 @@ public class CitaService {
 
     @Transactional(readOnly = true)
     public List<Cita> getCitas() { 
-        var lista = citaRepository.findAll(); // se quito la buqueda por activo de techShop
+        var lista = citaRepository.findAll();
         return lista;
     }
 
