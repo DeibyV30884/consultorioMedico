@@ -1,4 +1,3 @@
-
 package com.proyecto.consultorioMedico.service;
 
 import com.proyecto.consultorioMedico.domain.Cita;
@@ -14,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class CitaService {
-    
+
     @Autowired
     private CitaRepository citaRepository;
 
     @Transactional(readOnly = true)
-    public List<Cita> getCitas() { 
+    public List<Cita> getCitas() {
         var lista = citaRepository.findAll();
         return lista;
     }
@@ -44,6 +43,8 @@ public class CitaService {
     public Cita getCita(Cita cita) {
         return citaRepository.findById(cita.getIdCita()).orElse(null);
     }
-    
-    // JPA Ampliada para las citas del dia
+
+    public List<Cita> buscarCitasHoy() {
+        return citaRepository.buscarCitasHoy();
+    }
 }

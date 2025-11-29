@@ -5,7 +5,9 @@
 package com.proyecto.consultorioMedico.repository;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -14,5 +16,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
     
     
-    // JPA Ampliada para las citas del dia
+            @Query(
+            value = "SELECT * FROM cita WHERE DATE(fecha_hora) = CURDATE()",
+            nativeQuery = true
+        )
+        List<Cita> buscarCitasHoy();
+
 }
