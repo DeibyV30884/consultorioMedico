@@ -1,0 +1,49 @@
+
+package com.proyecto.consultorioMedico.service;
+
+import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.repository.CitaRepository;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ *
+ * @author Alejandro
+ */
+@Service
+public class CitaService {
+    
+    @Autowired
+    private CitaRepository citaRepository;
+
+    @Transactional(readOnly = true)
+    public List<Cita> getCitas() { 
+        var lista = citaRepository.findAll();
+        return lista;
+    }
+
+    @Transactional
+    public void save(Cita cita) {
+        citaRepository.save(cita);
+    }
+
+    @Transactional
+    public boolean delete(Cita cita) {
+        try {
+            citaRepository.delete(cita);
+            citaRepository.flush();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Cita getCita(Cita cita) {
+        return citaRepository.findById(cita.getIdCita()).orElse(null);
+    }
+    
+    // JPA Ampliada para las citas del dia
+}

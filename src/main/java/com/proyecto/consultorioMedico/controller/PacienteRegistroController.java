@@ -37,7 +37,7 @@ public class PacienteRegistroController {
 
     @GetMapping("/listado") // https:localhost/paciente/listado
     public String inicio(Model model) {
-        var pacientes = pacienteService.getPacientes(false);
+        var pacientes = pacienteService.getPacientes();
         model.addAttribute("pacientes", pacientes);
         model.addAttribute("totalPacientes", pacientes.size());
         return "/secretaria/pacientes"; //las vistas que yo voy a crear en el html

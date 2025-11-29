@@ -23,9 +23,13 @@ public class PacienteService {
     private PacienteRepository pacienteRepository;
 
     @Transactional(readOnly = true)
-    public List<Paciente> getPacientes(boolean activo) {
-        var lista = pacienteRepository.findAll();
-        return lista;
+    public List<Paciente> getPacientes() {
+        return pacienteRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Paciente getPaciente(Paciente paciente) {
+        return pacienteRepository.findById(paciente.getIdPaciente()).orElse(null);
     }
 
     @Transactional
@@ -42,11 +46,6 @@ public class PacienteService {
         } catch (Exception e){ 
             return false;
         }
-    }
-
-    @Transactional(readOnly = true)
-    public Paciente getPaciente(Paciente paciente) {
-        return pacienteRepository.findById(paciente.getIdPaciente()).orElse(null);
     }
     
      public List<Paciente> buscarPaciente(String texto) {
