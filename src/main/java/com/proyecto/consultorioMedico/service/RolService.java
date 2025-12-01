@@ -7,7 +7,6 @@ import com.proyecto.consultorioMedico.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 
 @Service
@@ -21,7 +20,7 @@ public class RolService {
     
     @Transactional(readOnly = true)
     public Rol getRolByNombre(String nombre) {
-        return rolRepository.buscarPorNombreJPQL(nombre).orElse(null);
+        return rolRepository.buscarPorNombreJPQL(nombre).orElseThrow(() -> new RuntimeException("Ese rol no esta : " + nombre));
     }
     
     @Transactional

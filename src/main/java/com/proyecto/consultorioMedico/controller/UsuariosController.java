@@ -8,6 +8,7 @@ import com.proyecto.consultorioMedico.service.RolService;
 import com.proyecto.consultorioMedico.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,9 @@ public class UsuariosController {
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     @GetMapping
     public String mostrarFormularioRegistro(Model model) {
@@ -74,8 +78,7 @@ public class UsuariosController {
         }
         
         try {
-
-            usuario.setPassword("{noop}" + usuario.getPassword()); // de momento se guarda la contraseña así porque aun no se encripta la clave, sino springboot no nos deja guardar el usuario
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             usuario.setActivo(true);
             
             usuarioService.save(usuario);

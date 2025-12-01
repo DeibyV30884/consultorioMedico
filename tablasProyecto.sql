@@ -216,10 +216,11 @@ CREATE TABLE constante (
 
 -- Inserción de usuarios
 INSERT INTO usuario (username, password, nombre, apellido_1, apellido_2, correo, telefono, activo) VALUES 
-('admin', '1234', 'Carlos', 'Rodriguez','Ramírez', 'admin@consultorio.com', '8888-8888', TRUE),
-('dr.perez', '1234', 'Juan', 'Pérez','Ramírez','jperez@consultorio.com', '8777-7777', TRUE),
-('secretaria', '1234', 'Ana', 'Gutierres','López', 'anag2004@gmail.com', '0909-3490', TRUE),
-('paciente1', '1111', 'Erick', 'Johnson','Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE);
+('admin', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Carlos', 'Rodriguez','Ramírez', 'admin@consultorio.com', '8888-8888', TRUE),-- 1234
+('dr.perez', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Juan', 'Pérez','Ramírez','jperez@consultorio.com', '8777-7777', TRUE),-- 1234
+('secretaria', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Ana', 'Gutierres','López', 'anag2004@gmail.com', '0909-3490', TRUE),-- 1234
+('paciente1', '$2a$10$r1JSQWLy0ezvORD.zrlyu.pqbmYJha0O7yMujUbXEuMOXTvx.h4cq', 'Erick', 'Johnson','Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE);-- 1111
+
 
 -- Inserción de roles
 INSERT INTO rol (nombre, descripcion) VALUES 
@@ -273,43 +274,47 @@ INSERT INTO medicamento (codigo, nombre, principio_activo, presentacion, stock_a
 ('MED-003', 'Amoxicilina 500mg', 'Amoxicilina', 'Cápsulas', 60, 10),
 ('MED-004', 'Omeprazol 20mg', 'Omeprazol', 'Cápsulas', 50, 10);
 
--- Inserción de rutas con roles específicos (ADMINISTRADOR)
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/admin/**', 3),
-('/usuario/**', 3),
-('/rol/**', 3),
-('/ruta/**', 3),
-('/constante/**', 3);
-
--- Rutas para MEDICO
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/medico/**', 1),
-('/paciente/ver/**', 1),
-('/cita/ver/**', 1),
-('/registro-clinico/**', 1),
-('/prescripcion/**', 1);
-
--- Rutas para SECRETARIA
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/secretaria/**', 4),
-('/paciente/**', 4),
-('/cita/**', 4);
-
--- Rutas para PACIENTE
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/paciente/inicio', 2),
-('/paciente/tratamientos', 2),
-('/paciente/perfil', 2),
-('/cita/mis-citas', 2);
-
--- Rutas públicas (sin rol requerido)
+-- Rutas públicas (sin rol)
 INSERT INTO ruta (ruta, requiere_rol) VALUES 
 ('/', FALSE),
 ('/index', FALSE),
 ('/login', FALSE),
 ('/registro', FALSE),
+('/registro/guardar', FALSE),
 ('/error/**', FALSE),
-('/webjars/**', FALSE);
+('/webjars/**', FALSE),
+('/js/**', FALSE),
+('/img/**', FALSE),
+('/css/**', FALSE);
+
+-- Rutas para PACIENTE/CLIENTE (id_rol = 2)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/paciente/inicio', 2, TRUE),
+('/paciente/tratamientos', 2, TRUE),
+('/paciente/perfil', 2, TRUE),
+('/cita/mis-citas', 2, TRUE);
+
+-- Rutas para ADMINISTRADOR (id_rol = 3)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/admin/**', 3, TRUE),
+('/usuario/**', 3, TRUE),
+('/rol/**', 3, TRUE),
+('/ruta/**', 3, TRUE),
+('/constante/**', 3, TRUE);
+
+-- Rutas para MEDICO (id_rol = 1)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/medico/**', 1, TRUE),
+('/paciente/ver/**', 1, TRUE),
+('/cita/ver/**', 1, TRUE),
+('/registro-clinico/**', 1, TRUE),
+('/prescripcion/**', 1, TRUE);
+
+-- Rutas para SECRETARIA (id_rol = 4)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/secretaria/**', 4, TRUE),
+('/pacientes/**', 4, TRUE),
+('/citas/**', 4, TRUE);
 
 -- Constantes del sistema
 INSERT INTO constante (atributo, valor) VALUES 
