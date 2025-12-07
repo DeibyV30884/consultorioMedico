@@ -138,10 +138,10 @@ CREATE TABLE secretaria (
   ENGINE = InnoDB;
 
 -- Tabla de tipos de consulta
-CREATE TABLE tipo_consulta(
-  id_tipo_consulta INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE motivo_cita(
+  id_motivo_cita INT NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(50),
-  PRIMARY KEY (id_tipo_consulta)
+  PRIMARY KEY (id_motivo_cita)
   )
    ENGINE = InnoDB;
    
@@ -151,19 +151,19 @@ CREATE TABLE cita (
   id_paciente INT NOT NULL,
   id_medico INT NOT NULL,
   fecha_hora DATETIME,
-  estado ENUM('Agendada', 'Cancelada', 'Completada') NOT NULL,
+  estado ENUM('Pendiente', 'Cancelada', 'Completada') NOT NULL,
   tratamiento TEXT,
   observaciones TEXT,
-  id_tipo_consulta INT NOT NULL,
+  id_motivo_cita INT NOT NULL,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_cita),
   INDEX ndx_id_paciente (id_paciente),
   INDEX ndx_id_medico (id_medico),
-  INDEX ndx_id_tipo_consulta (id_tipo_consulta),
+  INDEX ndx_idid_motivo_cita (id_motivo_cita),
   FOREIGN KEY fk_cita_paciente (id_paciente) REFERENCES paciente(id_paciente),
   FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico),
-  FOREIGN KEY fk_cita_tipo (id_tipo_consulta) REFERENCES tipo_consulta(id_tipo_consulta))
+  FOREIGN KEY fk_motivo_cita (id_motivo_cita) REFERENCES motivo_cita(id_motivo_cita))
   ENGINE = InnoDB;
   
   
@@ -273,23 +273,23 @@ INSERT INTO paciente (id_usuario, identificacion, nombre, apellido_1, apellido_2
 (NULL, '1-0992-0318', 'Ana', 'Venegas', 'Castro', '1992-03-18', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltero'),
 (NULL, '8-0888-0725', 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
 
--- Inserción de tipos citas
-INSERT INTO tipo_consulta (nombre) VALUES
+-- Inserción de motivo citas
+INSERT INTO motivo_cita (nombre) VALUES
 ('Consulta General'),
 ('Dictamen Medico'),
 ('Cirujia Menor');
 
-select * from cita;
+select * from motivo_cita;
 
 -- Inserción de citas
-INSERT INTO cita (id_paciente, id_medico, fecha_hora, estado, id_tipo_consulta) VALUES
+INSERT INTO cita (id_paciente, id_medico, fecha_hora, estado, id_motivo_cita) VALUES
 (1, 1, '2025-11-10 08:00:00', 'Cancelada', 1),
 (2, 1, '2025-11-10 11:00:00', 'Completada', 1),
 (3, 1, '2025-11-10 09:00:00', 'Cancelada', 2),
 (4, 1, '2025-11-10 11:30:00', 'Completada', 3),
-(5, 1, '2025-11-10 13:00:00', 'Agendada', 2),
-(1, 1, '2025-11-15 09:30:00', 'Agendada', 1),
-(2, 1, '2025-11-15 10:00:00', 'Agendada', 1),
+(5, 1, '2025-11-10 13:00:00', 'Pendiente', 2),
+(1, 1, '2025-11-15 09:30:00', 'Pendiente', 1),
+(2, 1, '2025-11-15 10:00:00', 'Pendiente', 1),
 (3, 1, '2025-11-16 14:00:00', 'Completada', 2);
 
 -- Inserción de medicamentos

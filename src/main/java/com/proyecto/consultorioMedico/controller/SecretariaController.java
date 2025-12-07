@@ -1,6 +1,7 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.service.CitaService;
 import java.util.List;
 import com.proyecto.consultorioMedico.service.PacienteService;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.proyecto.consultorioMedico.domain.Paciente;
 import com.proyecto.consultorioMedico.service.MedicoService;
-import com.proyecto.consultorioMedico.service.TipoConsultaService;
+import com.proyecto.consultorioMedico.service.MotivoCitaService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -25,7 +26,7 @@ public class SecretariaController {
     private MedicoService medicoService;
 
     @Autowired
-    private TipoConsultaService tipoConsultaService;
+    private MotivoCitaService motivoCitaService;
 
     @Autowired
     private PacienteService pacienteService;
@@ -33,6 +34,26 @@ public class SecretariaController {
     @GetMapping("/inicio")
     public String inicio(Model model) {
         model.addAttribute("titulo", "Panel de Secretaría");
+        List<Cita> citas = citaService.buscarCitasHoy();
+
+        int total = citas.size();
+        int completas = 0;
+        int pendientes = 0;
+
+        for (Cita c : citas) {
+            if (c.getEstado() == EstadoCita.Completada) {
+                completas++;
+            }
+            if (c.getEstado() == EstadoCita.Pendiente) {
+                pendientes++;
+            }
+        }
+
+        model.addAttribute("total", total);
+        model.addAttribute("citasproximas", citas);
+        model.addAttribute("completas", completas);
+        model.addAttribute("pendientes", pendientes);
+
         return "secretaria/inicio";
     }
 
@@ -48,7 +69,7 @@ public class SecretariaController {
         model.addAttribute("citas", lista);
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("tiposConsulta", tipoConsultaService.getTipoConsultas());
+        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         model.addAttribute("totalCitas", lista.size());
         return "secretaria/citas";
     }
@@ -60,7 +81,7 @@ public class SecretariaController {
         model.addAttribute("paciente", new Paciente());
         model.addAttribute("titulo", "pacientes");
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("tiposConsulta", tipoConsultaService.getTipoConsultas());
+        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         return "secretaria/pacientes";
     }
 }

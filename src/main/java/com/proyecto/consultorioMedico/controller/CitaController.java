@@ -4,7 +4,7 @@ import com.proyecto.consultorioMedico.domain.Cita;
 import com.proyecto.consultorioMedico.service.CitaService;
 import com.proyecto.consultorioMedico.service.MedicoService;
 import com.proyecto.consultorioMedico.service.PacienteService;
-import com.proyecto.consultorioMedico.service.TipoConsultaService;
+import com.proyecto.consultorioMedico.service.MotivoCitaService;
 import java.util.Locale;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class CitaController {
     private MedicoService medicoService;
 
     @Autowired
-    private TipoConsultaService tipoConsultaService;
+    private MotivoCitaService motivoCitaService;
 
     @Autowired
     private MessageSource messageSource;
@@ -46,7 +46,7 @@ public class CitaController {
         model.addAttribute("citas", citas);
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("tiposConsulta", tipoConsultaService.getTipoConsultas());
+        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         return "/secretaria/citas";
     }
 
@@ -63,7 +63,7 @@ public class CitaController {
         model.addAttribute("cita", citaOpt.get());
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("tiposConsulta", tipoConsultaService.getTipoConsultas());
+        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
 
         return "/secretaria/modifica";
     }
