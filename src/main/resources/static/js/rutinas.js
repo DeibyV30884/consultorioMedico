@@ -23,6 +23,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('modalId').value = button.getAttribute('data-bs-id');
         document.getElementById('modalDescripcion').textContent = button.getAttribute('data-bs-descripcion');
     });
+    
+    const agendarCitaModal = document.getElementById('agendarCitaModal');
+    if (agendarCitaModal) {
+        agendarCitaModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('modalPacienteId').value = button.getAttribute('data-bs-id');
+            document.getElementById('modalPacienteNombre').value = button.getAttribute('data-bs-nombre');
+        });
+    }
 });
 
 //Para quitar toast

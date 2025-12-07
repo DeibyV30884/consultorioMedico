@@ -46,24 +46,30 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>[[#{cita.paciente}]]</th>
+                                            <th>[[#{paciente.identificacion}]]</th>
+                                            <th>[[#{paciente.nombre}]]</th>
+                                            <th>[[#{paciente.apellido1}]]</th>
                                             <th>[[#{cita.medico}]]</th>
                                             <th>[[#{cita.fecha}]]</th>
                                             <th>[[#{cita.estado}]]</th>
                                             <th>[[#{cita.tipo}]]</th>
                                             <th>[[#{cita.tratamiento}]]</th>
+                                            <th>[[#{cita.observaciones}]]</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr th:each="c : ${citas}">
                                             <td>[[${c.idCita}]]</td>
+                                            <td>[[${c.paciente.identificacion}]]</td>
                                             <td>[[${c.paciente.nombre}]]</td>
+                                            <td>[[${c.paciente.apellido1}]]</td>
                                             <td>[[${c.medico.nombre}]]</td>
                                             <td>[[${#temporals.format(c.fechaHora, 'yyyy-MM-dd HH:mm')}]]</td>
                                             <td>[[${c.estado}]]</td>
-                                            <td>[[${c.tipoConsulta}]]</td>
+                                            <td>[[${c.tipoConsulta.nombre}]]</td>
                                             <td>[[${c.tratamiento}]]</td>
+                                            <td>[[${c.observaciones}]]</td>
 
                                             <td>
                                                 <div class="d-flex align-items-start">
@@ -80,13 +86,10 @@
 
 
                                                     <!-- BOTÓN MODIFICAR -->
-                                                    <form th:action="@{/cita/modificar}" method="post">
-                                                        <input type="hidden" name="idCita" th:value="${c.idCita}" />
-                                                        <button type="submit" class="btn btn-success">
-                                                            <i class="fa-solid fa-pencil"></i>
-                                                            [[#{accion.actualizar}]]
-                                                        </button>
-                                                    </form>
+                                                    <a th:href="@{/cita/modificar/}+${c.idCita}" class="btn btn-success">
+                                                        <i class="fa-solid fa-pencil"></i>
+                                                        [[#{accion.actualizar}]]
+                                                    </a>
 
                                                 </div>
                                             </td>
@@ -112,7 +115,7 @@
                 <div class="col-md-8">
 
                     <form method="POST" th:action="@{/cita/guardar}" 
-                          th:object="${cita}" class="was-validated">
+                          th:object="${cita}" class="was-validated"  enctype="multipart/form-data">
 
                         <input type="hidden" th:field="*{idCita}"/>
 
@@ -134,17 +137,48 @@
                             <div class="col">
                                 <div class="card">
                                     <div class="card-header"><h4>[[#{accion.actualizar}]]</h4></div>
-                                    <div class="card-body">
-
-                                        <!-- FECHA -->
+                                    <div class="card-body row g-3">
+                                        <!-- PACIENTE -->
                                         <div class="mb-3">
-                                            <label>[[#{cita.fecha}]]</label>
-                                            <input type="datetime-local" class="form-control"
-                                                   th:field="*{fechaHora}" required />
+                                            <label>[[#{cita.paciente}]]</label>
+                                            <select class="form-select" th:field="*{paciente.idPaciente}" required>
+                                                <option th:each="p : ${pacientes}"
+                                                        th:value="${p.idPaciente}"
+                                                        th:text="${p.nombre} + ' ' + ${p.apellido1} + ' - ' + ${p.identificacion}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>[[#{cita.medico}]]</label>
+                                            <select class="form-select" th:field="*{medico.idMedico}" required>
+                                                <option th:each="m : ${medicos}"
+                                                        th:value="${m.idMedico}"
+                                                        th:text="${m.nombre}"
+                                                        th:selected="${m.idMedico == cita.medico?.idMedico}">
+                                                </option>
+                                            </select>
                                         </div>
 
-                                        <!-- ESTADO -->
-                                        <div class="mb-3">
+                                        <div class="col-md-6 mb-3">
+                                            <label>[[#{cita.fecha}]]</label>
+                                            <input type="datetime-local" 
+                                                   class="form-control"
+                                                   name="fechaHora"
+                                                   th:value="${cita.fechaHora != null ? #temporals.format(cita.fechaHora, 'yyyy-MM-dd') + 'T' + #temporals.format(cita.fechaHora, 'HH:mm') : ''}"
+                                                   th:min="${fechaMinima}"
+                                                   required />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>[[#{cita.tipo}]]</label>
+                                            <select class="form-select" th:field="*{tipoConsulta.idTipoConsulta}" required>
+                                                <option th:each="t : ${tiposConsulta}"
+                                                        th:value="${t.idTipoConsulta}"
+                                                        th:text="${t.nombre}"
+                                                        th:selected="${t.idTipoConsulta == cita.tipoConsulta?.idTipoConsulta}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
                                             <label>[[#{cita.estado}]]</label>
                                             <select class="form-select" th:field="*{estado}" required>
                                                 <option th:each="e : ${T(com.proyecto.consultorioMedico.domain.EstadoCita).values()}"
@@ -154,10 +188,13 @@
                                             </select>
                                         </div>
 
-                                        <!-- TRATAMIENTO -->
-                                        <div class="mb-3">
+                                        <div class="col-md-6 mb-3">
                                             <label>[[#{cita.tratamiento}]]</label>
                                             <textarea class="form-control" th:field="*{tratamiento}"></textarea>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>[[#{cita.observaciones}]]</label>
+                                            <textarea class="form-control" th:field="*{observaciones}"></textarea>
                                         </div>
 
                                     </div>

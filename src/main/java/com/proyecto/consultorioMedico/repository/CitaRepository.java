@@ -5,9 +5,11 @@
 package com.proyecto.consultorioMedico.repository;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -22,4 +24,17 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
         )
         List<Cita> buscarCitasHoy();
 
+    // JPA Ampliada para las citas del dia
+    
+    //
+    @Query("SELECT c FROM Cita c WHERE c.medico.idMedico = :idMedico " +
+           "AND c.fechaHora BETWEEN :inicio AND :fin " +
+           "AND c.estado != 'CANCELADA' " +
+           "AND (:idCita IS NULL OR c.idCita != :idCita)")
+    List<Cita> findCitasEnRango(
+        @Param("idMedico") Integer idMedico,
+        @Param("inicio") LocalDateTime inicio,
+        @Param("fin") LocalDateTime fin,
+        @Param("idCita") Integer idCita
+    );
 }

@@ -78,6 +78,7 @@ CREATE TABLE ruta (
 CREATE TABLE paciente (
   id_paciente INT NOT NULL AUTO_INCREMENT,
   id_usuario INT NULL,
+  identificacion VARCHAR(30) UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
   apellido_2 VARCHAR(30),
@@ -116,6 +117,7 @@ CREATE TABLE administrador (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
+  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_administrador),
@@ -128,29 +130,44 @@ CREATE TABLE secretaria (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
+  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_secretaria),
   FOREIGN KEY fk_secretaria_usuario (id_usuario) REFERENCES usuario(id_usuario))
   ENGINE = InnoDB;
 
+-- Tabla de tipos de consulta
+CREATE TABLE tipo_consulta(
+  id_tipo_consulta INT NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(50),
+  PRIMARY KEY (id_tipo_consulta)
+  )
+   ENGINE = InnoDB;
+   
 -- Tabla de citas
 CREATE TABLE cita (
   id_cita INT NOT NULL AUTO_INCREMENT,
   id_paciente INT NOT NULL,
   id_medico INT NOT NULL,
   fecha_hora DATETIME,
-  estado ENUM('Pendiente', 'Confirmada', 'Cancelada', 'Completada') NOT NULL,
+  estado ENUM('Agendada', 'Cancelada', 'Completada') NOT NULL,
   tratamiento TEXT,
-  tipo_consulta VARCHAR(50),
+  observaciones TEXT,
+  id_tipo_consulta INT NOT NULL,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_cita),
   INDEX ndx_id_paciente (id_paciente),
   INDEX ndx_id_medico (id_medico),
+  INDEX ndx_id_tipo_consulta (id_tipo_consulta),
   FOREIGN KEY fk_cita_paciente (id_paciente) REFERENCES paciente(id_paciente),
-  FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico))
+  FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico),
+  FOREIGN KEY fk_cita_tipo (id_tipo_consulta) REFERENCES tipo_consulta(id_tipo_consulta))
   ENGINE = InnoDB;
+  
+  
+  
 
 -- Tabla de registro clínico
 CREATE TABLE registro_clinico (
@@ -216,10 +233,11 @@ CREATE TABLE constante (
 
 -- Inserción de usuarios
 INSERT INTO usuario (username, password, nombre, apellido_1, apellido_2, correo, telefono, activo) VALUES 
-('admin', '1234', 'Carlos', 'Rodriguez','Ramírez', 'admin@consultorio.com', '8888-8888', TRUE),
-('dr.perez', '1234', 'Juan', 'Pérez','Ramírez','jperez@consultorio.com', '8777-7777', TRUE),
-('secretaria', '1234', 'Ana', 'Gutierres','López', 'anag2004@gmail.com', '0909-3490', TRUE),
-('paciente1', '1111', 'Erick', 'Johnson','Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE);
+('admin', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Carlos', 'Rodriguez','Ramírez', 'admin@consultorio.com', '8888-8888', TRUE),-- 1234
+('dr.perez', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Juan', 'Pérez','Ramírez','jperez@consultorio.com', '8777-7777', TRUE),-- 1234
+('secretaria', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Ana', 'Gutierres','López', 'anag2004@gmail.com', '0909-3490', TRUE),-- 1234
+('paciente1', '$2a$10$r1JSQWLy0ezvORD.zrlyu.pqbmYJha0O7yMujUbXEuMOXTvx.h4cq', 'Erick', 'Johnson','Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE);-- 1111
+
 
 -- Inserción de roles
 INSERT INTO rol (nombre, descripcion) VALUES 
@@ -248,23 +266,31 @@ INSERT INTO secretaria (id_usuario, nombre, apellido_1, apellido_2) VALUES
 (3, 'Ana', 'Gutierres', 'Pérez');
 
 -- Inserción de pacientes
-INSERT INTO paciente (id_usuario, nombre, apellido_1, apellido_2, fecha_nacimiento, correo_electronico, telefono, ocupacion, estado_civil) VALUES
-(4, 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
-(NULL, 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casado'),
-(NULL, 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
-(NULL, 'Ana', 'Venegas', 'Castro', '1992-03-18', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltero'),
-(NULL, 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
+INSERT INTO paciente (id_usuario, identificacion, nombre, apellido_1, apellido_2, fecha_nacimiento, correo_electronico, telefono, ocupacion, estado_civil) VALUES
+(4, '1-0850-0515', 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
+(NULL, '6-0385-0822', 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casado'),
+(NULL, '2-0478-1210', 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
+(NULL, '1-0992-0318', 'Ana', 'Venegas', 'Castro', '1992-03-18', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltero'),
+(NULL, '8-0888-0725', 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
+
+-- Inserción de tipos citas
+INSERT INTO tipo_consulta (nombre) VALUES
+('Consulta General'),
+('Dictamen Medico'),
+('Cirujia Menor');
+
+select * from cita;
 
 -- Inserción de citas
-INSERT INTO cita (id_paciente, id_medico, fecha_hora, estado, tipo_consulta) VALUES
-(1, 1, '2025-11-10 08:00:00', 'Cancelada', 'Consulta Gral.'),
-(2, 1, '2025-11-10 11:00:00', 'Completada', 'Consulta Gral.'),
-(3, 1, '2025-11-10 08:00:00', 'Cancelada', 'Consulta Gral.'),
-(4, 1, '2025-11-10 11:00:00', 'Completada', 'Consulta Gral.'),
-(5, 1, '2025-11-10 13:00:00', 'Pendiente', 'Consulta Gral.'),
-(1, 1, '2025-11-15 09:00:00', 'Pendiente', 'Control'),
-(2, 1, '2025-11-15 10:00:00', 'Pendiente', 'Consulta Gral.'),
-(3, 1, '2025-11-16 14:00:00', 'Confirmada', 'Control');
+INSERT INTO cita (id_paciente, id_medico, fecha_hora, estado, id_tipo_consulta) VALUES
+(1, 1, '2025-11-10 08:00:00', 'Cancelada', 1),
+(2, 1, '2025-11-10 11:00:00', 'Completada', 1),
+(3, 1, '2025-11-10 09:00:00', 'Cancelada', 2),
+(4, 1, '2025-11-10 11:30:00', 'Completada', 3),
+(5, 1, '2025-11-10 13:00:00', 'Agendada', 2),
+(1, 1, '2025-11-15 09:30:00', 'Agendada', 1),
+(2, 1, '2025-11-15 10:00:00', 'Agendada', 1),
+(3, 1, '2025-11-16 14:00:00', 'Completada', 2);
 
 -- Inserción de medicamentos
 INSERT INTO medicamento (codigo, nombre, principio_activo, presentacion, stock_actual, stock_minimo) VALUES
@@ -273,43 +299,47 @@ INSERT INTO medicamento (codigo, nombre, principio_activo, presentacion, stock_a
 ('MED-003', 'Amoxicilina 500mg', 'Amoxicilina', 'Cápsulas', 60, 10),
 ('MED-004', 'Omeprazol 20mg', 'Omeprazol', 'Cápsulas', 50, 10);
 
--- Inserción de rutas con roles específicos (ADMINISTRADOR)
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/admin/**', 3),
-('/usuario/**', 3),
-('/rol/**', 3),
-('/ruta/**', 3),
-('/constante/**', 3);
-
--- Rutas para MEDICO
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/medico/**', 1),
-('/paciente/ver/**', 1),
-('/cita/ver/**', 1),
-('/registro-clinico/**', 1),
-('/prescripcion/**', 1);
-
--- Rutas para SECRETARIA
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/secretaria/**', 4),
-('/paciente/**', 4),
-('/cita/**', 4);
-
--- Rutas para PACIENTE
-INSERT INTO ruta (ruta, id_rol) VALUES 
-('/paciente/inicio', 2),
-('/paciente/tratamientos', 2),
-('/paciente/perfil', 2),
-('/cita/mis-citas', 2);
-
--- Rutas públicas (sin rol requerido)
+-- Rutas públicas (sin rol)
 INSERT INTO ruta (ruta, requiere_rol) VALUES 
 ('/', FALSE),
 ('/index', FALSE),
 ('/login', FALSE),
 ('/registro', FALSE),
+('/registro/guardar', FALSE),
 ('/error/**', FALSE),
-('/webjars/**', FALSE);
+('/webjars/**', FALSE),
+('/js/**', FALSE),
+('/img/**', FALSE),
+('/css/**', FALSE);
+
+-- Rutas para PACIENTE/CLIENTE (id_rol = 2)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/paciente/inicio', 2, TRUE),
+('/paciente/tratamientos', 2, TRUE),
+('/paciente/perfil', 2, TRUE),
+('/cita/mis-citas', 2, TRUE);
+
+-- Rutas para ADMINISTRADOR (id_rol = 3)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/admin/**', 3, TRUE),
+('/usuario/**', 3, TRUE),
+('/rol/**', 3, TRUE),
+('/ruta/**', 3, TRUE),
+('/constante/**', 3, TRUE);
+
+-- Rutas para MEDICO (id_rol = 1)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/medico/**', 1, TRUE),
+('/paciente/ver/**', 1, TRUE),
+('/cita/ver/**', 1, TRUE),
+('/registro-clinico/**', 1, TRUE),
+('/prescripcion/**', 1, TRUE);
+
+-- Rutas para SECRETARIA (id_rol = 4)
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/secretaria/**', 4, TRUE),
+('/pacientes/**', 4, TRUE),
+('/citas/**', 4, TRUE);
 
 -- Constantes del sistema
 INSERT INTO constante (atributo, valor) VALUES 
