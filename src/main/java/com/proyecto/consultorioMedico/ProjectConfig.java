@@ -1,18 +1,10 @@
 package com.proyecto.consultorioMedico;
 
-import com.proyecto.consultorioMedico.security.InicioSegunRol;
 import java.util.Locale;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -24,9 +16,6 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 @Configuration
 public class ProjectConfig implements WebMvcConfigurer {
-
-    @Autowired
-    private InicioSegunRol inicioSegunRol; 
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -74,80 +63,5 @@ public class ProjectConfig implements WebMvcConfigurer {
         messageSource.setBasenames("messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests((request) -> request
-                        // Rutas publicas
-                        .requestMatchers("/", "/index", "/login", "/registro", 
-                                "/error/**", "/webjars/**", "/js/**", "/img/**")
-                        .permitAll()
-                        
-                        // Rutas de los Pacientes
-                        .requestMatchers("/paciente/inicio", "/paciente/tratamientos", 
-                                "/paciente/perfil", "/cita/mis-citas")
-                        .hasRole("CLIENTE")
-                        
-                        // Rutas de los Administrador
-                        .requestMatchers("/admin/**", "/usuario/**", "/rol/**", 
-                                "/ruta/**", "/constante/**")
-                        .hasRole("ADMINISTRADOR")
-                        
-                        // Rutas de los Medico
-                        .requestMatchers("/medico/**", "/paciente/ver/**", 
-                                "/cita/ver/**", "/registro-clinico/**", "/prescripcion/**")
-                        .hasRole("MEDICO")
-                        
-                        // Rutas de los Secretaria
-                        .requestMatchers("/secretaria/**", "/pacientes/**", "/citas/**")
-                        .hasRole("SECRETARIA")
-                        
-                        .anyRequest().authenticated()
-                )
-                .formLogin((form) -> form
-                        .loginPage("/login")
-                        .successHandler(inicioSegunRol) //desde aqui manejan los perfiles separados de inicio despues del login
-                        .permitAll()
-                )
-                .logout((logout) -> logout
-                        .logoutSuccessUrl("/")
-                        .permitAll()
-                );
-        return http.build();
-    }
-
-    @Bean
-    public UserDetailsService users() {
-        //Administrador
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password("{noop}1234")
-                .roles("ADMINISTRADOR")
-                .build();
-        
-        //Médico
-        UserDetails medico = User.builder()
-                .username("dr.perez")
-                .password("{noop}1234")
-                .roles("MEDICO")
-                .build();
-        
-        //Secretaria
-        UserDetails secretaria = User.builder()
-                .username("secretaria")
-                .password("{noop}1234")
-                .roles("SECRETARIA")
-                .build();
-        
-        //Paciente
-        UserDetails paciente = User.builder()
-                .username("paciente1")
-                .password("{noop}1111")
-                .roles("CLIENTE")
-                .build();
-        
-        return new InMemoryUserDetailsManager(admin, medico, secretaria, paciente);
     }
 }

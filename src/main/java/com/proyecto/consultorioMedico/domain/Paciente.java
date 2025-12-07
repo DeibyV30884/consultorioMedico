@@ -1,31 +1,29 @@
-
 package com.proyecto.consultorioMedico.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDate;
-import lombok.Data;
-
+import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
-@Table(name="paciente")
-public class Paciente implements Serializable{
-   
+@Table(name = "paciente")
+public class Paciente implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_paciente")
     private Integer idPaciente;
 
     @Column(name = "id_usuario")
-    private Integer idUsuario;  // Si quieres, luego lo convertimos a relación ManyToOne
+    private Integer idUsuario;
+
+    @Column(name = "identificacion", length = 30, unique = true)
+    private String identificacion;
 
     @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;
@@ -37,6 +35,7 @@ public class Paciente implements Serializable{
     private String apellido2;
 
     @Column(name = "fecha_nacimiento")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaNacimiento;
 
     @Column(name = "correo_electronico", length = 75)
@@ -64,11 +63,9 @@ public class Paciente implements Serializable{
     private String antecedentesGinecoObstetricos;
 
     @Column(name = "fecha_creacion", updatable = false)
-    private java.sql.Timestamp fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "fecha_modificacion")
-    private java.sql.Timestamp fechaModificacion;
-    
-        
-}
+    private LocalDateTime fechaModificacion;
 
+}

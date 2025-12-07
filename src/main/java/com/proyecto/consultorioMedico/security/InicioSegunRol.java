@@ -1,5 +1,4 @@
 package com.proyecto.consultorioMedico.security;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,25 +19,33 @@ public class InicioSegunRol implements AuthenticationSuccessHandler {
                                         Authentication authentication ) throws IOException, ServletException {
         
         List<GrantedAuthority> authorities = new ArrayList<> (authentication.getAuthorities());
+        String redirectUrl = null;
         
         for (int i = 0; i < authorities.size(); i++ ) {
             String role = authorities.get(i).getAuthority();
             
             if (role.equals("ROLE_ADMINISTRADOR")) { 
-                response.sendRedirect("/admin/reportes");
-                return;
+                redirectUrl = "/admin/reportes";
+                break;
             } else if (role.equals("ROLE_MEDICO")) { 
-                response.sendRedirect("/medico/inicio");
-                return;
+                redirectUrl = "/medico/inicio";
+                break;
             } else if (role.equals("ROLE_SECRETARIA")) { 
-                response.sendRedirect("/secretaria/inicio");
-                return;
+                redirectUrl = "/secretaria/inicio";
+                break;
             } else if (role.equals("ROLE_CLIENTE")) { 
-                response.sendRedirect("/paciente/inicio");
-                return;
+                redirectUrl = "/paciente/inicio";
+                break;
             }
         }
         
-        response.sendRedirect("/");
+        if (redirectUrl == null) {
+            redirectUrl = "/index";
+        }
+        
+        String contextPath = request.getContextPath();
+        String fullUrl = contextPath + redirectUrl;
+        
+        response.sendRedirect(fullUrl);
     } 
 }
