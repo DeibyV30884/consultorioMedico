@@ -62,6 +62,9 @@ public class CitaService {
         return citaRepository.findById(cita.getIdCita()).orElse(null);
     }
 
+    public List<Cita> buscarCitasHoy() {
+        return citaRepository.buscarCitasHoy();
+    }
     @Transactional(readOnly = true)
     public boolean validarDisponibilidad(Cita cita) {
         LocalDateTime inicio = cita.getFechaHora();

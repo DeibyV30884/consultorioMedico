@@ -18,6 +18,12 @@ import org.springframework.data.repository.query.Param;
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
     
     
+            @Query(
+            value = "SELECT * FROM cita WHERE DATE(fecha_hora) = CURDATE()",
+            nativeQuery = true
+        )
+        List<Cita> buscarCitasHoy();
+
     // JPA Ampliada para las citas del dia
     
     //

@@ -1,6 +1,7 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.service.CitaService;
 import java.util.List;
 import com.proyecto.consultorioMedico.service.PacienteService;
@@ -33,6 +34,26 @@ public class SecretariaController {
     @GetMapping("/inicio")
     public String inicio(Model model) {
         model.addAttribute("titulo", "Panel de Secretaría");
+        List<Cita> citas = citaService.buscarCitasHoy();
+
+        int total = citas.size();
+        int completas = 0;
+        int pendientes = 0;
+
+        for (Cita c : citas) {
+            if (c.getEstado() == EstadoCita.Completada) {
+                completas++;
+            }
+            if (c.getEstado() == EstadoCita.Pendiente) {
+                pendientes++;
+            }
+        }
+
+        model.addAttribute("total", total);
+        model.addAttribute("citasproximas", citas);
+        model.addAttribute("completas", completas);
+        model.addAttribute("pendientes", pendientes);
+
         return "secretaria/inicio";
     }
 
