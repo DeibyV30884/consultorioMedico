@@ -52,7 +52,7 @@
                                             <th>[[#{cita.medico}]]</th>
                                             <th>[[#{cita.fecha}]]</th>
                                             <th>[[#{cita.estado}]]</th>
-                                            <th>[[#{cita.tipo}]]</th>
+                                            <th>[[#{cita.Motivo}]]</th>
                                             <th>[[#{cita.tratamiento}]]</th>
                                             <th>[[#{cita.observaciones}]]</th>
                                             <th></th>
@@ -67,7 +67,7 @@
                                             <td>[[${c.medico.nombre}]]</td>
                                             <td>[[${#temporals.format(c.fechaHora, 'yyyy-MM-dd HH:mm')}]]</td>
                                             <td>[[${c.estado}]]</td>
-                                            <td>[[${c.tipoConsulta.nombre}]]</td>
+                                            <td>[[${c.motivoCita.nombre}]]</td>
                                             <td>[[${c.tratamiento}]]</td>
                                             <td>[[${c.observaciones}]]</td>
 
@@ -78,7 +78,7 @@
                                                             class="btn btn-danger me-2"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#confirmModal"
-                                                            th:attr="data-bs-id=${c.idCita}, data-bs-descripcion=${c.tipoConsulta}">
+                                                            th:attr="data-bs-id=${c.idCita}, data-bs-descripcion=${c.motivoCita}">
                                                         <i class="fa-solid fa-trash"></i>
                                                         [[#{accion.eliminar}]]
                                                     </button>
@@ -169,12 +169,12 @@
                                                    required />
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label>[[#{cita.tipo}]]</label>
-                                            <select class="form-select" th:field="*{tipoConsulta.idTipoConsulta}" required>
-                                                <option th:each="t : ${tiposConsulta}"
-                                                        th:value="${t.idTipoConsulta}"
+                                            <label>[[#{cita.Motivo}]]</label>
+                                            <select class="form-select" th:field="*{motivoCita.idMotivoCita}" required>
+                                                <option th:each="t : ${motivosCita}"
+                                                        th:value="${t.idMotivoCita}"
                                                         th:text="${t.nombre}"
-                                                        th:selected="${t.idTipoConsulta == cita.tipoConsulta?.idTipoConsulta}">
+                                                        th:selected="${t.idMotivoCita == cita.motivoCita?.idMotivoCita}">
                                                 </option>
                                             </select>
                                         </div>

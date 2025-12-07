@@ -11,13 +11,13 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tipo_consulta")
-public class TipoConsulta implements Serializable{
+@Table(name = "motivo_cita")
+public class MotivoCita implements Serializable{
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_tipo_consulta")
-    private Integer idTipoConsulta;
+    @Column(name = "id_motivo_cita")
+    private Integer idMotivoCita;
     
     @Column(name = "nombre")
     private String nombre;

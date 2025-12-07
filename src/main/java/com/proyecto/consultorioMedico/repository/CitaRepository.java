@@ -16,25 +16,21 @@ import org.springframework.data.repository.query.Param;
  * @author Alejandro
  */
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
-    
-    
-            @Query(
+
+    @Query(
             value = "SELECT * FROM cita WHERE DATE(fecha_hora) = CURDATE()",
             nativeQuery = true
-        )
-        List<Cita> buscarCitasHoy();
+    )
+    List<Cita> buscarCitasHoy();
 
-    // JPA Ampliada para las citas del dia
-    
-    //
-    @Query("SELECT c FROM Cita c WHERE c.medico.idMedico = :idMedico " +
-           "AND c.fechaHora BETWEEN :inicio AND :fin " +
-           "AND c.estado != 'CANCELADA' " +
-           "AND (:idCita IS NULL OR c.idCita != :idCita)")
+    @Query("SELECT c FROM Cita c WHERE c.medico.idMedico = :idMedico "
+            + "AND c.fechaHora BETWEEN :inicio AND :fin "
+            + "AND c.estado != 'CANCELADA' "
+            + "AND (:idCita IS NULL OR c.idCita != :idCita)")
     List<Cita> findCitasEnRango(
-        @Param("idMedico") Integer idMedico,
-        @Param("inicio") LocalDateTime inicio,
-        @Param("fin") LocalDateTime fin,
-        @Param("idCita") Integer idCita
+            @Param("idMedico") Integer idMedico,
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin,
+            @Param("idCita") Integer idCita
     );
 }

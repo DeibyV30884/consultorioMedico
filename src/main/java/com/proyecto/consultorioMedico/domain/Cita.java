@@ -48,8 +48,8 @@ public class Cita implements Serializable {
     private String observaciones;
 
     @ManyToOne
-    @JoinColumn(name = "id_tipo_consulta")
-    private TipoConsulta tipoConsulta;
+    @JoinColumn(name = "id_motivo_cita")
+    private MotivoCita motivoCita;
     
     @ManyToOne
     @JoinColumn(name = "id_paciente")

@@ -9,7 +9,7 @@ package com.proyecto.consultorioMedico.domain;
  * @author Alejandro
  */
 public enum EstadoCita {
-    Agendada,
+    Pendiente,
     Cancelada,
     Completada
 }

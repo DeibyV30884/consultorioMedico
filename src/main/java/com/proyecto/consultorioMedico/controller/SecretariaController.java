@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.proyecto.consultorioMedico.domain.Paciente;
 import com.proyecto.consultorioMedico.service.MedicoService;
-import com.proyecto.consultorioMedico.service.TipoConsultaService;
+import com.proyecto.consultorioMedico.service.MotivoCitaService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -26,7 +26,7 @@ public class SecretariaController {
     private MedicoService medicoService;
 
     @Autowired
-    private TipoConsultaService tipoConsultaService;
+    private MotivoCitaService motivoCitaService;
 
     @Autowired
     private PacienteService pacienteService;
@@ -69,7 +69,7 @@ public class SecretariaController {
         model.addAttribute("citas", lista);
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("tiposConsulta", tipoConsultaService.getTipoConsultas());
+        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         model.addAttribute("totalCitas", lista.size());
         return "secretaria/citas";
     }
@@ -81,7 +81,7 @@ public class SecretariaController {
         model.addAttribute("paciente", new Paciente());
         model.addAttribute("titulo", "pacientes");
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("tiposConsulta", tipoConsultaService.getTipoConsultas());
+        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         return "secretaria/pacientes";
     }
 }

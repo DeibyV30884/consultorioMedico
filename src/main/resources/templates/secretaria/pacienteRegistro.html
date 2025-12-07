@@ -345,11 +345,11 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label>[[#{cita.tipo}]]</label>
-                            <select name="tipoConsulta.idTipoConsulta" class="form-select" required>
+                            <label>[[#{cita.Motivo}]]</label>
+                            <select name="motivoCita.idMotivoCita" class="form-select" required>
                                 <option value="">[[#{accion.seleccionar}]]</option>
-                                <option th:each="t : ${tiposConsulta}" 
-                                        th:value="${t.idTipoConsulta}"
+                                <option th:each="t : ${motivosCita}" 
+                                        th:value="${t.idMotivoCita}"
                                         th:text="${t.nombre}">
                                 </option>
                             </select>
