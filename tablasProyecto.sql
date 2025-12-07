@@ -78,6 +78,7 @@ CREATE TABLE ruta (
 CREATE TABLE paciente (
   id_paciente INT NOT NULL AUTO_INCREMENT,
   id_usuario INT NULL,
+  identificacion VARCHAR(30) UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
   apellido_2 VARCHAR(30),
@@ -116,6 +117,7 @@ CREATE TABLE administrador (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
+  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_administrador),
@@ -128,29 +130,44 @@ CREATE TABLE secretaria (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
+  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_secretaria),
   FOREIGN KEY fk_secretaria_usuario (id_usuario) REFERENCES usuario(id_usuario))
   ENGINE = InnoDB;
 
+-- Tabla de tipos de consulta
+CREATE TABLE tipo_consulta(
+  id_tipo_consulta INT NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(50),
+  PRIMARY KEY (id_tipo_consulta)
+  )
+   ENGINE = InnoDB;
+   
 -- Tabla de citas
 CREATE TABLE cita (
   id_cita INT NOT NULL AUTO_INCREMENT,
   id_paciente INT NOT NULL,
   id_medico INT NOT NULL,
   fecha_hora DATETIME,
-  estado ENUM('Pendiente', 'Confirmada', 'Cancelada', 'Completada') NOT NULL,
+  estado ENUM('Agendada', 'Cancelada', 'Completada') NOT NULL,
   tratamiento TEXT,
-  tipo_consulta VARCHAR(50),
+  observaciones TEXT,
+  id_tipo_consulta INT NOT NULL,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_cita),
   INDEX ndx_id_paciente (id_paciente),
   INDEX ndx_id_medico (id_medico),
+  INDEX ndx_id_tipo_consulta (id_tipo_consulta),
   FOREIGN KEY fk_cita_paciente (id_paciente) REFERENCES paciente(id_paciente),
-  FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico))
+  FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico),
+  FOREIGN KEY fk_cita_tipo (id_tipo_consulta) REFERENCES tipo_consulta(id_tipo_consulta))
   ENGINE = InnoDB;
+  
+  
+  
 
 -- Tabla de registro clínico
 CREATE TABLE registro_clinico (
@@ -249,23 +266,31 @@ INSERT INTO secretaria (id_usuario, nombre, apellido_1, apellido_2) VALUES
 (3, 'Ana', 'Gutierres', 'Pérez');
 
 -- Inserción de pacientes
-INSERT INTO paciente (id_usuario, nombre, apellido_1, apellido_2, fecha_nacimiento, correo_electronico, telefono, ocupacion, estado_civil) VALUES
-(4, 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
-(NULL, 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casado'),
-(NULL, 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
-(NULL, 'Ana', 'Venegas', 'Castro', '1992-03-18', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltero'),
-(NULL, 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
+INSERT INTO paciente (id_usuario, identificacion, nombre, apellido_1, apellido_2, fecha_nacimiento, correo_electronico, telefono, ocupacion, estado_civil) VALUES
+(4, '1-0850-0515', 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
+(NULL, '6-0385-0822', 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casado'),
+(NULL, '2-0478-1210', 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
+(NULL, '1-0992-0318', 'Ana', 'Venegas', 'Castro', '1992-03-18', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltero'),
+(NULL, '8-0888-0725', 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
+
+-- Inserción de tipos citas
+INSERT INTO tipo_consulta (nombre) VALUES
+('Consulta General'),
+('Dictamen Medico'),
+('Cirujia Menor');
+
+select * from cita;
 
 -- Inserción de citas
-INSERT INTO cita (id_paciente, id_medico, fecha_hora, estado, tipo_consulta) VALUES
-(1, 1, '2025-11-10 08:00:00', 'Cancelada', 'Consulta Gral.'),
-(2, 1, '2025-11-10 11:00:00', 'Completada', 'Consulta Gral.'),
-(3, 1, '2025-11-10 08:00:00', 'Cancelada', 'Consulta Gral.'),
-(4, 1, '2025-11-10 11:00:00', 'Completada', 'Consulta Gral.'),
-(5, 1, '2025-11-10 13:00:00', 'Pendiente', 'Consulta Gral.'),
-(1, 1, '2025-11-15 09:00:00', 'Pendiente', 'Control'),
-(2, 1, '2025-11-15 10:00:00', 'Pendiente', 'Consulta Gral.'),
-(3, 1, '2025-11-16 14:00:00', 'Confirmada', 'Control');
+INSERT INTO cita (id_paciente, id_medico, fecha_hora, estado, id_tipo_consulta) VALUES
+(1, 1, '2025-11-10 08:00:00', 'Cancelada', 1),
+(2, 1, '2025-11-10 11:00:00', 'Completada', 1),
+(3, 1, '2025-11-10 09:00:00', 'Cancelada', 2),
+(4, 1, '2025-11-10 11:30:00', 'Completada', 3),
+(5, 1, '2025-11-10 13:00:00', 'Agendada', 2),
+(1, 1, '2025-11-15 09:30:00', 'Agendada', 1),
+(2, 1, '2025-11-15 10:00:00', 'Agendada', 1),
+(3, 1, '2025-11-16 14:00:00', 'Completada', 2);
 
 -- Inserción de medicamentos
 INSERT INTO medicamento (codigo, nombre, principio_activo, presentacion, stock_actual, stock_minimo) VALUES

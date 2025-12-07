@@ -44,10 +44,13 @@ public class Cita implements Serializable {
 
     
     private String tratamiento;
+    
+    private String observaciones;
 
-    @Column(unique = true, nullable = false, length = 50)
-    private String tipoConsulta;
-
+    @ManyToOne
+    @JoinColumn(name = "id_tipo_consulta")
+    private TipoConsulta tipoConsulta;
+    
     @ManyToOne
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;

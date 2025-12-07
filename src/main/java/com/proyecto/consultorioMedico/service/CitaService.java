@@ -1,9 +1,10 @@
-
 package com.proyecto.consultorioMedico.service;
 
 import com.proyecto.consultorioMedico.domain.Cita;
 import com.proyecto.consultorioMedico.repository.CitaRepository;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,18 +15,29 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class CitaService {
-    
+
     @Autowired
     private CitaRepository citaRepository;
 
+    private static final int DURACION_CITA_MINUTOS = 30;
+
     @Transactional(readOnly = true)
-    public List<Cita> getCitas() { 
+    public List<Cita> getCitas() {
         var lista = citaRepository.findAll();
         return lista;
     }
 
     @Transactional
     public void save(Cita cita) {
+
+        if (cita.getFechaHora().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("No se pueden agendar citas en el pasado");
+        }
+
+        if (!validarDisponibilidad(cita)) {
+            throw new IllegalArgumentException("El médico ya tiene una cita asignada en ese horario");
+        }
+
         citaRepository.save(cita);
     }
 
@@ -41,9 +53,29 @@ public class CitaService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<Cita> getCita(Integer idCita) {
+        return citaRepository.findById(idCita);
+    }
+
+    @Transactional(readOnly = true)
     public Cita getCita(Cita cita) {
         return citaRepository.findById(cita.getIdCita()).orElse(null);
     }
-    
+
+    @Transactional(readOnly = true)
+    public boolean validarDisponibilidad(Cita cita) {
+        LocalDateTime inicio = cita.getFechaHora();
+        LocalDateTime fin = inicio.plusMinutes(DURACION_CITA_MINUTOS);
+
+        List<Cita> citasConflicto = citaRepository.findCitasEnRango(
+                cita.getMedico().getIdMedico(),
+                inicio.minusMinutes(DURACION_CITA_MINUTOS - 1),
+                fin,
+                cita.getIdCita()
+        );
+
+        return citasConflicto.isEmpty();
+    }
+
     // JPA Ampliada para las citas del dia
 }
