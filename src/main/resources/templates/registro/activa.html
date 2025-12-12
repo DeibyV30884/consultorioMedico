@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentosLogin :: head}">
+        <title>[[#{registro.activar}]]</title>
+        <meta charset="UTF-8"/>
+    </head>
+    <body>
+        <header th:replace="~{general/fragmentosLogin :: header}"/>
+
+        <main>
+            <div class="container-fluid">
+                <div class="row" style="min-height: 704px;">
+
+                    <div class="col-md-6 bg-dark d-flex align-items-center justify-content-center">
+                        <div class="text-center">
+                            <img src="/img/logo.png" alt="Consultorio Logo" style="max-width: 600px; width: 90%;"/>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 bg-white d-flex align-items-center justify-content-center">
+                        <div style="width: 100%; max-width: 600px; padding: 20px;">
+                            
+                            <form method="POST" th:action="@{/registro/activar}" th:object="${usuario}">
+                                <input type="hidden" name="idUsuario" th:field="*{idUsuario}"/>
+                                <input type="hidden" name="fechaNacimiento" th:field="*{fechaNacimiento}"/>
+                                
+                                <div class="card border border-warning">
+                                    <div class="card-header bg-dark text-white text-center">
+                                        <h1 class="mb-0">
+                                            <i class="fas fa-check-circle"></i> [[#{registro.activar}]]
+                                        </h1>
+                                    </div>
+
+                                    <div class="card-body p-4">
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-info-circle"></i>
+                                            <strong>[[#{registro.activar.ultimo.paso}]]</strong>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2">
+                                                <i class="fas fa-user"></i> [[#{usuario.username}]]
+                                            </label>
+                                            <input type="text" class="form-control"  th:field="*{username}" disabled/>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2">
+                                                <i class="fas fa-id-card"></i> [[#{usuario.nombre}]]
+                                            </label>
+                                            <input type="text" class="form-control" th:field="*{nombre}" disabled/>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2">
+                                                <i class="fas fa-id-card"></i> [[#{formulario.registo.apellido1}]]
+                                            </label>
+                                            <input type="text" class="form-control" th:field="*{apellido1}" disabled/>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2">
+                                                <i class="fas fa-id-card"></i> [[#{formulario.registo.apellido2}]]
+                                            </label>
+                                            <input type="text" class="form-control" th:field="*{apellido2}" disabled/>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2">
+                                                <i class="fas fa-envelope"></i> [[#{usuario.correo}]]
+                                            </label>
+                                            <input type="email" class="form-control" th:field="*{correo}" disabled/>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2">
+                                                <i class="fas fa-phone"></i> [[#{usuario.telefono}]]
+                                            </label>
+                                            <input type="tel" class="form-control" th:field="*{telefono}" disabled/>
+                                        </div>
+
+                                        <hr class="my-4"/>
+
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-key"></i>
+                                            <strong>[[#{registro.activar.establecer.contrasena}]]</strong>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2" for="password">
+                                                <i class="fas fa-lock"></i> [[#{registro.activar.nueva.contrasena}]]
+                                            </label>
+                                            <input type="password" class="form-control" name="password" 
+                                                   id="password" required minlength="8" 
+                                                   th:placeholder="#{registro.activar.placeholder.minimo}"/>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="mb-2" for="confirmarPassword"><i class="fas fa-lock"></i> [[#{registro.activar.confirmar.contrasena}]] </label>
+                                            <input type="password" class="form-control" name="confirmarPassword" id="confirmarPassword" required 
+                                                   th:placeholder="#{registro.activar.placeholder.confirmar}"/>
+                                        </div>
+
+                                        <div class="text-center my-4">
+                                            <button type="submit" class="btn btn-secondary btn-lg w-100"> <i class="fas fa-check"></i> [[#{registro.activar.btn}]]</button>
+                                       
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <div th:if="${error != null}" class="alert alert-danger mt-3">
+                                <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer th:replace="~{general/fragmentosLogin :: footer}"/>
+    </body>
+</html>

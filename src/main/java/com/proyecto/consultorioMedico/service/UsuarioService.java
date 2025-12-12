@@ -2,6 +2,7 @@ package com.proyecto.consultorioMedico.service;
 
 import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.repository.UsuarioRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,24 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public boolean existeCorreo(String correo) {
      return usuarioRepository.findByCorreoNativo(correo).isPresent();
+    }  
+    
+    @Transactional(readOnly = true)
+    public Optional<Usuario> getUsuarioPorUsernameYPassword(String username, String password) {
+        return usuarioRepository.findByUsernameAndPassword(username, password);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Usuario>  getUsuarioPorId(Integer idUsuario) {
+        return usuarioRepository.findById(idUsuario);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Usuario> getUsuarioPorCorreo(String correo) {
+        if (correo != null && !correo.isEmpty())  {
+            return usuarioRepository.findByCorreoNativo(correo);
+        }
+        
+        return  Optional.empty();
+    }
 }
