@@ -40,7 +40,7 @@ public class InicioSegunRol implements AuthenticationSuccessHandler {
         }
         
         if (redirectUrl == null) {
-            redirectUrl = "/index";
+            redirectUrl = "/login";
         }
         
         String contextPath = request.getContextPath();

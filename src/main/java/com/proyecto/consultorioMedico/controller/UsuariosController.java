@@ -73,19 +73,19 @@ public class UsuariosController {
     }
     
     @GetMapping("/activacion/{usuario}/{id}")
-    public String mostrarActivacion(
-            Model model, 
-            @PathVariable(value = "usuario") String username, 
-            @PathVariable(value = "id") String clave) {
-        
-        model = registroService.activar(model, username, clave);
-        
-        if (model.containsAttribute("usuario")) {
-            return "registro/activa";
-        } else {
-            return "registro/salida";
-        }
+public String mostrarActivacion(
+        Model model, 
+        @PathVariable(value = "usuario") String username, 
+        @PathVariable(value = "id") String clave) {
+    
+    model = registroService.activar(model, username, clave);
+    
+    if (model.containsAttribute("usuario") && model.getAttribute("usuario") != null) {
+        return "registro/activa";
+    } else {
+        return "registro/salida";
     }
+}
     
     @PostMapping("/activar")
     public String activar(
@@ -103,7 +103,7 @@ public class UsuariosController {
             usuarioService.save(usuario);
             
             Rol rolCliente = rolService.getRolByNombre("CLIENTE"); 
-            if (rolCliente == null) {
+            if (rolCliente != null) {
             rolService.asignarRolAUsuario(usuario, rolCliente);
             }
             
