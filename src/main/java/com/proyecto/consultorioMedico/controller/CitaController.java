@@ -1,15 +1,18 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.CitaService;
 import com.proyecto.consultorioMedico.service.MedicoService;
 import com.proyecto.consultorioMedico.service.PacienteService;
+import com.proyecto.consultorioMedico.service.UsuarioService;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +33,14 @@ public class CitaController {
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private UsuarioService usuarioService;
+    
+    @ModelAttribute("usuario")
+    public Usuario agregarUsuarioLogueado() {
+        return usuarioService.getUsuarioLogueado();
+    }
 
     @GetMapping("/listado") 
     public String inicio(Model model) {
