@@ -23,6 +23,16 @@ public class MedicoService {
         return medicoRepository.findById(medico.getIdMedico()).orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public Medico getMedicoPorId(Integer idMedico) {
+        return medicoRepository.findById(idMedico).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Medico getMedicoPorIdUsuario(Integer idUsuario) {
+        return medicoRepository.findByIdUsuario(idUsuario).orElse(null);
+    }
+
     @Transactional
     public void save(Medico medico) {
         medicoRepository.save(medico);
