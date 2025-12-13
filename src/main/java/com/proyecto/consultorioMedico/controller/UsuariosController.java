@@ -80,7 +80,7 @@ public class UsuariosController {
         
         model = registroService.activar(model, username, clave);
         
-        if (model.containsAttribute("usuario")) {
+    if (model.containsAttribute("usuario") && model.getAttribute("usuario") != null) {
             return "registro/activa";
         } else {
             return "registro/salida";
@@ -103,7 +103,7 @@ public class UsuariosController {
             usuarioService.save(usuario);
             
             Rol rolCliente = rolService.getRolByNombre("CLIENTE"); 
-            if (rolCliente == null) {
+            if (rolCliente != null) {
             rolService.asignarRolAUsuario(usuario, rolCliente);
             }
             

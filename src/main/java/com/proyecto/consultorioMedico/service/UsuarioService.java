@@ -4,6 +4,8 @@ import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.repository.UsuarioRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,5 +48,12 @@ public class UsuarioService {
         }
         
         return  Optional.empty();
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario getUsuarioLogueado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        return usuarioRepository.findByUsernameNativo(username).orElse(null);
     }
 }

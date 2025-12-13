@@ -23,7 +23,7 @@
                             
                             <form method="POST" th:action="@{/registro/activar}" th:object="${usuario}">
                                 <input type="hidden" name="idUsuario" th:field="*{idUsuario}"/>
-                                <input type="hidden" name="fechaNacimiento" th:field="*{fechaNacimiento}"/>
+                                <input type="hidden" name="fechaNacimiento" th:value="${fechaNacimiento}"/>
                                 
                                 <div class="card border border-warning">
                                     <div class="card-header bg-dark text-white text-center">
