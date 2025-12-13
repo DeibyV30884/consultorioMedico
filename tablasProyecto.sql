@@ -325,3 +325,9 @@ INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES
 INSERT INTO constante (atributo, valor) VALUES 
 ('nombre_consultorio', 'Consultorio Doctor Cerdas'),
 ('telefono_contacto', '2315-2832');
+
+INSERT INTO ruta (ruta, requiere_rol) VALUES 
+('/registro/nuevo', FALSE),
+('/registro/recordar', FALSE),
+('/registro/guardar', FALSE),
+('/registro/recuperar', FALSE);
