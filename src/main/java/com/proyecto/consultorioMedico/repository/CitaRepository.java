@@ -33,4 +33,13 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
             @Param("fin") LocalDateTime fin,
             @Param("idCita") Integer idCita
     );
+
+    @Query("SELECT c FROM Cita c WHERE c.paciente.idPaciente = :idPaciente "
+            + "AND c.estado = 'COMPLETADA' "
+            + "ORDER BY c.fechaHora DESC")
+    List<Cita> findUltimaCitaCompletada(@Param("idPaciente") Integer idPaciente);
+
+    @Query("SELECT c FROM Cita c WHERE c.paciente.idPaciente = :idPaciente "
+            + "ORDER BY c.fechaHora DESC")
+    List<Cita> findCitasByPaciente(@Param("idPaciente") Integer idPaciente);
 }

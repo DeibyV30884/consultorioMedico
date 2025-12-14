@@ -1,6 +1,7 @@
 package com.proyecto.consultorioMedico.service;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.repository.CitaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,14 +31,20 @@ public class CitaService {
     @Transactional
     public void save(Cita cita) {
 
-        if (cita.getFechaHora().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("No se pueden agendar citas en el pasado");
-        }
+        if(cita.getEstado()==EstadoCita.Pendiente){
+            if (cita.getFechaHora().isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("No se pueden agendar citas en el pasado");
+            }
 
-        if (!validarDisponibilidad(cita)) {
-            throw new IllegalArgumentException("El médico ya tiene una cita asignada en ese horario");
-        }
+            if (!validarDisponibilidad(cita)) {
+                throw new IllegalArgumentException("El médico ya tiene una cita asignada en ese horario");
+            }
+        }    
+        citaRepository.save(cita);
+    }
 
+    @Transactional
+    public void guardarConsultaMedica(Cita cita) {
         citaRepository.save(cita);
     }
 
@@ -65,6 +72,7 @@ public class CitaService {
     public List<Cita> buscarCitasHoy() {
         return citaRepository.buscarCitasHoy();
     }
+
     @Transactional(readOnly = true)
     public boolean validarDisponibilidad(Cita cita) {
         LocalDateTime inicio = cita.getFechaHora();
@@ -80,5 +88,14 @@ public class CitaService {
         return citasConflicto.isEmpty();
     }
 
-    // JPA Ampliada para las citas del dia
+    @Transactional(readOnly = true)
+    public Cita getUltimaCitaCompletada(Integer idPaciente) {
+        List<Cita> citas = citaRepository.findUltimaCitaCompletada(idPaciente);
+        return citas.isEmpty() ? null : citas.get(0);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Cita> getCitasByPaciente(Integer idPaciente) {
+        return citaRepository.findCitasByPaciente(idPaciente);
+    }
 }

@@ -36,7 +36,7 @@
         <section th:fragment="listado" class="p-3">
 
             <div class="row p-3">
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <div class="card p-2">
                         <div class="card-header"><h4>[[#{cita.listado}]]</h4></div>
                         <div class="card-body">
@@ -47,14 +47,11 @@
                                         <tr>
                                             <th>#</th>
                                             <th>[[#{paciente.identificacion}]]</th>
-                                            <th>[[#{paciente.nombre}]]</th>
-                                            <th>[[#{paciente.apellido1}]]</th>
+                                            <th>[[#{cita.paciente}]]</th>
                                             <th>[[#{cita.medico}]]</th>
                                             <th>[[#{cita.fecha}]]</th>
                                             <th>[[#{cita.estado}]]</th>
-                                            <th>[[#{cita.Motivo}]]</th>
-                                            <th>[[#{cita.tratamiento}]]</th>
-                                            <th>[[#{cita.observaciones}]]</th>
+                                            <th>[[#{cita.motivo}]]</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -62,19 +59,16 @@
                                         <tr th:each="c : ${citas}">
                                             <td>[[${c.idCita}]]</td>
                                             <td>[[${c.paciente.identificacion}]]</td>
-                                            <td>[[${c.paciente.nombre}]]</td>
-                                            <td>[[${c.paciente.apellido1}]]</td>
-                                            <td>[[${c.medico.nombre}]]</td>
+                                            <td>[[${c.paciente.nombre}]] [[${c.paciente.apellido1}]] [[${c.paciente.apellido2}]]</td>
+                                            <td>[[${c.medico.nombre}]] [[${c.medico.apellido1}]] [[${c.medico.apellido2}]]</td>                                            
                                             <td>[[${#temporals.format(c.fechaHora, 'yyyy-MM-dd HH:mm')}]]</td>
                                             <td>[[${c.estado}]]</td>
                                             <td>[[${c.motivoCita.nombre}]]</td>
-                                            <td>[[${c.tratamiento}]]</td>
-                                            <td>[[${c.observaciones}]]</td>
-
                                             <td>
                                                 <div class="d-flex align-items-start">
 
-                                                    <button type="button"
+                                                    <button sec:authorize="hasAnyRole('SECRETARIA', 'ADMINISTRADOR')"
+                                                            type="button"
                                                             class="btn btn-danger me-2"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#confirmModal"
@@ -84,9 +78,8 @@
                                                     </button>
 
 
-
-                                                    <!-- BOTÓN MODIFICAR -->
-                                                    <a th:href="@{/cita/modificar/}+${c.idCita}" class="btn btn-success">
+                                                    <a 
+                                                        th:href="@{/cita/modificar/}+${c.idCita}" class="btn btn-success">
                                                         <i class="fa-solid fa-pencil"></i>
                                                         [[#{accion.actualizar}]]
                                                     </a>
@@ -144,7 +137,7 @@
                                             <select class="form-select" th:field="*{paciente.idPaciente}" required>
                                                 <option th:each="p : ${pacientes}"
                                                         th:value="${p.idPaciente}"
-                                                        th:text="${p.nombre} + ' ' + ${p.apellido1} + ' - ' + ${p.identificacion}">
+                                                        th:text="${p.nombre} + ' ' + ${p.apellido1} + ' ' + ${p.apellido2}+ ' - ' + ${p.identificacion} ">
                                                 </option>
                                             </select>
                                         </div>
@@ -153,7 +146,7 @@
                                             <select class="form-select" th:field="*{medico.idMedico}" required>
                                                 <option th:each="m : ${medicos}"
                                                         th:value="${m.idMedico}"
-                                                        th:text="${m.nombre}"
+                                                        th:text="${m.nombre} + ' ' + ${m.apellido1} + ' ' + ${m.apellido2}"
                                                         th:selected="${m.idMedico == cita.medico?.idMedico}">
                                                 </option>
                                             </select>
@@ -169,7 +162,7 @@
                                                    required />
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label>[[#{cita.Motivo}]]</label>
+                                            <label>[[#{cita.motivo}]]</label>
                                             <select class="form-select" th:field="*{motivoCita.idMotivoCita}" required>
                                                 <option th:each="t : ${motivosCita}"
                                                         th:value="${t.idMotivoCita}"
@@ -180,7 +173,7 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label>[[#{cita.estado}]]</label>
-                                            <select class="form-select" th:field="*{estado}" required>
+                                            <select class="form-select" th:field="*{estado}">
                                                 <option th:each="e : ${T(com.proyecto.consultorioMedico.domain.EstadoCita).values()}"
                                                         th:value="${e}" 
                                                         th:text="${e}">
@@ -188,11 +181,13 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div sec:authorize="hasAnyRole('MEDICO', 'ADMINISTRADOR')" 
+                                            class="col-md-6 mb-3">
                                             <label>[[#{cita.tratamiento}]]</label>
                                             <textarea class="form-control" th:field="*{tratamiento}"></textarea>
                                         </div>
-                                        <div class="col-md-6 mb-3">
+                                        <div sec:authorize="hasAnyRole('MEDICO', 'ADMINISTRADOR')"  
+                                            class="col-md-6 mb-3">
                                             <label>[[#{cita.observaciones}]]</label>
                                             <textarea class="form-control" th:field="*{observaciones}"></textarea>
                                         </div>

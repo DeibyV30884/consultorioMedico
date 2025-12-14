@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentosUsuarios :: head}"/>
+    <body>
+        <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
+        <aside th:replace="~{medico/fragmentos :: sidebar}"></aside>
+        
+        <main class="contenido p-4">
+            
+            <!-- Alertas -->
+            <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show">
+                <i class="fa-solid fa-circle-check"></i> [[${todoOk}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fa-solid fa-circle-exclamation"></i> [[${error}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    
+                    <form method="POST" th:action="@{/medico/guardarExpediente}" 
+                          th:object="${paciente}" class="was-validated">
+                        
+                        <input type="hidden" th:field="*{idPaciente}"/>
+                        
+                        <div class="row py-4 mb-4 bg-light">
+                            <div class="col-md-4 d-grid">
+                                <a th:href="@{/medico/expedientes}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                                </a>
+                            </div>
+                            <div class="col-md-4 d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bg-info text-white">
+                                <h4><i class="fa-solid fa-user"></i> [[#{paciente.informacion}]]</h4>
+                            </div>
+                            <div class="card-body row g-3">
+                                
+                                <!-- Datos básicos (SOLO LECTURA) -->
+                                <div class="col-md-4">
+                                    <label>[[#{cita.paciente}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${paciente.nombre} + ' ' + ${paciente.apellido1} + ' ' +  ${paciente.apellido2} "readonly/>
+                                </div>
+                                                                                               
+                                <div class="col-md-4">
+                                    <label>[[#{paciente.identificacion}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${paciente.identificacion}" readonly/>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label>[[#{paciente.fechaNacimiento}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${paciente.fechaNacimiento}" readonly/>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h4><i class="fa-solid fa-notes-medical"></i> [[#{paciente.antecedentes}]]</h4>
+                            </div>
+                            
+                            <div class="card-body row g-3">
+                                
+                                <!-- Antecedentes EDITABLES -->
+                                <div class="col-md-6">
+                                    <label>[[#{paciente.antecedentesHeredoFamiliares}]]</label>
+                                    <textarea class="form-control" 
+                                              th:field="*{antecedentesHeredoFamiliares}" 
+                                              rows="4"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label>[[#{paciente.antecedentesPersonales}]]</label>
+                                    <textarea class="form-control" 
+                                              th:field="*{antecedentesPersonales}" 
+                                              rows="4"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label>[[#{paciente.antecedentesQuirurgicos}]]</label>
+                                    <textarea class="form-control" 
+                                              th:field="*{antecedentesQuirurgicos}" 
+                                              rows="4"></textarea>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label>[[#{paciente.antecedentesGinecoObstetricos}]]</label>
+                                    <textarea class="form-control" 
+                                              th:field="*{antecedentesGinecoObstetricos}" 
+                                              rows="4"></textarea>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+        
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>

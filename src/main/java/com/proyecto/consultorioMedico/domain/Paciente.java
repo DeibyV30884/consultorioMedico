@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
@@ -68,4 +69,6 @@ public class Paciente implements Serializable {
     @Column(name = "fecha_modificacion")
     private LocalDateTime fechaModificacion;
 
+    @OneToMany(mappedBy="paciente")
+    private List<Cita> citas;
 }
