@@ -43,45 +43,55 @@ public class RegistroService {
     /**
      * se crea el usuario inactivo y envia se envia el correo de con el enlace de activacion
      */
-    public Model crearUsuario(Model model, Usuario usuario) throws MessagingException {
-        String mensaje;
+    public boolean crearUsuario(Usuario usuario, Locale locale) throws MessagingException {
         try {
-            
             String clave = demeClave();
             usuario.setPassword(clave);
             usuario.setActivo(false);
             usuarioService.save(usuario);
-            enviaCorreoActivar(usuario, clave);
-            mensaje = String.format(
-                messageSource.getMessage("registro.mensaje.activacion.ok", null, Locale.getDefault()), usuario.getCorreo());
+
+            String nombreCompleto = usuario.getApellido1();
+            if (usuario.getApellido2() != null) {
+                nombreCompleto = nombreCompleto + " " + usuario.getApellido2();
+            }
+
+            String mensaje = messageSource.getMessage("registro.correo.activar", null, locale);
+            mensaje = String.format(mensaje, usuario.getNombre(), nombreCompleto, servidor, usuario.getUsername(), clave);
+            String asunto = messageSource.getMessage("registro.mensaje.activacion", null, locale);
+            correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
+
+            return true;
         } catch (MessagingException | NoSuchMessageException e) {
-            mensaje = String.format(
-                messageSource.getMessage("registro.mensaje.usuario.o.correo", null, Locale.getDefault()), usuario.getUsername(), usuario.getCorreo());
+            return false;
         }
-        model.addAttribute("titulo", messageSource.getMessage("registro.activar", null, Locale.getDefault()));
-        model.addAttribute("mensaje", mensaje);
-        return model;
     }
     
-    public Model recordarUsuario(Model model, String correo) throws MessagingException {
-    String mensaje;
-    Optional<Usuario> usuarioOpt = usuarioService.getUsuarioPorCorreo(correo);
-    
-    if (usuarioOpt.isPresent()) {
-        Usuario usuario = usuarioOpt.get();
-        String clave = demeClave();
-        usuario.setPassword(clave);
-        usuario.setActivo(false);
-        usuarioService.save(usuario);
-        enviaCorreoRecordar(usuario, clave);
-        mensaje = String.format(messageSource.getMessage("registro.mensaje.recordar.ok", null, Locale.getDefault()), usuario.getCorreo());
-    } else {
-        mensaje = messageSource.getMessage ("registro.mensaje.correo.no.encontrado", null, Locale.getDefault());
+    public boolean recordarUsuario(String correo, Locale locale) throws MessagingException {
+        Optional<Usuario> usuarioOpt = usuarioService.getUsuarioPorCorreo(correo);
+
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            String clave = demeClave();
+            usuario.setPassword(clave);
+            usuario.setActivo(false);
+            usuarioService.save(usuario);
+
+            String nombreCompleto = usuario.getApellido1();
+            if (usuario.getApellido2() != null) {
+                nombreCompleto = nombreCompleto + " " + usuario.getApellido2();
+            }
+
+            String mensaje = messageSource.getMessage("registro.correo.recordar", null, locale);
+            mensaje = String.format(mensaje, usuario.getNombre(), nombreCompleto, servidor, usuario.getUsername(), clave);
+
+            String asunto = messageSource.getMessage("registro.mensaje.recordar", null, locale);
+            correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
+
+            return true;
+        }
+
+        return false;
     }
-    model.addAttribute("titulo", messageSource.getMessage("registro.activar", null, Locale.getDefault()));
-    model.addAttribute("mensaje", mensaje);
-    return model;
-}
     
     private String demeClave() {
         String tira =  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -98,11 +108,22 @@ public class RegistroService {
         String asunto = messageSource.getMessage("registro.mensaje.activacion", null, Locale.getDefault());
         correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
     }
-    
-    private void enviaCorreoRecordar(Usuario usuario, String clave) throws MessagingException {
-        String mensaje = messageSource.getMessage("registro.correo.recordar", null, Locale.getDefault());
-        mensaje = String.format(mensaje, usuario.getNombre(), usuario.getApellido1() + (usuario.getApellido2() != null ? " " + usuario.getApellido2() : ""),servidor, usuario.getUsername(),  clave);
-        String asunto = messageSource.getMessage("registro.mensaje.recordar", null, Locale.getDefault());
+
+    public void enviarCorreoRecordar(Usuario usuario, Locale locale) throws MessagingException {
+        String clave = demeClave();
+        usuario.setPassword(clave);
+        usuario.setActivo(false);
+        usuarioService.save(usuario);
+
+        String nombreCompleto = usuario.getApellido1();
+        if (usuario.getApellido2() != null) {
+            nombreCompleto = nombreCompleto + " " + usuario.getApellido2();
+        }
+
+        String mensaje = messageSource.getMessage("registro.correo.recordar", null, locale);
+        mensaje = String.format(mensaje, usuario.getNombre(), nombreCompleto, servidor, usuario.getUsername(), clave);
+
+        String asunto = messageSource.getMessage("registro.mensaje.recordar", null, locale);
         correoService.enviarCorreoHtml(usuario.getCorreo(), asunto, mensaje);
     }
 }
