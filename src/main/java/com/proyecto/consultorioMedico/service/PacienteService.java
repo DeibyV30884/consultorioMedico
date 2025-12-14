@@ -58,6 +58,7 @@ public class PacienteService {
         }
     }
     
+    @Transactional(readOnly = true)
      public List<Paciente> buscarPaciente(String texto) {
         return pacienteRepository.buscarPaciente(texto);
     }

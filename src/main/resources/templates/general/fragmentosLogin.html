@@ -26,7 +26,7 @@
         <script th:src="@{/js/rutinas.js}"></script>        
     </head>
     <body>
-                <header th:fragment="header" class="header">
+        <header th:fragment="header" class="header">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
                 <div class="container-fluid px-4">                    
                     <a th:href="@{/}" class="navbar-brand">
@@ -40,8 +40,8 @@
                             <li class="nav-item dropdown me-2">  
                                 <a class="nav-link dropdown-toggle text-white px-4 py-2" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">[[#{header.idioma}]]</a>
                                 <ul class="dropdown-menu bg-secondary ">
-                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{''(lang=es)}">[[#{header.idioma.espanol}]]</a></li>
-                                    <li><a class="dropdown-item bg-dark text-white" th:href="@{''(lang=en)}">[[#{header.idioma.ingles}]]</a></li>
+                                    <li><a class="dropdown-item bg-dark text-white" href="#" onclick="cambiarIdioma('es'); return false;">[[#{header.idioma.espanol}]]</a></li>
+                                    <li><a class="dropdown-item bg-dark text-white" href="#" onclick="cambiarIdioma('en'); return false;">[[#{header.idioma.ingles}]]</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item text-white my-auto" sec:authorize="isAuthenticated()">
@@ -60,6 +60,14 @@
                     </div>
                 </div>
             </nav>
+            
+            <script>
+                function cambiarIdioma(lang) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('lang', lang);
+                    window.location.href = url.toString();
+                }
+            </script>
         </header>
         <footer th:fragment="footer" class="p-4 bg-dark text-white">
             <p class="text-center mb-0 fw-bold">[[#{footer.texto}]]</p>

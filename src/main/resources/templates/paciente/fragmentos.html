@@ -32,6 +32,144 @@
 
             </nav>
         </aside>
+
+        <section th:fragment="perfil" class="p-3" style="margin-bottom: 50px;">
+            <div class="container-fluid">
+                
+                <div class="row" style="min-height: 704px;">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                        <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                            
+                            <div class="card border border-warning">
+                                <div class="card-header bg-dark text-white text-center">
+                                    <h1 class="mb-0"><i class="fas fa-user-circle"></i> [[#{paciente.perfil}]]</h1>
+                                </div>
+
+                                <div class="card-body p-4">
+                                    
+                                    <div th:if="${mensaje}" class="alert alert-success mt-3">
+                                        <i class="fas fa-check-circle"></i> [[${mensaje}]]
+                                    </div>
+                                    
+                                    <div th:if="${error}" class="alert alert-danger mt-3">
+                                        <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                                    </div>
+                                    
+                                    <form method="POST" 
+                                          th:action="@{'/paciente/guardar/' + ${paciente.idPaciente}}" 
+                                          th:object="${paciente}">
+                                        
+                                        <input type="hidden" th:field="*{idPaciente}"/>
+                                        <input type="hidden" th:field="*{idUsuario}"/>
+                                        
+                                        
+                                        <h5 class="mb-3 text-dark border-bottom pb-2">
+                                            <i class="fas fa-id-card"></i> [[#{paciente.seccion.personal}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="nombre"><i class="fas fa-user"></i> [[#{paciente.nombre}]]</label>
+                                            <input type="text" class="form-control"id="nombre"th:field="*{nombre}" required maxlength="50" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="apellido1"><i class="fas fa-id-card"></i> [[#{paciente.apellido1}]]</label>
+                                            <input type="text" class="form-control" id="apellido1"th:field="*{apellido1}" required maxlength="30" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="apellido2"><i class="fas fa-id-card"></i> [[#{paciente.apellido2}]]</label>
+                                            <input type="text" class="form-control"id="apellido2"th:field="*{apellido2}" maxlength="30" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="fechaNacimiento"><i class="fas fa-calendar"></i> [[#{paciente.fechaNacimiento}]]</label>
+                                            <input type="date" class="form-control"id="fechaNacimiento"th:field="*{fechaNacimiento}" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="estadoCivil"><i class="fas fa-heart"></i> [[#{paciente.estadoCivil}]]</label>
+                                            <select class="form-control" id="estadoCivil" th:field="*{estadoCivil}">
+                                                <option value="">[[#{paciente.seleccione}]]</option>
+                                                <option value="Soltero">[[#{paciente.soltero}]]</option>
+                                                <option value="Casado">[[#{paciente.casado}]]</option>
+                                                <option value="Divorciado">[[#{paciente.divorciado}]]</option>
+                                                <option value="Viudo">[[#{paciente.viudo}]]</option>
+                                                <option value="Union Libre">[[#{paciente.unionLibre}]]</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="genero"><i class="fa-solid fa-person-half-dress"></i> [[#{paciente.genero}]]</label>
+                                            <select class="form-control" id="genero" th:field="*{genero}">
+                                                <option value="Masculino">[[#{paciente.masculino}]]</option>
+                                                <option value="Femenino">[[#{paciente.femenino}]]</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fas fa-address-book"></i> [[#{paciente.seccion.contacto}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="correoElectronico"><i class="fas fa-envelope"></i> [[#{paciente.correo}]]</label>
+                                            <input type="email" class="form-control"id="correoElectronico"th:field="*{correoElectronico}" maxlength="75" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="telefono"><i class="fas fa-phone"></i> [[#{paciente.telefono}]]</label>
+                                            <input type="text" class="form-control"id="telefono"th:field="*{telefono}"  maxlength="25" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="ocupacion"><i class="fas fa-briefcase"></i> [[#{paciente.ocupacion}]]</label>
+                                            <input type="text" class="form-control" id="ocupacion" th:field="*{ocupacion}" maxlength="50" />
+                                        </div>
+                                        
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fas fa-notes-medical"></i> [[#{paciente.seccion.antecedentes}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesHeredoFamiliares"><i class="fas fa-users"></i> [[#{paciente.antecedentesHeredoFamiliares}]]</label>
+                                            <textarea class="form-control"  rows="3" id="antecedentesHeredoFamiliares" th:field="*{antecedentesHeredoFamiliares}"></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesPersonales"><i class="fas fa-user-md"></i> [[#{paciente.antecedentesPersonales}]]</label>
+                                            <textarea class="form-control" rows="3" id="antecedentesPersonales" th:field="*{antecedentesPersonales}"></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesQuirurgicos"><i class="fas fa-procedures"></i> [[#{paciente.antecedentesQuirurgicos}]]</label>
+                                            <textarea class="form-control" rows="3" id="antecedentesQuirurgicos" th:field="*{antecedentesQuirurgicos}"></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesGinecoObstetricos"><i class="fas fa-baby"></i> [[#{paciente.antecedentesGinecoObstetricos}]]</label>
+                                            <textarea class="form-control" rows="3" id="antecedentesGinecoObstetricos" th:field="*{antecedentesGinecoObstetricos}"></textarea>
+                                        </div>
+                                        
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-info-circle"></i> <strong>[[#{atencion}]]:</strong> [[#{paciente.nota.perfil}]]
+                                        </div>
+                                        
+                                        
+                                        <div class="text-center my-3">
+                                            <button class="btn btn-secondary w-100" type="submit">
+                                                <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                            </button>
+                                        </div>                                        
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         
     </body>
 </html>

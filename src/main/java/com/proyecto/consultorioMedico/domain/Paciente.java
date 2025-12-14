@@ -40,6 +40,9 @@ public class Paciente implements Serializable {
 
     @Column(name = "ocupacion", length = 50)
     private String ocupacion;
+    
+    @Column(name = "genero", length = 20)
+    private String genero;
 
     @Column(name = "estado_civil", length = 20)
     private String estadoCivil;
