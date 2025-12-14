@@ -25,7 +25,7 @@
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/secretaria/perfil}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/secretaria/perfil/' + ${usuario.idUsuario}}" class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.perfil}]]</a>
                     </li>
                 </ul>

@@ -5,7 +5,9 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Paciente;
+import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.PacienteService;
+import com.proyecto.consultorioMedico.service.UsuarioService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Locale;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  *
@@ -34,6 +37,14 @@ public class PacienteRegistroController {
 
     @Autowired
     private MessageSource messageSource;
+    
+    @Autowired
+    private UsuarioService usuarioService;
+    
+    @ModelAttribute("usuario")
+    public Usuario agregarUsuarioLogueado() {
+        return usuarioService.getUsuarioLogueado();
+    }
 
     @GetMapping("/listado") // https:localhost/paciente/listado
     public String inicio(Model model) {

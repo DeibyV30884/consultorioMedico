@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentosLogin :: head}">
+        <title>[[#{registro.recordar.us}]]</title>
+        <meta charset="UTF-8"/>
+    </head>
+    <body>
+        <header th:replace="~{general/fragmentosLogin :: header}"/>
+
+        <main>
+            <div class="container-fluid">
+                <div class="row" style="min-height: 704px;">
+
+                    <div class="col-md-6 bg-dark d-flex align-items-center justify-content-center">
+                        <div class="text-center">
+                            <img src="/img/logo.png" alt="Consultorio Logo" style="max-width: 600px; width: 90%;"/>
+                        </div>
+                    </div>
+
+                    <div class= "col-md-6 bg-white d-flex align-items-center justify-content-center">
+                        <div style="width: 100%; max-width: 600px; padding: 20px;">
+                            
+                            <div class="mb-3">
+                                <a th:href="@{/login} " class="btn btn-secondary"><i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]</a>
+                            </div>
+
+                            <div class="card border border-warning">
+                                <div class="card-header bg-dark text-white text-center">
+                                    <h1 class="mb-0"><i class="fas fa-key"></i> [[#{registro.recordar.us}]]</h1>
+                                </div>
+
+                                <div class="card-body p-4">
+                                    <div class="alert alert-warning"><i class="fas fa-info-circle"></i><strong>[[#{registro.recordar.instrucciones}]]</strong>
+                                    </div>
+
+                                    <form method="POST"  th:action="@{/registro/recordarUsuario}">
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="correo"> <i class="fas fa-envelope"></i> [[#{usuario.correo}]]</label>
+                                            <input class="form-control" type="email" name="correo" id="correo" maxlength="75" required/>
+                                        </div>
+
+                                        <div class="text-center my-3">
+                                            <button class="btn btn-secondary w-100" type="submit"> <i class= "fas fa-paper-plane"></i> [[#{registro.recordar.enviar.enlace}]]</button>
+                                        </div>
+
+                                        <hr class="my-3"/>
+
+                                        <div class="text-center">
+                                            <span class="text-muted">[[#{registro.recordar.pregunta}]]</span> <a th:href= "@{/login}" class="text-warning fw-bold">[[#{registro.recordar.iniciar.sesion}]]</a>
+                                        </div>
+                                    </form>
+
+                                    <div th:if="${error != null}" class="alert alert-danger mt-3">
+                                        <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                                    </div>
+
+                                    <div th:if="${mensaje != null}"  class="alert alert-success mt-3">
+                                        <i class="fas fa-check-circle"></i> [[${mensaje}]]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </main>
+
+        <footer th:replace="~{general/fragmentosLogin :: footer}"/>
+    </body>
+</html>

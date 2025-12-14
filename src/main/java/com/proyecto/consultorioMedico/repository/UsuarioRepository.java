@@ -24,5 +24,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
      @Query(nativeQuery = true,
            value = "SELECT * FROM usuario WHERE username = :username AND activo = true")
     Optional<Usuario> findByUsernameAndActivoTrue(@Param("username") String username);
+    
+    Optional<Usuario> findByUsernameAndPassword(String username, String password);
 }
 

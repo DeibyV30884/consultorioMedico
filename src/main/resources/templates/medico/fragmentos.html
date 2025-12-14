@@ -10,17 +10,17 @@
             <nav class="h-100">
                 <ul class="nav flex-column">
                     <li class="nav-item border-bottom border-secondary" > 
-                        <a th:href="@{/medico/inicio}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/medico/inicio/' + ${medico.idMedico}} " class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.inicio}]]</a>
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/medico/expedientes}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/medico/expedientes/' + ${medico.idMedico}}" class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.expedientes}]]</a>
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/medico/perfil}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/medico/perfil/' + ${medico.idMedico}}" class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.perfil}]]</a>
                     </li>
                 </ul>
