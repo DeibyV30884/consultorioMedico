@@ -84,6 +84,7 @@ CREATE TABLE paciente (
   fecha_nacimiento DATE,
   correo_electronico VARCHAR(75),
   ocupacion VARCHAR(50),
+  genero VARCHAR(20),
   estado_civil VARCHAR(20),
   telefono VARCHAR(25),
   antecedentes_heredo_familiares TEXT,
@@ -297,7 +298,12 @@ INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES
 ('/paciente/inicio', 2, TRUE),
 ('/paciente/tratamientos', 2, TRUE),
 ('/paciente/perfil', 2, TRUE),
-('/cita/mis-citas', 2, TRUE);
+('/cita/mis-citas', 2, TRUE),
+('/paciente/inicio/**', 2, TRUE),
+('/paciente/perfil/**', 2, TRUE),
+('/paciente/tratamientos/**', 2, TRUE),
+('/paciente/citas/**', 2, TRUE),
+('/paciente/guardar/**', 2, TRUE);
 
 -- Rutas para ADMINISTRADOR (id_rol = 3)
 INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
@@ -325,9 +331,3 @@ INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES
 INSERT INTO constante (atributo, valor) VALUES 
 ('nombre_consultorio', 'Consultorio Doctor Cerdas'),
 ('telefono_contacto', '2315-2832');
-
-INSERT INTO ruta (ruta, requiere_rol) VALUES 
-('/registro/nuevo', FALSE),
-('/registro/recordar', FALSE),
-('/registro/guardar', FALSE),
-('/registro/recuperar', FALSE);
