@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentosUsuarios :: head}"/>
+    <body>
+        <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
+        <aside th:replace="~{medico/fragmentos :: sidebar}"></aside>
+
+        <main class="contenido p-4">
+
+            <!-- Alertas -->
+            <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show">
+                <i class="fa-solid fa-circle-check"></i> [[${todoOk}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fa-solid fa-circle-exclamation"></i> [[${error}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="row py-3 mb-3 bg-light">
+                        <div class="col-md-3 d-grid">
+                            <a th:href="@{/medico/inicio}" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]] 
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <h3><i class="fa-solid fa-user-doctor"></i> [[#{cita.actual}]]</h3>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header bg-info text-white">
+                            <h5><i class="fa-solid fa-user"></i> [[#{paciente.informacion}]]</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <b>[[#{paciente.nombre}]]</b><br>
+                                        [[${paciente.nombre}]] [[${paciente.apellido1}]] [[${paciente.apellido2}]]
+                                </div>
+                                <div class="col-md-2">
+                                    <b>[[#{paciente.identificacion}]]</b><br>
+                                        [[${paciente.identificacion}]]
+                                </div>
+                                <div class="col-md-2">
+                                    <b>[[#{paciente.fechaNacimiento}]]</b><br>
+                                        [[${#temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy')}]]
+                                </div>
+                                <div class="col-md-2">
+                                    <b>[[#{paciente.telefono}]]</b><br>
+                                        [[${paciente.telefono}]]
+                                </div>
+                                <div class="col-md-3">
+                                    <b>[[#{paciente.ocupacion}]]</b><br>
+                                        [[${paciente.ocupacion}]]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Antecedentes del Paciente  -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-secondary text-white">
+                            <h5><i class="fa-solid fa-notes-medical"></i> [[#{paciente.antecedentes}]]</h5>
+
+                        </div>
+                        <div class="card-body row g-3">
+                            <form sec:authorize="hasRole('MEDICO')" 
+                                  th:action="@{/medico/ver-expediente}" 
+                                  method="post">
+                                <input type="hidden" name="idPaciente" th:value="${paciente.idPaciente}"/>
+                                <button type="submit" class="btn btn-secondary">
+                                    <i class="fa-solid fa-file-medical"></i>[[#{accion.verExpediene}]]
+                                </button>
+                            </form>
+                            <!-- Antecedentes EDITABLES -->
+                            <div class="col-md-6">
+                                <label>[[#{paciente.antecedentesHeredoFamiliares}]]</label>
+                                <textarea class="form-control" 
+                                          name="paciente.antecedentesHeredoFamiliares"
+                                          th:text="${paciente.antecedentesHeredoFamiliares}" 
+                                          rows="4"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>[[#{paciente.antecedentesPersonales}]]</label>
+                                <textarea class="form-control" 
+                                          name="paciente.antecedentesPersonales"
+                                          th:text="${paciente.antecedentesPersonales}" 
+                                          rows="4"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>[[#{paciente.antecedentesQuirurgicos}]]</label>
+                                <textarea class="form-control" 
+                                          name="paciente.antecedentesQuirurgicos"
+                                          th:text="${paciente.antecedentesQuirurgicos}" 
+                                          rows="4"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>[[#{paciente.antecedentesGinecoObstetricos}]]</label>
+                                <textarea class="form-control" 
+                                          name="paciente.antecedentesGinecoObstetricos"
+                                          th:text="${paciente.antecedentesGinecoObstetricos}" 
+                                          rows="4"></textarea>
+                            </div>
+                            <div class="modal-footer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Última Cita (si existe) -->
+                <div th:if="${ultimaCita != null}" class="card mb-3">
+                    <div class="card-header bg-secondary text-white">
+                        <h5><i class="fa-solid fa-history"></i> [[#{cita.historial}]]</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <b>Fecha:</b><br>
+                                    [[${#temporals.format(ultimaCita.fechaHora, 'dd/MM/yyyy')}]]
+                            </div>
+                            <div class="col-md-5">
+                                <b>Observaciones:</b>
+                                <p class="border p-2 bg-light">
+                                    [[${ultimaCita.observaciones ?: 'Sin observaciones'}]]
+                                </p>
+                            </div>
+                            <div class="col-md-5">
+                                <b>Tratamiento:</b>
+                                <p class="border p-2 bg-light">
+                                    [[${ultimaCita.tratamiento ?: 'Sin tratamiento'}]]
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Consulta Actual -->
+                <form method="POST" th:action="@{/medico/guardar-consulta}" 
+                      th:object="${cita}" class="was-validated">
+
+                    <input type="hidden" th:field="*{idCita}"/>
+                    <input type="hidden" th:field="*{fechaHora}"/>
+                    <input type="hidden" th:field="*{paciente.idPaciente}"/>
+                    <input type="hidden" th:field="*{medico.idMedico}"/>
+                    <input type="hidden" th:field="*{motivoCita.idMotivoCita}"/>
+
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h5><i class="fa-solid fa-stethoscope"></i> [[#{cita.actual}]]</h5>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <b>[[#{cita.motivo}]]</b><br>
+                                        [[${cita.motivoCita.nombre}]]
+                                </div>
+                                <div class="col-md-4">
+                                    <b>[[#{cita.fecha}]]</b><br>
+                                        [[${#temporals.format(cita.fechaHora, 'dd/MM/yyyy HH:mm')}]]
+                                </div>
+                                <div class="col-md-4">
+                                    <label>[[#{cita.estado}]]</label>
+                                    <select class="form-select" th:field="*{estado}">
+                                        <option th:each="e : ${T(com.proyecto.consultorioMedico.domain.EstadoCita).values()}"
+                                                th:value="${e}" 
+                                                th:text="${e}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card-body row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <b><i class="fa-solid fa-clipboard"></i> [[#{cita.observaciones}]]</b>
+                                    </label>
+                                    <textarea class="form-control" 
+                                              th:field="*{observaciones}" 
+                                              rows="6"
+                                              placeholder="Registre los hallazgos, síntomas y diagnóstico de la consulta"
+                                              ></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <b><i class="fa-solid fa-pills"></i> [[#{cita.tratamiento}]]</b>
+                                    </label>
+                                    <textarea class="form-control" 
+                                              th:field="*{tratamiento}" 
+                                              rows="6"
+                                              placeholder="Indique medicamentos, dosis, frecuencia y recomendaciones"
+                                              ></textarea>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i> [[#{accion.guardar}]]
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+            </div>
+            </div>
+        </main>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>

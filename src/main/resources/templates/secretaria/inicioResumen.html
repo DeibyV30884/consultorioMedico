@@ -52,9 +52,10 @@
                     <table class="table table-hover align-middle rounded-3 overflow-hidden">
                         <thead class="table-primary">
                             <tr>
-                                <th class="fw-semibold">[[#{cita.Hora}]]</th>
-                                <th class="fw-semibold">[[#{cita.Paciente}]]</th>
-                                <th class="fw-semibold">[[#{cita.Motivo}]]</th>
+                                <th class="fw-semibold">[[#{cita.hora}]]</th>
+                                <th class="fw-semibold">[[#{cita.paciente}]]</th>
+                                <th class="fw-semibold">[[#{cita.motivo}]]</th>
+                                <th class="fw-semibold"></th>
                             </tr>
                         </thead>
 
@@ -62,7 +63,16 @@
                             <tr th:each="c : ${citasproximas}">
                                 <td>[[${#temporals.format(c.fechaHora, 'HH:mm')}]]</td>
                                 <td>[[${c.paciente.nombre}]] [[${c.paciente.apellido1}]] [[${c.paciente.apellido2}]]</td>
-                                <td>[[${c.tipoConsulta}]]</td>
+                                <td>[[${c.motivoCita.nombre}]]</td>
+                                <td>
+                                    <div class="d-flex align-items-start">
+                                        <a sec:authorize="hasRole('MEDICO')" 
+                                           th:href="@{/medico/atender-cita/}+${c.idCita}" 
+                                           class="btn btn-primary me-2">
+                                            <i class="fa-solid fa-user-doctor"></i> [[#{accion.atender}]]
+                                        </a>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
 

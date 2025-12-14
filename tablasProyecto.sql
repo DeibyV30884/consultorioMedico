@@ -334,7 +334,8 @@ INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES
 ('/cita/ver/**', 1, TRUE),
 ('/registro-clinico/**', 1, TRUE),
 ('/prescripcion/**', 1, TRUE);
-
+INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
+('/secretaria/**', 1, TRUE);
 -- Rutas para SECRETARIA (id_rol = 4)
 INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
 ('/secretaria/**', 4, TRUE),

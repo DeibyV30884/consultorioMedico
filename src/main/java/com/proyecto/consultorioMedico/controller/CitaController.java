@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CitaController {
 
     @Autowired
-    private CitaService citaService;//-> CRUD
+    private CitaService citaService;
 
     @Autowired
     private PacienteService pacienteService;
