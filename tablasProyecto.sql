@@ -78,16 +78,15 @@ CREATE TABLE ruta (
 CREATE TABLE paciente (
   id_paciente INT NOT NULL AUTO_INCREMENT,
   id_usuario INT NULL,
-  identificacion VARCHAR(30) UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
   apellido_2 VARCHAR(30),
-  fecha_nacimiento DATE,
-  correo_electronico VARCHAR(75),
-  ocupacion VARCHAR(50),
-  genero VARCHAR(20),
-  estado_civil VARCHAR(20),
-  telefono VARCHAR(25),
+  fecha_nacimiento DATE NULL,
+  correo_electronico VARCHAR(75) NULL,
+  ocupacion VARCHAR(50) NULL,
+  genero VARCHAR(20)NULL,
+  estado_civil VARCHAR(20) NULL,
+  telefono VARCHAR(25) NULL,
   antecedentes_heredo_familiares TEXT,
   antecedentes_personales TEXT,
   antecedentes_quirurgicos TEXT,
@@ -118,7 +117,6 @@ CREATE TABLE administrador (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
-  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_administrador),
@@ -131,44 +129,32 @@ CREATE TABLE secretaria (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
-  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_secretaria),
   FOREIGN KEY fk_secretaria_usuario (id_usuario) REFERENCES usuario(id_usuario))
   ENGINE = InnoDB;
 
--- Tabla de tipos de consulta
-CREATE TABLE motivo_cita(
-  id_motivo_cita INT NOT NULL AUTO_INCREMENT,
-  nombre VARCHAR(50),
-  PRIMARY KEY (id_motivo_cita)
-  )
-   ENGINE = InnoDB;
-   
 -- Tabla de citas
 CREATE TABLE cita (
   id_cita INT NOT NULL AUTO_INCREMENT,
   id_paciente INT NOT NULL,
   id_medico INT NOT NULL,
-  fecha_hora DATETIME,
-  estado ENUM('Pendiente', 'Cancelada', 'Completada') NOT NULL,
+  fecha DATE NOT NULL,
+  hora TIME NOT NULL,
+  estado ENUM('Pendiente', 'Confirmada', 'Cancelada', 'Completada') NOT NULL,
   tratamiento TEXT,
-  observaciones TEXT,
-  id_motivo_cita INT NOT NULL,
+  tipo_consulta VARCHAR(50),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_cita),
   INDEX ndx_id_paciente (id_paciente),
   INDEX ndx_id_medico (id_medico),
-  INDEX ndx_idid_motivo_cita (id_motivo_cita),
+  INDEX ndx_fecha_hora (id_medico, fecha, hora),
   FOREIGN KEY fk_cita_paciente (id_paciente) REFERENCES paciente(id_paciente),
   FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico),
-  FOREIGN KEY fk_motivo_cita (id_motivo_cita) REFERENCES motivo_cita(id_motivo_cita))
-  ENGINE = InnoDB;
-  
-  
-  
+  UNIQUE KEY uk_medico_fecha_hora (id_medico, fecha, hora)
+) ENGINE = InnoDB;
 
 -- Tabla de registro clínico
 CREATE TABLE registro_clinico (
@@ -267,31 +253,18 @@ INSERT INTO secretaria (id_usuario, nombre, apellido_1, apellido_2) VALUES
 (3, 'Ana', 'Gutierres', 'Pérez');
 
 -- Inserción de pacientes
-INSERT INTO paciente (id_usuario, identificacion, nombre, apellido_1, apellido_2, fecha_nacimiento, correo_electronico, telefono, ocupacion, estado_civil) VALUES
-(4, '1-0850-0515', 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
-(NULL, '6-0385-0822', 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casado'),
-(NULL, '2-0478-1210', 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
-(NULL, '1-0992-0318', 'Ana', 'Venegas', 'Castro', '1992-03-18', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltero'),
-(NULL, '8-0888-0725', 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
-
--- Inserción de motivo citas
-INSERT INTO motivo_cita (nombre) VALUES
-('Consulta General'),
-('Dictamen Medico'),
-('Cirujia Menor');
-
-select * from motivo_cita;
+INSERT INTO paciente (id_usuario, nombre, apellido_1, apellido_2, fecha_nacimiento, genero, correo_electronico, telefono, ocupacion, estado_civil) VALUES
+(4, 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'Masculino', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
+(NULL, 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'Femenino', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casada'),
+(NULL, 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'Masculino', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
+(NULL, 'Ana', 'Venegas', 'Castro', '1992-03-18', 'Femenino', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltera'),
+(NULL, 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'Masculino', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
 
 -- Inserción de citas
-INSERT INTO cita (id_paciente, id_medico, fecha_hora, estado, id_motivo_cita) VALUES
-(1, 1, '2025-11-10 08:00:00', 'Cancelada', 1),
-(2, 1, '2025-11-10 11:00:00', 'Completada', 1),
-(3, 1, '2025-11-10 09:00:00', 'Cancelada', 2),
-(4, 1, '2025-11-10 11:30:00', 'Completada', 3),
-(5, 1, '2025-11-10 13:00:00', 'Pendiente', 2),
-(1, 1, '2025-11-15 09:30:00', 'Pendiente', 1),
-(2, 1, '2025-11-15 10:00:00', 'Pendiente', 1),
-(3, 1, '2025-11-16 14:00:00', 'Completada', 2);
+INSERT INTO cita (id_paciente, id_medico, fecha, hora, estado, tipo_consulta) VALUES
+(1, 1, '2025-12-15', '08:00:00', 'Pendiente', 'Consulta Gral.'),
+(2, 1, '2025-12-15', '09:00:00', 'Confirmada', 'Consulta Gral.'),
+(3, 1, '2025-12-15', '10:00:00', 'Pendiente', 'Control');
 
 -- Inserción de medicamentos
 INSERT INTO medicamento (codigo, nombre, principio_activo, presentacion, stock_actual, stock_minimo) VALUES
@@ -345,13 +318,14 @@ INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES
 ('/cita/ver/**', 1, TRUE),
 ('/registro-clinico/**', 1, TRUE),
 ('/prescripcion/**', 1, TRUE);
-INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
-('/secretaria/**', 1, TRUE);
+
 -- Rutas para SECRETARIA (id_rol = 4)
 INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
 ('/secretaria/**', 4, TRUE),
 ('/pacientes/**', 4, TRUE),
-('/citas/**', 4, TRUE);
+('/citas/**', 4, TRUE),
+('/cita/**', 4, TRUE),
+('/secretaria/citasRegistro/**', 4, TRUE);
 
 -- Constantes del sistema
 INSERT INTO constante (atributo, valor) VALUES 

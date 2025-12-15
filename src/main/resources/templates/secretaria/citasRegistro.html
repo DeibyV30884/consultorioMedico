@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentosUsuarios :: head}"/>
+    <body>
+        <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
+        <aside th:replace="~{secretaria/fragmentos :: sidebar}"></aside>
+        <main class="contenido p-4">
+            
+            <div th:replace="~{secretaria/fragmentos :: mensajeError}"></div>
+            <div th:replace="~{secretaria/fragmentos :: mensajeExito}"></div>
+            
+            <section class="p-3" style="margin-bottom: 50px;">
+                <div class="container-fluid">
+                    <div class="row" style="min-height: 704px;">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                            <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                                
+                                <div class="card border border-warning">
+                                    <div class="card-header bg-dark text-white text-center">
+                                        <h1 class="mb-0"><i class="fa-solid fa-calendar-plus"></i> [[#{cita.registrar.nueva}]]</h1>
+                                    </div>
+                                    
+                                    <div class="card-body p-4">
+                                        
+                                        <h5 class="mb-3 text-dark border-bottom pb-2">
+                                            <i class="fa-solid fa-magnifying-glass"></i> [[#{cita.buscar.paciente}]]
+                                        </h5>
+                                        
+                                        <form th:action="@{/secretaria/citasRegistro/buscar}" method="post">
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <div class="form-group mb-3">
+                                                        <input type="text" name="texto" class="form-control" 
+                                                               th:placeholder="#{cita.buscar.placeholder}"
+                                                               th:value="${texto}"
+                                                               required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button class="btn btn-primary w-100" type="submit">
+                                                        <i class="fa-solid fa-search"></i> [[#{cita.buscar.btn}]]
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        
+                                        <div th:if="${pacientesEncontrados != null}" class="mb-4">
+                                            <div th:if="${pacientesEncontrados.empty}" class="alert alert-warning">
+                                                <i class="fas fa-exclamation-triangle"></i> [[#{cita.pacientes.no.encontrados}]]
+                                            </div>
+                                            <div th:if="${!pacientesEncontrados.empty}" class="alert alert-success">
+                                                <i class="fas fa-check-circle"></i> [[#{cita.pacientes.encontrados(${pacientesEncontrados.size()})}]]
+                                            </div>
+                                        </div>
+                                        
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fa-solid fa-file-medical"></i> [[#{cita.datos.cita}]]
+                                        </h5>
+                                        
+                                        <form th:action="@{/cita/crear}" method="post" class="was-validated">
+                                            
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="paciente">
+                                                    <i class="fa-solid fa-user"></i> [[#{cita.paciente}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <select class="form-control" id="paciente" name="paciente.idPaciente" required>
+                                                    <option value="">[[#{cita.paciente.seleccionar}]]</option>
+                                                    <option th:if="${pacientesEncontrados == null}" disabled>
+                                                        [[#{cita.paciente.buscar.primero}]]
+                                                    </option>
+                                                    <option th:each="p : ${pacientesEncontrados}"
+                                                            th:value="${p.idPaciente}" 
+                                                            th:text="${p.nombre + ' ' + p.apellido1 + (p.apellido2 != null ? ' ' + p.apellido2 : '')}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="medico">
+                                                    <i class="fa-solid fa-user-doctor"></i> [[#{cita.medico.label}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <select class="form-control" id="medico" name="medico.idMedico" required>
+                                                    <option value="">[[#{cita.medico.seleccionar}]]</option>
+                                                    <option th:each="m : ${medicos}"
+                                                            th:value="${m.idMedico}" 
+                                                            th:text="${m.nombre + ' ' + m.apellido1}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="fecha">
+                                                    <i class="fa-solid fa-calendar"></i> [[#{cita.fecha.label}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <input type="date" id="fecha" name="fecha" class="form-control" required/>
+                                            </div>
+                                            
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="hora">
+                                                    <i class="fa-solid fa-clock"></i> [[#{cita.hora.label}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <select class="form-control" id="hora" name="hora" required>
+                                                    <option value="">[[#{cita.hora.seleccionar}]]</option>
+                                                    <option value="07:00">7:00 AM</option>
+                                                    <option value="07:30">7:30 AM</option>
+                                                    <option value="08:00">8:00 AM</option>
+                                                    <option value="08:30">8:30 AM</option>
+                                                    <option value="09:00">9:00 AM</option>
+                                                    <option value="09:30">9:30 AM</option>
+                                                    <option value="10:00">10:00 AM</option>
+                                                    <option value="10:30">10:30 AM</option>
+                                                    <option value="11:00">11:00 AM</option>
+                                                    <option value="13:00">1:00 PM</option>
+                                                    <option value="13:30">1:30 PM</option>
+                                                    <option value="14:00">2:00 PM</option>
+                                                    <option value="14:30">2:30 PM</option>
+                                                    <option value="15:00">3:00 PM</option>
+                                                    <option value="15:30">3:30 PM</option>
+                                                    <option value="16:00">4:00 PM</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="tipoConsulta">
+                                                    <i class="fa-solid fa-stethoscope"></i> [[#{cita.tipo.label}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <select class="form-control" id="tipoConsulta" name="tipoConsulta" required>
+                                                    <option value="">[[#{cita.tipo.seleccionar}]]</option>
+                                                    <option value="General">[[#{cita.tipo.general}]]</option>
+                                                    <option value="Especialidad">[[#{cita.tipo.especialidad}]]</option>
+                                                    <option value="Seguimiento">[[#{cita.tipo.seguimiento}]]</option>
+                                                    <option value="Urgencia">[[#{cita.tipo.urgencia}]]</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="estado">
+                                                    <i class="fa-solid fa-circle-info"></i> [[#{cita.estado}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <select class="form-control" id="estado" name="estado" required>
+                                                    <option value="Pendiente" selected>[[#{cita.estado.pendiente}]]</option>
+                                                    <option value="Confirmada">[[#{cita.estado.confirmada}]]</option>
+                                                    <option value="Completada">[[#{cita.estado.completada}]]</option>
+                                                    <option value="Cancelada">[[#{cita.estado.cancelada}]]</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="tratamiento">
+                                                    <i class="fa-solid fa-notes-medical"></i> [[#{cita.tratamiento}]] [[#{campo.opcional}]]
+                                                </label>
+                                                <textarea id="tratamiento" name="tratamiento" class="form-control" rows="3" 
+                                                          th:placeholder="#{cita.tratamiento.placeholder}"></textarea>
+                                            </div>
+                                            
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-info-circle"></i> <strong>[[#{atencion}]]:</strong> [[#{cita.atencion.verificar}]]
+                                            </div>
+                                            
+                                            <div class="row mt-3">
+                                                <div class="col-md-6 mb-2">
+                                                    <a th:href="@{/secretaria/citas}" class="btn btn-secondary w-100">
+                                                        <i class="fa-solid fa-arrow-left"></i> [[#{cita.cancelar.btn}]]
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <button type="submit" class="btn btn-primary w-100">
+                                                        <i class="fa-solid fa-floppy-disk"></i> [[#{cita.guardar.btn}]]
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+        
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>

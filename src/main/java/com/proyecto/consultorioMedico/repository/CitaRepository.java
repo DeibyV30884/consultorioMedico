@@ -5,7 +5,8 @@
 package com.proyecto.consultorioMedico.repository;
 
 import com.proyecto.consultorioMedico.domain.Cita;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,30 +17,38 @@ import org.springframework.data.repository.query.Param;
  * @author Alejandro
  */
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
-
-    @Query(
-            value = "SELECT * FROM cita WHERE DATE(fecha_hora) = CURDATE()",
-            nativeQuery = true
-    )
-    List<Cita> buscarCitasHoy();
-
-    @Query("SELECT c FROM Cita c WHERE c.medico.idMedico = :idMedico "
-            + "AND c.fechaHora BETWEEN :inicio AND :fin "
-            + "AND c.estado != 'CANCELADA' "
-            + "AND (:idCita IS NULL OR c.idCita != :idCita)")
-    List<Cita> findCitasEnRango(
-            @Param("idMedico") Integer idMedico,
-            @Param("inicio") LocalDateTime inicio,
-            @Param("fin") LocalDateTime fin,
-            @Param("idCita") Integer idCita
+    
+    @Query("SELECT c FROM Cita c WHERE c.medico.idMedico = :idMedico " +
+           "AND c.fecha = :fecha " +
+           "AND c.hora = :hora " +
+           "AND c.estado != 'Cancelada'")
+    List<Cita> findByMedicoFechaHora(
+        @Param("idMedico") Integer idMedico,
+        @Param("fecha") LocalDate fecha,
+        @Param("hora") LocalTime hora
     );
-
-    @Query("SELECT c FROM Cita c WHERE c.paciente.idPaciente = :idPaciente "
-            + "AND c.estado = 'COMPLETADA' "
-            + "ORDER BY c.fechaHora DESC")
-    List<Cita> findUltimaCitaCompletada(@Param("idPaciente") Integer idPaciente);
-
-    @Query("SELECT c FROM Cita c WHERE c.paciente.idPaciente = :idPaciente "
-            + "ORDER BY c.fechaHora DESC")
-    List<Cita> findCitasByPaciente(@Param("idPaciente") Integer idPaciente);
+    
+    @Query("SELECT c FROM Cita c WHERE c.medico.idMedico = :idMedico " +
+           "AND c.fecha = :fecha " +
+           "AND c.hora = :hora " +
+           "AND c.estado != 'Cancelada' " +
+           "AND c.idCita != :idCitaExcluir")
+    List<Cita> findByMedicoFechaHoraExcluyendo(
+        @Param("idMedico") Integer idMedico,
+        @Param("fecha") LocalDate fecha,
+        @Param("hora") LocalTime hora,
+        @Param("idCitaExcluir") Integer idCitaExcluir
+    );
+    
+    @Query("SELECT c.hora FROM Cita c WHERE c.medico.idMedico = :idMedico " +
+           "AND c.fecha = :fecha " +
+           "AND c.estado != 'Cancelada'")
+    List<LocalTime> findHorasOcupadas(
+        @Param("idMedico") Integer idMedico,
+        @Param("fecha") LocalDate fecha
+    );
+    
+    @Query("SELECT c FROM Cita c WHERE c.paciente.idPaciente = :idPaciente " +
+           "ORDER BY c.fecha DESC, c.hora DESC")
+    List<Cita> findByPacienteId(@Param("idPaciente") Integer idPaciente);
 }
