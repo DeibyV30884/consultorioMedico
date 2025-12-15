@@ -171,5 +171,139 @@
             </div>
         </section>
         
+<section th:fragment="listadoCitas" class="p-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border border-warning">
+                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0"><i class="fas fa-calendar-alt"></i> [[#{cita.mis.citas}]]</h4>
+                                <a th:href="@{'/paciente/citas/' + ${paciente.idPaciente} + '/nueva'}" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> [[#{cita.agendar.btn}]]
+                                </a>
+                            </div>
+
+                            <div class="card-body">
+                                <div th:if="${citas != null and !citas.empty}">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    
+                                                    <th>[[#{cita.numero}]]</th>
+                                                    <th>[[#{cita.fecha}]]</th>
+                                                    <th>[[#{cita.hora}]]</th>
+                                                    <th>[[#{cita.medico.nombre}]]</th>
+                                                    <th>[[#{cita.tipo}]]</th>
+                                                    <th>[[#{cita.estado}]]</th>
+                                                    <th>[[#{cita.motivo}]]</th>
+                                                    <th>[[#{cita.acciones}]]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="c : ${citas}">
+                                                    
+                                                    <td>[[${c.idCita}]]</td>
+                                                    <td>[[${#temporals.format(c.fecha, 'dd/MM/yyyy')}]]</td>
+                                                    <td>[[${#temporals.format(c.hora, 'hh:mm a')}]]</td>
+                                                    <td>[[${c.medico.nombre}]] [[${c.medico.apellido1}]]</td>
+                                                    
+                                                    <td>[[${c.tipoConsulta}]]</td>
+                                                    <td>
+                                                        <span th:class="${'badge ' + 
+                                                            (c.estado == 'Pendiente' ? 'bg-warning text-dark' : 
+                                                             c.estado == 'Confirmada' ? 'bg-success' : 
+                                                             c.estado == 'Completada' ? 'bg-info' : 'bg-danger')}">
+                                                            [[${c.estado}]]
+                                                        </span>
+                                                    </td>
+                                                    <td>[[${c.tratamiento}]]</td>
+                                                    <td>
+                                                        <button 
+                                                            th:if="${c.estado == 'Pendiente' or c.estado == 'Confirmada'}"
+                                                            type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalCancelar" th:attr="data-bs-id=${c.idCita}, data-bs-descripcion=${c.tipoConsulta}">
+                                                            <i class="fas fa-times"></i> [[#{cita.btn.cancelar}]]
+                                                        </button>
+                                                        <span th:if="${c.estado != 'Pendiente' and c.estado != 'Confirmada'}" class="text-muted">
+                                                            <i class="fas fa-info-circle"></i> [[#{cita.no.disponible}]]
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div th:if="${citas == null or citas.empty}" class="text-center p-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">[[#{cita.sin.citas}]]</h5>
+                                    <p>[[#{cita.primera.cita}]]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+        
+        <section th:fragment="modalCancelar">
+            <div class="modal fade" id="modalCancelar" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form th:action="@{'/paciente/citas/' + ${paciente.idPaciente} + '/cancelar'}" method="post">
+                            <input type="hidden" name="idCita" id="modalId"/>
+                            
+                            <div class="modal-header bg-danger text-white">
+                                
+                                <h5 class="modal-title">
+                                    <i class="fas fa-exclamation-triangle"></i> [[#{modal.cancelar.titulo}]]
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                
+                                <p>[[#{modal.cancelar.pregunta}]] <strong><span id="modalDescripcion"></span></strong>?</p>
+                                <p class="text-danger">
+                                    <strong>[[#{modal.cancelar.nota.titulo}]]</strong> [[#{modal.cancelar.nota}]]
+                                </p>
+                            </div>
+
+                            <div class="modal-footer">
+                                
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-arrow-left"></i> [[#{modal.cancelar.volver}]]
+                                </button>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-times"></i> [[#{modal.cancelar.confirmar}]]
+                                </button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section th:fragment="mensajeError">
+            <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fa-solid fa-exclamation-triangle"></i>
+                <strong>[[#{error}]]:</strong> [[${error}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </section>
+
+        <section th:fragment="mensajeExito">
+            <div th:if="${mensaje != null}" class="alert alert-success alert-dismissible fade show">
+                <i class="fa-solid fa-check-circle"></i>
+                <strong>[[#{mensaje.guardado}]]:</strong> [[${mensaje}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </section>
+        
+        <script th:src="@{/js/rutinas.js}"></script>
+        
     </body>
 </html>

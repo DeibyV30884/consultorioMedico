@@ -7,6 +7,9 @@
         <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
         <aside th:replace="~{secretaria/fragmentos :: sidebar}"></aside>
         <main class="contenido p-4">
+            <div th:replace="~{secretaria/fragmentos :: mensajeError}"></div>
+            <div th:replace="~{secretaria/fragmentos :: mensajeExito}"></div>
+            
             <div th:replace="~{secretaria/fragmentos :: listado}"></div>
         </main>
 

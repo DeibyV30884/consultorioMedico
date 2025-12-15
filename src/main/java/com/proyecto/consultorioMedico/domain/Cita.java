@@ -15,7 +15,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.io.Serializable;
-import java.time.LocalDateTime;// para fechaHora
+import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.Data;
 
 /**
@@ -33,21 +34,7 @@ public class Cita implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cita")
     private Integer idCita;
-
-    @Column(name = "fecha_hora")
-    private LocalDateTime fechaHora;
-
-    //estado
-    @Enumerated(EnumType.STRING)
-    @Column(name = "estado")
-    private EstadoCita estado;
-
     
-    private String tratamiento;
-
-    @Column(unique = true, nullable = false, length = 50)
-    private String tipoConsulta;
-
     @ManyToOne
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;
@@ -55,4 +42,19 @@ public class Cita implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_medico")
     private Medico medico;
+    
+    @Column(name = "fecha")
+    private LocalDate fecha;
+    
+    @Column(name = "hora")
+    private LocalTime hora;
+    
+    @Column(name = "estado")
+    private String estado;
+    
+    @Column(name = "tratamiento")
+    private String tratamiento;
+    
+    @Column(name = "tipo_consulta")
+    private String tipoConsulta;
 }

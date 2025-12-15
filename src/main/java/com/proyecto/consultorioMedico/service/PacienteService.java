@@ -62,5 +62,9 @@ public class PacienteService {
      public List<Paciente> buscarPaciente(String texto) {
         return pacienteRepository.buscarPaciente(texto);
     }
-
+     
+     @Transactional(readOnly = true)
+    public List<Paciente> buscarPorNombreOApellido(String termino) {
+        return pacienteRepository.buscarPorNombreOApellido(termino.toLowerCase());
+    }
 }
