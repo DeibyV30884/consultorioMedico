@@ -10,28 +10,300 @@
             <nav class="h-100">
                 <ul class="nav flex-column">
                     <li class="nav-item border-bottom border-secondary" > 
-                        <a th:href="@{/paciente/inicio}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/paciente/inicio/' + ${paciente.idPaciente}} " class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.inicio}]]</a>
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/paciente/tratamientos}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/paciente/tratamientos/' + ${paciente.idPaciente}} "class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.tratamientos}]]</a>
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/paciente/citas}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/paciente/citas/' + ${paciente.idPaciente}}" class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.mis.citas}]]</a>
                     </li>
 
                     <li class="nav-item border-bottom border-secondary"> 
-                        <a th:href="@{/paciente/perfil}" class= "nav-link text-secondary text-center py-4">
+                        <a th:href="@{'/paciente/perfil/' + ${paciente.idPaciente}}" class= "nav-link text-secondary text-center py-4">
                             [[#{sidebar.perfil}]]</a>
                     </li>
                 </ul>
 
             </nav>
         </aside>
+
+        <section th:fragment="perfil" class="p-3" style="margin-bottom: 50px;">
+            <div class="container-fluid">
+                
+                <div class="row" style="min-height: 704px;">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                        <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                            
+                            <div class="card border border-warning">
+                                <div class="card-header bg-dark text-white text-center">
+                                    <h1 class="mb-0"><i class="fas fa-user-circle"></i> [[#{paciente.perfil}]]</h1>
+                                </div>
+
+                                <div class="card-body p-4">
+                                    
+                                    <div th:if="${mensaje}" class="alert alert-success mt-3">
+                                        <i class="fas fa-check-circle"></i> [[${mensaje}]]
+                                    </div>
+                                    
+                                    <div th:if="${error}" class="alert alert-danger mt-3">
+                                        <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                                    </div>
+                                    
+                                    <form method="POST" 
+                                          th:action="@{'/paciente/guardar/' + ${paciente.idPaciente}}" 
+                                          th:object="${paciente}">
+                                        
+                                        <input type="hidden" th:field="*{idPaciente}"/>
+                                        <input type="hidden" th:field="*{idUsuario}"/>
+                                        
+                                        
+                                        <h5 class="mb-3 text-dark border-bottom pb-2">
+                                            <i class="fas fa-id-card"></i> [[#{paciente.seccion.personal}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="nombre"><i class="fas fa-user"></i> [[#{paciente.nombre}]]</label>
+                                            <input type="text" class="form-control"id="nombre"th:field="*{nombre}" required maxlength="50" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="apellido1"><i class="fas fa-id-card"></i> [[#{paciente.apellido1}]]</label>
+                                            <input type="text" class="form-control" id="apellido1"th:field="*{apellido1}" required maxlength="30" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="apellido2"><i class="fas fa-id-card"></i> [[#{paciente.apellido2}]]</label>
+                                            <input type="text" class="form-control"id="apellido2"th:field="*{apellido2}" maxlength="30" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="fechaNacimiento"><i class="fas fa-calendar"></i> [[#{paciente.fechaNacimiento}]]</label>
+                                            <input type="date" class="form-control"id="fechaNacimiento"th:field="*{fechaNacimiento}" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="estadoCivil"><i class="fas fa-heart"></i> [[#{paciente.estadoCivil}]]</label>
+                                            <select class="form-control" id="estadoCivil" th:field="*{estadoCivil}">
+                                                <option value="">[[#{paciente.seleccione}]]</option>
+                                                <option value="Soltero">[[#{paciente.soltero}]]</option>
+                                                <option value="Casado">[[#{paciente.casado}]]</option>
+                                                <option value="Divorciado">[[#{paciente.divorciado}]]</option>
+                                                <option value="Viudo">[[#{paciente.viudo}]]</option>
+                                                <option value="Union Libre">[[#{paciente.unionLibre}]]</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="genero"><i class="fa-solid fa-person-half-dress"></i> [[#{paciente.genero}]]</label>
+                                            <select class="form-control" id="genero" th:field="*{genero}">
+                                                <option value="Masculino">[[#{paciente.masculino}]]</option>
+                                                <option value="Femenino">[[#{paciente.femenino}]]</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fas fa-address-book"></i> [[#{paciente.seccion.contacto}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="correoElectronico"><i class="fas fa-envelope"></i> [[#{paciente.correo}]]</label>
+                                            <input type="email" class="form-control"id="correoElectronico"th:field="*{correoElectronico}" maxlength="75" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="telefono"><i class="fas fa-phone"></i> [[#{paciente.telefono}]]</label>
+                                            <input type="text" class="form-control"id="telefono"th:field="*{telefono}"  maxlength="25" />
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="ocupacion"><i class="fas fa-briefcase"></i> [[#{paciente.ocupacion}]]</label>
+                                            <input type="text" class="form-control" id="ocupacion" th:field="*{ocupacion}" maxlength="50" />
+                                        </div>
+                                        
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fas fa-notes-medical"></i> [[#{paciente.seccion.antecedentes}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesHeredoFamiliares"><i class="fas fa-users"></i> [[#{paciente.antecedentesHeredoFamiliares}]]</label>
+                                            <textarea class="form-control"  rows="3" id="antecedentesHeredoFamiliares" th:field="*{antecedentesHeredoFamiliares}"></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesPersonales"><i class="fas fa-user-md"></i> [[#{paciente.antecedentesPersonales}]]</label>
+                                            <textarea class="form-control" rows="3" id="antecedentesPersonales" th:field="*{antecedentesPersonales}"></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesQuirurgicos"><i class="fas fa-procedures"></i> [[#{paciente.antecedentesQuirurgicos}]]</label>
+                                            <textarea class="form-control" rows="3" id="antecedentesQuirurgicos" th:field="*{antecedentesQuirurgicos}"></textarea>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="mb-2" for="antecedentesGinecoObstetricos"><i class="fas fa-baby"></i> [[#{paciente.antecedentesGinecoObstetricos}]]</label>
+                                            <textarea class="form-control" rows="3" id="antecedentesGinecoObstetricos" th:field="*{antecedentesGinecoObstetricos}"></textarea>
+                                        </div>
+                                        
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-info-circle"></i> <strong>[[#{atencion}]]:</strong> [[#{paciente.nota.perfil}]]
+                                        </div>
+                                        
+                                        
+                                        <div class="text-center my-3">
+                                            <button class="btn btn-secondary w-100" type="submit">
+                                                <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                            </button>
+                                        </div>                                        
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+<section th:fragment="listadoCitas" class="p-3">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border border-warning">
+                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0"><i class="fas fa-calendar-alt"></i> [[#{cita.mis.citas}]]</h4>
+                                <a th:href="@{'/paciente/citas/' + ${paciente.idPaciente} + '/nueva'}" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> [[#{cita.agendar.btn}]]
+                                </a>
+                            </div>
+
+                            <div class="card-body">
+                                <div th:if="${citas != null and !citas.empty}">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    
+                                                    <th>[[#{cita.numero}]]</th>
+                                                    <th>[[#{cita.fecha}]]</th>
+                                                    <th>[[#{cita.hora}]]</th>
+                                                    <th>[[#{cita.medico.nombre}]]</th>
+                                                    <th>[[#{cita.tipo}]]</th>
+                                                    <th>[[#{cita.estado}]]</th>
+                                                    <th>[[#{cita.motivo}]]</th>
+                                                    <th>[[#{cita.acciones}]]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="c : ${citas}">
+                                                    
+                                                    <td>[[${c.idCita}]]</td>
+                                                    <td>[[${#temporals.format(c.fecha, 'dd/MM/yyyy')}]]</td>
+                                                    <td>[[${#temporals.format(c.hora, 'hh:mm a')}]]</td>
+                                                    <td>[[${c.medico.nombre}]] [[${c.medico.apellido1}]]</td>
+                                                    
+                                                    <td>[[${c.tipoConsulta}]]</td>
+                                                    <td>
+                                                        <span th:class="${'badge ' + 
+                                                            (c.estado == 'Pendiente' ? 'bg-warning text-dark' : 
+                                                             c.estado == 'Confirmada' ? 'bg-success' : 
+                                                             c.estado == 'Completada' ? 'bg-info' : 'bg-danger')}">
+                                                            [[${c.estado}]]
+                                                        </span>
+                                                    </td>
+                                                    <td>[[${c.tratamiento}]]</td>
+                                                    <td>
+                                                        <button 
+                                                            th:if="${c.estado == 'Pendiente' or c.estado == 'Confirmada'}"
+                                                            type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalCancelar" th:attr="data-bs-id=${c.idCita}, data-bs-descripcion=${c.tipoConsulta}">
+                                                            <i class="fas fa-times"></i> [[#{cita.btn.cancelar}]]
+                                                        </button>
+                                                        <span th:if="${c.estado != 'Pendiente' and c.estado != 'Confirmada'}" class="text-muted">
+                                                            <i class="fas fa-info-circle"></i> [[#{cita.no.disponible}]]
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div th:if="${citas == null or citas.empty}" class="text-center p-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">[[#{cita.sin.citas}]]</h5>
+                                    <p>[[#{cita.primera.cita}]]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+        
+        <section th:fragment="modalCancelar">
+            <div class="modal fade" id="modalCancelar" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form th:action="@{'/paciente/citas/' + ${paciente.idPaciente} + '/cancelar'}" method="post">
+                            <input type="hidden" name="idCita" id="modalId"/>
+                            
+                            <div class="modal-header bg-danger text-white">
+                                
+                                <h5 class="modal-title">
+                                    <i class="fas fa-exclamation-triangle"></i> [[#{modal.cancelar.titulo}]]
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                
+                                <p>[[#{modal.cancelar.pregunta}]] <strong><span id="modalDescripcion"></span></strong>?</p>
+                                <p class="text-danger">
+                                    <strong>[[#{modal.cancelar.nota.titulo}]]</strong> [[#{modal.cancelar.nota}]]
+                                </p>
+                            </div>
+
+                            <div class="modal-footer">
+                                
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-arrow-left"></i> [[#{modal.cancelar.volver}]]
+                                </button>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-times"></i> [[#{modal.cancelar.confirmar}]]
+                                </button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section th:fragment="mensajeError">
+            <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fa-solid fa-exclamation-triangle"></i>
+                <strong>[[#{error}]]:</strong> [[${error}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </section>
+
+        <section th:fragment="mensajeExito">
+            <div th:if="${mensaje != null}" class="alert alert-success alert-dismissible fade show">
+                <i class="fa-solid fa-check-circle"></i>
+                <strong>[[#{mensaje.guardado}]]:</strong> [[${mensaje}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </section>
+        
+        <script th:src="@{/js/rutinas.js}"></script>
         
     </body>
 </html>

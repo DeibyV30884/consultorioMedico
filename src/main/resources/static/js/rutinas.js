@@ -18,18 +18,29 @@ function mostrarImagen(input) {
 //Para insertar información en el modal según el registro...
 document.addEventListener('DOMContentLoaded', function () {
     const confirmModal = document.getElementById('confirmModal');
-    confirmModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        document.getElementById('modalId').value = button.getAttribute('data-bs-id');
-        document.getElementById('modalDescripcion').textContent = button.getAttribute('data-bs-descripcion');
-    });
-    
-    const agendarCitaModal = document.getElementById('agendarCitaModal');
-    if (agendarCitaModal) {
-        agendarCitaModal.addEventListener('show.bs.modal', function (event) {
+    if (confirmModal) {
+        confirmModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
-            document.getElementById('modalPacienteId').value = button.getAttribute('data-bs-id');
-            document.getElementById('modalPacienteNombre').value = button.getAttribute('data-bs-nombre');
+            document.getElementById('modalId').value = button.getAttribute('data-bs-id');
+            document.getElementById('modalDescripcion').textContent = button.getAttribute('data-bs-descripcion');
+        });
+    }
+
+    const modalCancelar = document.getElementById('modalCancelar');
+    if (modalCancelar) {
+        modalCancelar.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const citaId = button.getAttribute('data-bs-id');
+            const descripcion = button.getAttribute('data-bs-descripcion');
+            const inputId = modalCancelar.querySelector('input[name="idCita"]');
+            const spanDescripcion = modalCancelar.querySelector('#modalDescripcion');
+            
+            if (inputId) {
+                inputId.value = citaId;
+            }
+            if (spanDescripcion) {
+                spanDescripcion.textContent = descripcion;
+            }
         });
     }
 });

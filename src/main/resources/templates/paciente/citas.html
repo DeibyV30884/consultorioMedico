@@ -6,6 +6,17 @@
     <body>
         <header th:replace="~{general/fragmentosUsuarios :: header}"/>
         <aside th:replace="~{paciente/fragmentos :: sidebar}"/>
+        
+        <main class="contenido p-4">
+
+            <div th:replace="~{paciente/fragmentos :: mensajeError}"></div>
+            <div th:replace="~{paciente/fragmentos :: mensajeExito}"></div>
+            
+            <section th:replace="~{paciente/fragmentos :: listadoCitas}"/>
+        </main>
+
+        <div th:replace="~{paciente/fragmentos :: modalCancelar}"></div>
+        
         <footer th:replace="~{general/fragmentos :: footer}"/>    
     </body>
 </html>

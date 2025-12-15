@@ -6,6 +6,7 @@ package com.proyecto.consultorioMedico.repository;
 
 import com.proyecto.consultorioMedico.domain.Paciente;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,5 +21,15 @@ public interface PacienteRepository extends JpaRepository<Paciente, Integer> {
             + "   OR apellido_2 LIKE CONCAT('%', :texto, '%') "
     )
     List<Paciente> buscarPaciente(@Param("texto") String texto);
-
+    
+    @Query(
+            nativeQuery = true,
+            value = "SELECT * FROM paciente WHERE id_usuario = :idUsuario")
+    Optional<Paciente> findByIdUsuario(@Param("idUsuario") Integer idUsuario);
+    
+    @Query("SELECT p FROM Paciente p WHERE " +
+       "LOWER(p.nombre) LIKE %:termino% OR " +
+       "LOWER(p.apellido1) LIKE %:termino% OR " +
+       "LOWER(p.apellido2) LIKE %:termino%")
+    List<Paciente> buscarPorNombreOApellido(@Param("termino") String termino);
 }

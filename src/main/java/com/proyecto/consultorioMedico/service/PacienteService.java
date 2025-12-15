@@ -32,6 +32,16 @@ public class PacienteService {
         return pacienteRepository.findById(paciente.getIdPaciente()).orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public Paciente getPacientePorId(Integer idPaciente) {
+        return pacienteRepository.findById(idPaciente).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Paciente getPacientePorIdUsuario(Integer idUsuario) {
+        return pacienteRepository.findByIdUsuario(idUsuario).orElse(null);
+    }
+
     @Transactional
     public void save(Paciente paciente) {
         pacienteRepository.save(paciente);
@@ -48,8 +58,13 @@ public class PacienteService {
         }
     }
     
+    @Transactional(readOnly = true)
      public List<Paciente> buscarPaciente(String texto) {
         return pacienteRepository.buscarPaciente(texto);
     }
-
+     
+     @Transactional(readOnly = true)
+    public List<Paciente> buscarPorNombreOApellido(String termino) {
+        return pacienteRepository.buscarPorNombreOApellido(termino.toLowerCase());
+    }
 }

@@ -9,6 +9,10 @@ import com.proyecto.consultorioMedico.service.MotivoCitaService;
 import com.proyecto.consultorioMedico.service.PacienteService;
 import java.util.List;
 import java.util.Optional;
+import com.proyecto.consultorioMedico.domain.Medico;
+import com.proyecto.consultorioMedico.domain.Usuario;
+import com.proyecto.consultorioMedico.service.MedicoService;
+import com.proyecto.consultorioMedico.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -159,4 +163,66 @@ public String guardarConsulta(Cita cita,Paciente paciente, RedirectAttributes re
 
         return "redirect:/medico/expedientes";
     }
+}
+    
+    @Autowired
+    private MedicoService medicoService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
+    
+    private boolean validarAcceso(Integer idMedico) {
+        Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
+        Medico medicoLogueado = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
+        
+        return medicoLogueado != null && medicoLogueado.getIdMedico().equals(idMedico);
+    }
+    
+    @GetMapping("/inicio/{idMedico}")
+    public String inicio(@PathVariable Integer idMedico, Model model) {
+        if (!validarAcceso(idMedico)) {
+            return "redirect:/";
+        }
+        
+        Medico medico = medicoService.getMedicoPorId(idMedico);
+        model.addAttribute("titulo", "Panel Médico");
+        model.addAttribute("medico", medico);
+        return "medico/inicio";
+    }
+    
+    @GetMapping("/perfil/{idMedico}")
+    public String perfil(@PathVariable Integer idMedico, Model model) {
+        if (!validarAcceso(idMedico)) {
+            return "redirect:/";
+        }
+        
+        Medico medico =medicoService.getMedicoPorId(idMedico);
+        model.addAttribute("titulo", "Perfil");
+        model.addAttribute("medico", medico);
+        return "medico/perfil";
+    }
+    
+    @GetMapping("/expedientes/{idMedico}")
+    public String expedientes(@PathVariable Integer idMedico, Model model) {
+        if  (!validarAcceso(idMedico)) {
+            return "redirect:/";
+        }
+        
+        Medico medico = medicoService.getMedicoPorId(idMedico);
+        model.addAttribute("titulo", "Expedientes");
+        model.addAttribute("medico", medico);
+        return "medico/expedientes";
+    }
+    
+    @PostMapping("/guardar/{idMedico}")
+    public String guardarMedico(@PathVariable Integer idMedico, Medico medico, Model model) {
+        if (!validarAcceso(idMedico)){
+            return  "redirect:/";
+        }
+        
+        medico.setIdMedico(idMedico);
+        medicoService.save(medico);
+        return "redirect:/medico/perfil/" + idMedico;
+    }
+    
 }

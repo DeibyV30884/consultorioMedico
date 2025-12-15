@@ -44,23 +44,32 @@
                             </div>
 
                             <div class='col-md-6 mb-3'>
+                                <label>[[#{paciente.genero}]]</label>
+                                <select name='genero' class='form-select'>
+                                    <option value="">[[#{accion.seleccionar}]]</option>
+                                    <option value="Masculino">[[#{paciente.masculino}]]</option>
+                                    <option value="Femenino">[[#{paciente.femenino}]]</option>
+                                </select>
+                            </div>
+
+                            <div class='col-md-6 mb-3'>
                                 <label>[[#{paciente.correoElectronico}]]</label>
                                 <input type="email" name='correoElectronico' class='form-control'/>
                             </div>
 
                             <div class='col-md-6 mb-3'>
                                 <label>[[#{paciente.telefono}]]</label>
-                                <input type="text" name='telefono' class='form-control'/>
+                                <input type="text" name='telefono' class='form-control' maxlength="25"/>
                             </div>
 
                             <div class='col-md-6 mb-3'>
                                 <label>[[#{paciente.ocupacion}]]</label>
-                                <input type="text" name='ocupacion' class='form-control'/>
+                                <input type="text" name='ocupacion' class='form-control' maxlength="50"/>
                             </div>
 
                             <div class='col-md-6 mb-3'>
                                 <label>[[#{paciente.estadoCivil}]]</label>
-                                <input type="text" name='estadoCivil' class='form-control'/>
+                                <input type="text" name='estadoCivil' class='form-control' maxlength="20"/>
                             </div>
 
 
@@ -128,6 +137,7 @@
                                         <th>[[#{paciente.nombre}]]</th>
                                         <th>[[#{paciente.apellido1}]]</th>
                                         <th>[[#{paciente.apellido2}]]</th>
+                                        <th>[[#{paciente.genero}]]</th>
                                         <th>[[#{paciente.fechaNacimiento}]]</th>
                                         <th>[[#{paciente.correoElectronico}]]</th>
                                         <th>[[#{paciente.telefono}]]</th>
@@ -142,6 +152,7 @@
                                         <td>[[${a.nombre}]]</td>
                                         <td>[[${a.apellido1}]]</td>
                                         <td>[[${a.apellido2}]]</td>
+                                        <td>[[${a.genero}]]</td>
                                         <td>[[${a.fechaNacimiento}]]</td>
                                         <td>[[${a.correoElectronico}]]</td>
                                         <td>[[${a.telefono}]]</td>
@@ -253,7 +264,15 @@
                             <div class="col-md-6 mb-3">
                                 <label>[[#{paciente.fechaNacimiento}]]</label>
                                 <input type="date" class="form-control" th:field="*{fechaNacimiento}">
+                            </div>
 
+                            <div class="col-md-6 mb-3">
+                                <label>[[#{paciente.genero}]]</label>
+                                <select class="form-select" th:field="*{genero}">
+                                    <option value="">[[#{accion.seleccionar}]]</option>
+                                    <option value="Masculino">[[#{paciente.masculino}]]</option>
+                                    <option value="Femenino">[[#{paciente.femenino}]]</option>
+                                </select>
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -263,17 +282,17 @@
 
                             <div class="col-md-6 mb-3">
                                 <label>[[#{paciente.telefono}]]</label>
-                                <input type="text" class="form-control" th:field="*{telefono}">
+                                <input type="text" class="form-control" th:field="*{telefono}" maxlength="25">
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>[[#{paciente.ocupacion}]]</label>
-                                <input type="text" class="form-control" th:field="*{ocupacion}">
+                                <input type="text" class="form-control" th:field="*{ocupacion}" maxlength="50">
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>[[#{paciente.estadoCivil}]]</label>
-                                <input type="text" class="form-control" th:field="*{estadoCivil}">
+                                <input type="text" class="form-control" th:field="*{estadoCivil}" maxlength="20">
                             </div>                        
 
                         </div>

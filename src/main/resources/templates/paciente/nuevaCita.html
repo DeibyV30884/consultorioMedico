@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"      
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentosUsuarios :: head}"/>
+    <body>
+        <header th:replace="~{general/fragmentosUsuarios :: header}"/>
+        <aside th:replace="~{paciente/fragmentos :: sidebar}"/>
+        
+        <main class="contenido p-4">
+            <section class="p-3" style="margin-bottom: 50px;">
+                <div class="container-fluid">
+                    
+                    <div class="row" style="min-height: 704px;">
+                        <div class="col-md-1"></div>
+                        
+                        <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                            <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                                
+                                <div class="card border border-warning">
+                                    <div class="card-header bg-dark text-white text-center">
+                                        <h1 class="mb-0"><i class="fas fa-calendar-plus"></i> [[#{cita.agendar.nueva}]]</h1>
+                                    </div>
+
+                                    <div class="card-body p-4">
+                                        
+                                        <div th:if="${error != null}" class="alert alert-danger mt-3">
+                                            <i class="fa-solid fa-exclamation-triangle"></i>
+                                            <strong>[[#{error}]]:</strong> [[${error}]]
+                                        </div>
+                                        
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> 
+                                            [[#{cita.info.pendiente}]]
+                                        </div>
+                                        
+                                        <form method="POST" 
+                                              th:action="@{'/paciente/citas/' + ${paciente.idPaciente} + '/crear'}" 
+                                              class="was-validated">
+
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="medico">
+                                                    <i class="fas fa-user-md"></i> [[#{cita.medico.label}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <select class="form-control" id="medico" name="medico.idMedico" required>
+                                                    <option value="">[[#{cita.medico.seleccione}]]</option>
+                                                    <option th:each="m : ${medicos}" th:value="${m.idMedico}" th:text="${m.nombre + ' ' + m.apellido1 + ' - ' + m.especialidad}">
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="fecha">
+                                                    <i class="fas fa-calendar"></i> [[#{cita.fecha.label}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <input type="date" class="form-control" id="fecha" name="fecha" required th:min="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}"/>
+                                                <small class="form-text text-muted">[[#{cita.fecha.hoy}]]</small>
+                                            </div>
+
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="hora"><i class="fas fa-clock"></i> [[#{cita.hora.label}]] [[#{campo.requerido}]]</label>
+                                                
+                                                <select class="form-control" id="hora" name="hora" required>
+                                                    <option value="">[[#{cita.hora.seleccione}]]</option>
+                                                    <option value="07:00">7:00 AM</option>
+                                                    <option value="07:30">7:30 AM</option>
+                                                    <option value="08:00">8:00 AM</option>
+                                                    <option value="08:30">8:30 AM</option>
+                                                    <option value="09:00">9:00 AM</option>
+                                                    <option value="09:30">9:30 AM</option>
+                                                    <option value="10:00">10:00 AM</option>
+                                                    <option value="10:30">10:30 AM</option>
+                                                    <option value="11:00">11:00 AM</option>
+                                                    <option value="13:00">1:00 PM</option>
+                                                    <option value="13:30">1:30 PM</option>
+                                                    <option value="14:00">2:00 PM</option>
+                                                    <option value="14:30">2:30 PM</option>
+                                                    <option value="15:00">3:00 PM</option>
+                                                    <option value="15:30">3:30 PM</option>
+                                                    <option value="16:00">4:00 PM</option>
+                                                </select>
+                                                
+                                                <small class="form-text text-muted">[[#{cita.hora.horario}]]</small>
+                                            </div>
+
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="tipoConsulta">
+                                                    
+                                                    <i class="fas fa-stethoscope"></i> [[#{cita.tipo.label}]] [[#{campo.requerido}]]
+                                                </label>
+                                                <select class="form-control" id="tipoConsulta" name="tipoConsulta" required>
+                                                    
+                                                    <option value="">[[#{cita.tipo.seleccione}]]</option>
+                                                    <option value="General">[[#{cita.tipo.general}]]</option>
+                                                    <option value="Especialidad">[[#{cita.tipo.especialidad}]]</option>
+                                                    <option value="Seguimiento">[[#{cita.tipo.seguimiento}]]</option>
+                                                    <option value="Urgencia">[[#{cita.tipo.urgencia}]]</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Motivo de Consulta -->
+                                            <div class="form-group mb-3">
+                                                <label class="mb-2" for="motivoConsulta">
+                                                    
+                                                    <i class="fas fa-notes-medical"></i> [[#{cita.motivo.label}]] [[#{campo.opcional}]]
+                                                </label>
+                                                <textarea class="form-control" id="motivoConsulta" name="motivoConsulta" rows="4"  maxlength="500"th:placeholder="#{cita.motivo.placeholder}"></textarea>
+                                                <small class="form-text text-muted">[[#{cita.motivo.maximo}]]</small>
+                                            </div>
+
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-exclamation-circle"></i> <strong>[[#{cita.importante}]]:</strong> [[#{cita.verificar.horario}]]
+                                            </div>
+                                            
+                                            <div class="row mt-3">
+                                                <div class="col-md-6 mb-2">
+                                                    <a th:href="@{'/paciente/citas/' + ${paciente.idPaciente}}"  class="btn btn-secondary w-100"> <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]</a>
+                                                </div>
+                                                
+                                                <div class="col-md-6 mb-2">
+                                                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check"></i> [[#{accion.guardar}]] </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <script th:src="@{/js/rutinas.js}"></script>
+        <footer th:replace="~{general/fragmentos :: footer}"/>    
+    </body>
+</html>
