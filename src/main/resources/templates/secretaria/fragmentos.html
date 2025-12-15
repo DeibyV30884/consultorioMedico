@@ -34,6 +34,13 @@
         </aside>
 
         <section th:fragment="listado" class="p-3">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <a th:href="@{/secretaria/citasRegistro}" class="btn btn-secondary">
+                        <i class="fa-solid fa-plus"></i> [[#{accion.agregar}]]
+                    </a>
+                </div>
+            </div>
 
             <div class="row p-3">
                 <div class="col-md-9">
@@ -45,7 +52,7 @@
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>[[#{cita.numero}]]</th>
                                             <th>[[#{cita.paciente}]]</th>
                                             <th>[[#{cita.medico}]]</th>
                                             <th>[[#{cita.fecha}]]</th>
@@ -60,7 +67,7 @@
                                             <td>[[${c.idCita}]]</td>
                                             <td>[[${c.paciente.nombre}]]</td>
                                             <td>[[${c.medico.nombre}]]</td>
-                                            <td>[[${#temporals.format(c.fechaHora, 'yyyy-MM-dd HH:mm')}]]</td>
+                                            <td>[[${c.fecha}]] [[${c.hora}]]</td>
                                             <td>[[${c.estado}]]</td>
                                             <td>[[${c.tipoConsulta}]]</td>
                                             <td>[[${c.tratamiento}]]</td>
@@ -133,24 +140,48 @@
                         <div class="row">
                             <div class="col">
                                 <div class="card">
-                                    <div class="card-header"><h4>[[#{accion.actualizar}]]</h4></div>
+                                    <div class="card-header"><h4>[[#{cita.editar}]]</h4></div>
                                     <div class="card-body">
 
                                         <!-- FECHA -->
                                         <div class="mb-3">
-                                            <label>[[#{cita.fecha}]]</label>
-                                            <input type="datetime-local" class="form-control"
-                                                   th:field="*{fechaHora}" required />
+                                            <label>[[#{cita.fecha.label}]] [[#{campo.requerido}]]</label>
+                                            <input type="date" class="form-control"
+                                                   th:field="*{fecha}" required />
+                                        </div>
+
+                                        <!-- HORA -->
+                                        <div class="mb-3">
+                                            <label>[[#{cita.hora.label}]] [[#{campo.requerido}]]</label>
+                                            <select class="form-select" th:field="*{hora}" required>
+                                                <option value="">[[#{cita.hora.seleccionar}]]</option>
+                                                <option value="07:00">7:00 AM</option>
+                                                <option value="07:30">7:30 AM</option>
+                                                <option value="08:00">8:00 AM</option>
+                                                <option value="08:30">8:30 AM</option>
+                                                <option value="09:00">9:00 AM</option>
+                                                <option value="09:30">9:30 AM</option>
+                                                <option value="10:00">10:00 AM</option>
+                                                <option value="10:30">10:30 AM</option>
+                                                <option value="11:00">11:00 AM</option>
+                                                <option value="13:00">1:00 PM</option>
+                                                <option value="13:30">1:30 PM</option>
+                                                <option value="14:00">2:00 PM</option>
+                                                <option value="14:30">2:30 PM</option>
+                                                <option value="15:00">3:00 PM</option>
+                                                <option value="15:30">3:30 PM</option>
+                                                <option value="16:00">4:00 PM</option>
+                                            </select>
                                         </div>
 
                                         <!-- ESTADO -->
                                         <div class="mb-3">
-                                            <label>[[#{cita.estado}]]</label>
+                                            <label>[[#{cita.estado}]] [[#{campo.requerido}]]</label>
                                             <select class="form-select" th:field="*{estado}" required>
-                                                <option th:each="e : ${T(com.proyecto.consultorioMedico.domain.EstadoCita).values()}"
-                                                        th:value="${e}" 
-                                                        th:text="${e}">
-                                                </option>
+                                                <option value="Pendiente">[[#{cita.estado.pendiente}]]</option>
+                                                <option value="Confirmada">[[#{cita.estado.confirmada}]]</option>
+                                                <option value="Completada">[[#{cita.estado.completada}]]</option>
+                                                <option value="Cancelada">[[#{cita.estado.cancelada}]]</option>
                                             </select>
                                         </div>
 
@@ -185,7 +216,8 @@
                                 <h5 class="modal-title" id="modalLabel">
                                     <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
                                 </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                                        th:attr="aria-label=#{accion.cerrar}"></button>
                             </div>
                             <div class="modal-body">
                                 <p>[[#{accion.confirmar.texto1}]] <span id="modalDescripcion"></span>?</p>
@@ -202,6 +234,23 @@
                         </form>
                     </div>
                 </div>
+            </div>
+        </section>
+        
+        <section th:fragment="mensajeError">
+            <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-exclamation-triangle"></i>
+                <strong>[[#{error}]]:</strong> [[${error}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" 
+                        th:attr="aria-label=#{accion.cerrar}"></button>
+            </div>
+        </section>
+        <section th:fragment="mensajeExito">
+            <div th:if="${todoOk != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-check-circle"></i>
+                <strong>[[#{mensaje.guardado}]]:</strong> [[${todoOk}]]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" 
+                        th:attr="aria-label=#{accion.cerrar}"></button>
             </div>
         </section>
 

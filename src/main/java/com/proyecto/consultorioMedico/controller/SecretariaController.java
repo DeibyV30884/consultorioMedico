@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.proyecto.consultorioMedico.domain.Paciente;
+import com.proyecto.consultorioMedico.service.MedicoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.proyecto.consultorioMedico.domain.Usuario;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 
@@ -28,6 +31,9 @@ public class SecretariaController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private MedicoService medicoService;
     
     @ModelAttribute("usuario")
     public Usuario agregarUsuarioLogueado() {
@@ -59,9 +65,13 @@ public class SecretariaController {
     public String citas(Model model) {
         List<Cita> lista = citaService.getCitas();
         model.addAttribute("citas", lista);
+        model.addAttribute("cita", new Cita());
+        model.addAttribute("medicos", medicoService.getMedicos());
+        model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("totalCitas", lista.size());
         return "secretaria/citas";
     }
+    
     
     @GetMapping("/pacientes")
     public String pacientes(Model model) {
@@ -70,5 +80,24 @@ public class SecretariaController {
         model.addAttribute("paciente", new Paciente());
         model.addAttribute("titulo", "pacientes");
         return "secretaria/pacientes";
+    }
+    
+    @GetMapping("/citasRegistro")
+    public String citasRegistro(Model model) {
+        model.addAttribute("medicos", medicoService.getMedicos());
+        model.addAttribute("pacientes", pacienteService.getPacientes());
+        return "secretaria/citasRegistro";
+    }
+    
+    @PostMapping("/citasRegistro/buscar")
+    public String buscarPacienteRegistro(@RequestParam(value = "texto") String texto, Model model) {
+        var pacientesEncontrados = pacienteService.buscarPorNombreOApellido(texto);
+        
+        model.addAttribute("pacientesEncontrados", pacientesEncontrados);
+        model.addAttribute("texto", texto);
+        model.addAttribute("medicos", medicoService.getMedicos());
+        model.addAttribute("pacientes", pacienteService.getPacientes());
+        
+        return "secretaria/citasRegistro";
     }
 }
