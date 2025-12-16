@@ -51,4 +51,19 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
     @Query("SELECT c FROM Cita c WHERE c.paciente.idPaciente = :idPaciente " +
            "ORDER BY c.fecha DESC, c.hora DESC")
     List<Cita> findByPacienteId(@Param("idPaciente") Integer idPaciente);
+    
+    @Query("SELECT c FROM Cita c WHERE c.fecha = CURRENT_DATE " +
+           "AND (c.estado = 'Pendiente' OR c.estado = 'Confirmada') " +
+           "ORDER BY c.hora ASC")
+    List<Cita> findCitasHoy();
+    
+    @Query("SELECT c FROM Cita c WHERE c.fecha = CURRENT_DATE " +
+           "ORDER BY c.hora ASC")
+    List<Cita> findTodasCitasHoy();
+    
+    @Query("SELECT c FROM Cita c WHERE c.paciente.idPaciente = :idPaciente " +
+           "AND c.estado = 'Completada' " +
+           "ORDER BY c.fecha DESC, c.hora DESC")
+    List<Cita> findUltimaCitaCompletada(@Param("idPaciente") Integer idPaciente);
+    
 }

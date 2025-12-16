@@ -1,6 +1,7 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.domain.Paciente;
 import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.CitaService;
@@ -190,7 +191,7 @@ public class PacienteController {
             cita.setFecha(fechaCita);
             cita.setHora(horaCita);
             cita.setTipoConsulta(tipoConsulta);
-            cita.setEstado("Pendiente");
+            cita.setEstado(EstadoCita.PENDIENTE);
             cita.setTratamiento(motivoConsulta);
             
             citaService.save(cita);
@@ -228,13 +229,14 @@ public class PacienteController {
                 return "redirect:/paciente/citas/" + idPaciente;
             }
             
-            if (!cita.getEstado().equals("Pendiente") && !cita.getEstado().equals("Confirmada")) {
+            if (!EstadoCita.PENDIENTE.equals(cita.getEstado()) && 
+                !EstadoCita.CONFIRMADA.equals(cita.getEstado())) {
                 redirectAttributes.addFlashAttribute ("error", 
                     "Solo se pueden cancelar citas en estado Pendiente o Confirmada");
                 return "redirect:/paciente/citas/" + idPaciente;
             }
             
-            cita.setEstado("Cancelada");
+            cita.setEstado(EstadoCita.CANCELADA);
             citaService.save(cita);
             
             redirectAttributes.addFlashAttribute ("todoOk", "Cita cancelada exitosamente");

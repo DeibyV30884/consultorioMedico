@@ -1,6 +1,7 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.domain.Paciente;
 import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.CitaService;
@@ -92,7 +93,13 @@ public class CitaController {
             LocalDate fechaCita = LocalDate.parse(fecha);
             LocalTime horaCita = LocalTime.parse(hora);
             
-            boolean hayConflicto = citaService.validarConflictoHorario (idMedico, fechaCita, horaCita);
+            if (!EstadoCita.esValido(estado)) {
+                redirectAttributes.addFlashAttribute("error",
+                    "Estado de cita inválido. Tiene que ser: Pendiente, Confirmada, Completada o Cancelada.");
+                return "redirect:/secretaria/citasRegistro";
+            }
+            
+            boolean hayConflicto = citaService.validarConflictoHorario(idMedico, fechaCita, horaCita);
             
             if (hayConflicto) {
                 redirectAttributes.addFlashAttribute("error",
@@ -125,10 +132,25 @@ public class CitaController {
     }
     
     @PostMapping("/modificar")
-    public String modificar(Cita cita, Model model) {
-        cita = citaService.getCita(cita);
-        model.addAttribute("cita", cita);
-        return "secretaria/modifica";
+    public String modificar(@RequestParam("idCita") Integer idCita, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Cita cita = citaService.getCitaPorId(idCita);
+            
+            if (cita == null) {
+                redirectAttributes.addFlashAttribute("error", "Cita no encontrada");
+                return "redirect:/secretaria/citas";
+            }
+            
+            model.addAttribute("cita", cita);
+            model.addAttribute("medicos", medicoService.getMedicos());
+            model.addAttribute("pacientes", pacienteService.getPacientes());
+            
+            return "secretaria/modifica";
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al cargar la cita: " + e.getMessage());
+            return "redirect:/secretaria/citas";
+        }
     }
     
     @GetMapping("/buscarPaciente")
@@ -165,6 +187,12 @@ public class CitaController {
             
             if (citaReal == null) {
                 redirectAttributes.addFlashAttribute("error", "Cita no encontrada");
+                return "redirect:/secretaria/citas";
+            }
+            
+            if (!EstadoCita.esValido(citaFormulario.getEstado())) {
+                redirectAttributes.addFlashAttribute("error",
+                    "Estado de cita inválido. Debe ser: Pendiente, Confirmada, Completada o Cancelada.");
                 return "redirect:/secretaria/citas";
             }
             
@@ -207,9 +235,11 @@ public class CitaController {
     }
     
     @PostMapping("/eliminar")
-    public String eliminar(Cita cita, RedirectAttributes redirectAttributes) {
-        cita = citaService.getCita(cita);
-        if (cita == null) {  // La cita no existe...
+    public String eliminar(@RequestParam("idCita") Integer idCita, RedirectAttributes redirectAttributes) {
+        try {
+            Cita cita = citaService.getCitaPorId(idCita);
+            
+            if (cita == null) {  // La cita no existe...
             redirectAttributes.addFlashAttribute("error",
                     messageSource.getMessage("cita.error01",
                             null,
@@ -225,7 +255,12 @@ public class CitaController {
                     messageSource.getMessage("cita.error03",
                             null,
                             Locale.getDefault()));
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                "Error al eliminar la cita: " + e.getMessage());
         }
+        
         return "redirect:/secretaria/citas";
     }
 }

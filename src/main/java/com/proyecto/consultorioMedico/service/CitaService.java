@@ -83,4 +83,21 @@ public class CitaService {
     public List<Cita> getCitasPorPaciente(Integer idPaciente) {
         return citaRepository.findByPacienteId(idPaciente);
     }
+
+    @Transactional(readOnly = true)
+    public List<Cita> buscarCitasHoy() {
+        return citaRepository.findCitasHoy();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Cita> buscarTodasCitasHoy() {
+        return citaRepository.findTodasCitasHoy();
+    }
+
+    @Transactional(readOnly = true)
+    public Cita getUltimaCitaCompletada(Integer idPaciente) {
+        List<Cita> citas = citaRepository.findUltimaCitaCompletada(idPaciente);
+        return citas.isEmpty() ? null : citas.get(0);
+    }
+    
 }

@@ -55,10 +55,10 @@ public class SecretariaController {
         int pendientes = 0;
 
         for (Cita c : citas) {
-            if (c.getEstado() == EstadoCita.Completada) {
+            if (EstadoCita.COMPLETADA.equals(c.getEstado())) {
                 completas++;
             }
-            if (c.getEstado() == EstadoCita.Pendiente) {
+            if (EstadoCita.PENDIENTE.equals(c.getEstado())) {
                 pendientes++;
             }
         }

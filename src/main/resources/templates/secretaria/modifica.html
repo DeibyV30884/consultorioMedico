@@ -6,11 +6,13 @@
         
     <body>    
         <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
-        <aside th:replace="~{secretaria/fragmentos :: aside}"/>
+        <aside th:replace="~{secretaria/fragmentos :: sidebar}"/>
         <main class="contenido p-4">
         <section th:replace="~{secretaria/fragmentos :: editar}"/>
+            <div th:replace="~{secretaria/fragmentos :: mensajeError}"></div>
+            <div th:replace="~{secretaria/fragmentos :: mensajeExito}"></div>
         </main>
-        <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+
         <footer th:replace="~{general/fragmentos :: footer}"/>
     </body>
     

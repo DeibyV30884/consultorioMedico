@@ -19,11 +19,6 @@
                         <div class="modal-body row g-3">
 
                             <div class='col-md-6 mb-3'>
-                                <label>[[#{paciente.identificacion}]]</label>
-                                <input type="text" name='identificacion' class='form-control' required/>
-                            </div>
-
-                            <div class='col-md-6 mb-3'>
                                 <label>[[#{paciente.nombre}]]</label>
                                 <input type="text" name='nombre' class='form-control' required/>
                             </div>
@@ -111,8 +106,7 @@
 
         <br>
 
-        <div sec:authorize="hasAnyRole('SECRETARIA', 'ADMINISTRADOR')" 
-             class="row">
+        <div class="row">
             <div class="col-12">
                 <button type="button" class="btn btn-secondary mb-3"
                         data-bs-toggle="modal" data-bs-target="#agregarPacienteModal">
@@ -133,7 +127,6 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>[[#{paciente.identificacion}]]</th>
                                         <th>[[#{paciente.nombre}]]</th>
                                         <th>[[#{paciente.apellido1}]]</th>
                                         <th>[[#{paciente.apellido2}]]</th>
@@ -148,7 +141,6 @@
                                 <tbody>
                                     <tr th:each="a : ${pacientes}">
                                         <td>[[${a.idPaciente}]]</td>
-                                        <td>[[${a.identificacion}]]</td>
                                         <td>[[${a.nombre}]]</td>
                                         <td>[[${a.apellido1}]]</td>
                                         <td>[[${a.apellido2}]]</td>
@@ -159,41 +151,20 @@
                                         <td>
                                             <div class="d-flex align-items-start">
 
-                                                <button sec:authorize="hasAnyRole('SECRETARIA', 'ADMINISTRADOR')"
-                                                        type="button" class="btn btn-danger me-2"
+                                                <button type="button" class="btn btn-danger me-2"
                                                         data-bs-toggle="modal" data-bs-target="#confirmModal"
                                                         th:data-bs-id="${a.idPaciente}"
                                                         th:data-bs-descripcion="${a.nombre}">
                                                     <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
                                                 </button>
 
-                                                <form sec:authorize="hasAnyRole('SECRETARIA', 'ADMINISTRADOR')"
-                                                      th:action="@{/secretaria/pacientes/modificar}" method="post">
+                                                <form th:action="@{/secretaria/pacientes/modificar}" method="post">
                                                     <input type="hidden" name="idPaciente" th:value="${a.idPaciente}"/>
                                                     <button type="submit" class="btn btn-success">
                                                         <i class="fa-solid fa-pencil"></i> [[#{accion.actualizar}]]
                                                     </button>
                                                 </form>
-                                                
-                                                <button sec:authorize="hasAnyRole('SECRETARIA', 'ADMINISTRADOR')"
-                                                        type="button" 
-                                                        class="btn btn-dark ms-2"
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#agendarCitaModal"
-                                                        th:data-bs-id="${a.idPaciente}"
-                                                        th:data-bs-nombre="${a.nombre + ' ' + a.apellido1 + ' - ' + a.identificacion}">
-                                                    <i class="far fa-calendar-plus"></i>[[#{accion.agendar}]]
-                                                </button>
-                                                
-                                                <form sec:authorize="hasRole('MEDICO')" 
-                                                      th:action="@{/medico/ver-expediente}" 
-                                                      method="post">
-                                                    <input type="hidden" name="idPaciente" th:value="${a.idPaciente}"/>
-                                                    <button type="submit" class="btn btn-info">
-                                                        <i class="fa-solid fa-file-medical"></i>[[#{accion.verExpediene}]]
-                                                    </button>
-                                                </form>
-                                                
+
                                             </div>
 
                                         </td>
@@ -240,11 +211,6 @@
                         </div>
 
                         <div class="card-body row g-3">
-
-                            <div class="col-md-6 mb-3">
-                                <label>[[#{paciente.identificacion}]]</label>
-                                <input type="text" class="form-control" th:field="*{identificacion}" required>
-                            </div>
 
                             <div class="col-md-6 mb-3">
                                 <label>[[#{paciente.nombre}]]</label>

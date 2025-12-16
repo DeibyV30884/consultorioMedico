@@ -56,7 +56,8 @@
                                             <th>[[#{cita.medico}]]</th>
                                             <th>[[#{cita.fecha}]]</th>
                                             <th>[[#{cita.estado}]]</th>
-                                            <th>[[#{cita.motivo}]]</th>
+                                            <th>[[#{cita.tipo}]]</th>
+                                            <th>[[#{cita.tratamiento}]]</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -68,79 +69,71 @@
                                             <td>[[${c.medico.nombre}]]</td>
                                             <td>[[${c.fecha}]] [[${c.hora}]]</td>
                                             <td>[[${c.estado}]]</td>
-                                            <td>[[${c.motivoCita.nombre}]]</td>
+                                            <td>[[${c.tipoConsulta}]]</td>
+                                            <td>[[${c.tratamiento}]]</td>
+
                                             <td>
                                                 <div class="d-flex align-items-start">
-                                                    <button sec:authorize="hasAnyRole('SECRETARIA', 'ADMINISTRADOR')"
-                                                            type="button" class="btn btn-danger me-2"
+
+                                                    <button type="button"
+                                                            class="btn btn-danger me-2" 
                                                             data-bs-toggle="modal" data-bs-target="#confirmModal"
-                                                            th:data-bs-id="${c.idCita}"
-                                                            th:data-bs-descripcion="${c.idCita}">
+                                                            th:attr="data-bs-id=${c.idCita},
+                                                            data-bs-descripcion=${c.tipoConsulta}">
                                                         <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
                                                     </button>
 
-                                                    <form sec:authorize="hasAnyRole('SECRETARIA', 'ADMINISTRADOR')"
-                                                          th:action="@{/secretaria/cita/modificar}" method="post">
+
+
+                                                    <form th:action="@{/cita/modificar}" method="post">
                                                         <input type="hidden" name="idCita" th:value="${c.idCita}"/>
                                                         <button type="submit" class="btn btn-success">
                                                             <i class="fa-solid fa-pencil"></i> [[#{accion.actualizar}]]
                                                         </button>
                                                     </form>
+
                                                 </div>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+
+                            <div th:if="${citas == null or citas.empty}" class="text-center p-2">
+                                <span>[[#{lista.vacia}]]</span>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section th:fragment="editar" th:if="${cita.idCita != null}">
-            <div class="container">
+        <!-- 3 Fragmento que se utiliza en la página modifca.html -->
+        <section th:fragment="editar">
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-6">
+
                         <form method="POST"
-                              th:action="@{/secretaria/cita/guardar}"
-                              th:object="${cita}"
-                              class="was-validated">
+                          th:action="@{/cita/guardar}" 
+                          th:object="${cita}" class="was-validated">
 
-                            <input type="hidden" th:field="*{idCita}"/>
-                            <input type="hidden" th:field="*{paciente.idPaciente}"/>
-                            <input type="hidden" th:field="*{medico.idMedico}"/>
-                            <input type="hidden" th:field="*{motivoCita.idMotivoCita}"/>
+                        <input type="hidden" th:field="*{idCita}"/>
 
-                            <div class="row py-4 mb-4 bg-light">
-                                <div class="col-md-4 d-grid">
-                                    <a th:href="@{/secretaria/citas}" class="btn btn-primary">
-                                        <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
-                                    </a>
-                                </div>
-                                <div class="col-md-4 d-grid">
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fas fa-check"></i> [[#{accion.guardar}]]
-                                    </button>
-                                </div>
+                        <div class="row py-4 mb-4 bg-light">
+                            <div class="col-md-4 d-grid">
+                                <a th:href="@{/secretaria/citas}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                                </a>
                             </div>
-                        </form>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-6">
-                        <form method="POST"
-                              th:action="@{/secretaria/cita/guardar}"
-                              th:object="${cita}"
-                              class="was-validated">
-
-                            <input type="hidden" th:field="*{idCita}"/>
-                            <input type="hidden" th:field="*{paciente.idPaciente}"/>
-                            <input type="hidden" th:field="*{medico.idMedico}"/>
-                            <input type="hidden" th:field="*{motivoCita.idMotivoCita}"/>
+                            <div class="col-md-4 d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </div>
 
                         <div class="row">
                             <div class="col">
@@ -190,29 +183,33 @@
                                             </select>
                                         </div>
 
+                                        <div class="mb-3">
+                                            <label>[[#{cita.tratamiento}]]</label>
+                                            <textarea class="form-control" th:field="*{tratamiento}"></textarea>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         </form>
-                    </div>
                 </div>
             </div>
         </section>
 
+        <section th:fragment="confirmarEliminar">
         <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered custom-modal-animation">
                 <div class="modal-content bg-dark text-white animate-slide-up">
-
-                    <form th:action="@{/secretaria/cita/eliminar}" method="post">
-                        <input type="hidden" name="idCita" id="modalId"/>
-
+                        <form th:action="@{/cita/eliminar}" th:object="${cita}" method="post">
+                            <input type="hidden" name="idCita" id="modalId"/>
                         <div class="modal-header bg-warning text-dark">
                             <div class="d-flex align-items-center">
                                 <h5 class="modal-title" id="modalLabel">
                                     <i class="fa-solid fa-circle-radiation"></i> [[#{accion.confirmar}]]
                                 </h5>
+                                </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" 
                                         th:attr="aria-label=#{accion.cerrar}"></button>
                             </div>
@@ -228,8 +225,8 @@
                                     <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
                                 </button>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </section>

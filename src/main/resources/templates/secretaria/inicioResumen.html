@@ -61,9 +61,9 @@
 
                         <tbody>
                             <tr th:each="c : ${citasproximas}">
-                                <td>[[${#temporals.format(c.fechaHora, 'HH:mm')}]]</td>
-                                <td>[[${c.paciente.nombre}]] [[${c.paciente.apellido1}]] [[${c.paciente.apellido2}]]</td>
-                                <td>[[${c.motivoCita.nombre}]]</td>
+                                <td>[[${#temporals.format(c.hora, 'HH:mm')}]]</td>
+                                <td>[[${c.paciente.nombre}]] [[${c.paciente.apellido1}]]  [[${c.paciente.apellido2 != null ? c.paciente.apellido2 : ''}]]</td>
+                                <td>[[${c.tipoConsulta != null ? c.tipoConsulta : 'No especificado'}]]</td>
                                 <td>
                                     <div class="d-flex align-items-start">
                                         <a sec:authorize="hasRole('MEDICO')" 

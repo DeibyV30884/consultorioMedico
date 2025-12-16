@@ -1,16 +1,10 @@
 package com.proyecto.consultorioMedico.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
@@ -30,25 +24,52 @@ public class Cita implements Serializable {
     private Integer idCita;
     
     @ManyToOne
-    @JoinColumn(name = "id_paciente")
+    @JoinColumn(name = "id_paciente", nullable = false)
     private Paciente paciente;
     
     @ManyToOne
-    @JoinColumn(name = "id_medico")
+    @JoinColumn(name = "id_medico", nullable = false)
     private Medico medico;
     
-    @Column(name = "fecha")
+    @ManyToOne
+    @JoinColumn(name = "id_motivo_cita", nullable = true)
+    private MotivoCita motivoCita;
+    
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
     
-    @Column(name = "hora")
+    @Column(name = "hora", nullable = false)
     private LocalTime hora;
     
-    @Column(name = "estado")
+    @Column(name = "estado", nullable = false, length = 20)
     private String estado;
     
-    @Column(name = "tratamiento")
+    @Column(name = "tratamiento", columnDefinition = "TEXT")
     private String tratamiento;
     
-    @Column(name = "tipo_consulta")
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observaciones;
+    
+    @Column(name = "tipo_consulta", length = 50)
     private String tipoConsulta;
+    
+    @Column(name = "fecha_creacion", updatable = false)
+    private LocalDateTime fechaCreacion;
+    
+    @Column(name = "fecha_modificacion")
+    private LocalDateTime fechaModificacion;
+    
+    public LocalDateTime getFechaHora() {
+        if (fecha != null && hora != null) {
+            return LocalDateTime.of(fecha, hora);
+        }
+        return null;
+    }
+    
+    public void setFechaHora(LocalDateTime fechaHora) {
+        if (fechaHora != null) {
+            this.fecha = fechaHora.toLocalDate();
+            this.hora = fechaHora.toLocalTime();
+        }
+    }
 }

@@ -31,7 +31,7 @@
                         
                         <div class="row py-4 mb-4 bg-light">
                             <div class="col-md-4 d-grid">
-                                <a th:href="@{/medico/expedientes}" class="btn btn-primary">
+                                <a th:href="@{'/medico/expedientes/' + ${medico.idMedico}}" class="btn btn-primary">
                                     <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
                                 </a>
                             </div>
@@ -52,19 +52,42 @@
                                 <div class="col-md-4">
                                     <label>[[#{cita.paciente}]]</label>
                                     <input type="text" class="form-control" 
-                                           th:value="${paciente.nombre} + ' ' + ${paciente.apellido1} + ' ' +  ${paciente.apellido2} "readonly/>
+                                           th:value="${paciente.nombre} + ' ' + ${paciente.apellido1} + ' ' + ${paciente.apellido2 ?: ''}" readonly/>
                                 </div>
-                                                                                               
-                                <div class="col-md-4">
-                                    <label>[[#{paciente.identificacion}]]</label>
-                                    <input type="text" class="form-control" 
-                                           th:value="${paciente.identificacion}" readonly/>
-                                </div>
-                                
+                                                                                                                               
                                 <div class="col-md-4">
                                     <label>[[#{paciente.fechaNacimiento}]]</label>
                                     <input type="text" class="form-control" 
-                                           th:value="${paciente.fechaNacimiento}" readonly/>
+                                           th:value="${paciente.fechaNacimiento != null ? #temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy') : 'N/A'}" 
+                                           readonly/>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label>[[#{paciente.telefono}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${paciente.telefono ?: 'N/A'}" 
+                                           readonly/>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label>[[#{paciente.correo}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${paciente.correoElectronico ?: 'N/A'}" 
+                                           readonly/>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label>[[#{paciente.genero}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${paciente.genero ?: 'N/A'}" 
+                                           readonly/>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <label>[[#{paciente.estadoCivil}]]</label>
+                                    <input type="text" class="form-control" 
+                                           th:value="${paciente.estadoCivil ?: 'N/A'}" 
+                                           readonly/>
                                 </div>
                                 
                             </div>
