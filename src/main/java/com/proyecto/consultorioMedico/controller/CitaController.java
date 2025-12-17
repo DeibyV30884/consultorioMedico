@@ -71,7 +71,8 @@ public class CitaController {
     }
     
     @GetMapping("/agregar")
-    public String agregar(Model model) {
+    public String agregar(Model model, Locale locale) {
+        model.addAttribute("titulo", messageSource.getMessage("cita.agregar", null, locale));
         model.addAttribute("cita", new Cita());
         model.addAttribute("medicos", medicoService.getMedicos());
         model.addAttribute("pacientes", pacienteService.getPacientes());
@@ -87,7 +88,8 @@ public class CitaController {
             @RequestParam String tipoConsulta,
             @RequestParam String estado,
             @RequestParam(required = false) String tratamiento,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
         
         try  {
             LocalDate fechaCita = LocalDate.parse(fecha);
@@ -95,7 +97,7 @@ public class CitaController {
             
             if (!EstadoCita.esValido(estado)) {
                 redirectAttributes.addFlashAttribute("error",
-                    "Estado de cita inválido. Tiene que ser: Pendiente, Confirmada, Completada o Cancelada.");
+                    messageSource.getMessage("cita.error.estado.invalido", null, locale));
                 return "redirect:/secretaria/citasRegistro";
             }
             
@@ -103,7 +105,7 @@ public class CitaController {
             
             if (hayConflicto) {
                 redirectAttributes.addFlashAttribute("error",
-                    "El médico ya tiene una cita agendada en ese horario. Por favor, seleccione otra hora.");
+                    messageSource.getMessage("cita.error.conflicto", null, locale));
                 return "redirect:/secretaria/citasRegistro";
             }
             
@@ -120,11 +122,11 @@ public class CitaController {
             citaService.save(cita);
             
             redirectAttributes.addFlashAttribute("todoOk",
-                messageSource.getMessage("mensaje.guardado", null, Locale.getDefault()));
+                messageSource.getMessage("mensaje.guardado", null, locale));
                 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error",
-                "Error al crear la cita: " + e.getMessage());
+                messageSource.getMessage("cita.error.crear", null, locale) + ": " + e.getMessage());
         }
         
         return "redirect:/secretaria/citas";
@@ -132,15 +134,19 @@ public class CitaController {
     }
     
     @PostMapping("/modificar")
-    public String modificar(@RequestParam("idCita") Integer idCita, Model model, RedirectAttributes redirectAttributes) {
+    public String modificar(
+            @RequestParam("idCita") Integer idCita, Model model, RedirectAttributes redirectAttributes,
+            Locale locale) {
         try {
             Cita cita = citaService.getCitaPorId(idCita);
             
             if (cita == null) {
-                redirectAttributes.addFlashAttribute("error", "Cita no encontrada");
+                redirectAttributes.addFlashAttribute("error", 
+                    messageSource.getMessage("cita.error01", null, locale));
                 return "redirect:/secretaria/citas";
             }
             
+            model.addAttribute("titulo", messageSource.getMessage("cita.editar", null, locale));
             model.addAttribute("cita", cita);
             model.addAttribute("medicos", medicoService.getMedicos());
             model.addAttribute("pacientes", pacienteService.getPacientes());
@@ -148,7 +154,8 @@ public class CitaController {
             return "secretaria/modifica";
             
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al cargar la cita: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("cita.error.cargar", null, locale) + ": " + e.getMessage());
             return "redirect:/secretaria/citas";
         }
     }
@@ -181,18 +188,19 @@ public class CitaController {
     }
     
     @PostMapping("/guardar")
-    public String guardar(Cita citaFormulario, RedirectAttributes redirectAttributes) {
+    public String guardar(Cita citaFormulario, RedirectAttributes redirectAttributes, Locale locale) {
         try {
             Cita citaReal = citaService.getCita(citaFormulario);
             
             if (citaReal == null) {
-                redirectAttributes.addFlashAttribute("error", "Cita no encontrada");
+                redirectAttributes.addFlashAttribute("error", 
+                    messageSource.getMessage("cita.error01", null, locale));
                 return "redirect:/secretaria/citas";
             }
             
             if (!EstadoCita.esValido(citaFormulario.getEstado())) {
                 redirectAttributes.addFlashAttribute("error",
-                    "Estado de cita inválido. Debe ser: Pendiente, Confirmada, Completada o Cancelada.");
+                    messageSource.getMessage("cita.error.estado.invalido", null, locale));
                 return "redirect:/secretaria/citas";
             }
             
@@ -209,7 +217,7 @@ public class CitaController {
                 
                 if (hayConflicto) {
                     redirectAttributes.addFlashAttribute("error",
-                         "El medico ya tiene una cita agendada en ese horario. Por favor, seleccione otra hora.");
+                        messageSource.getMessage("cita.error.conflicto", null, locale));
                     return "redirect:/secretaria/citas";
                 }
             }
@@ -222,43 +230,37 @@ public class CitaController {
             citaService.save(citaReal);
             
             redirectAttributes.addFlashAttribute("todoOk",
-                    messageSource.getMessage("mensaje.actualizado",
-                            null,
-                            Locale.getDefault()));
+                    messageSource.getMessage("mensaje.actualizado", null, locale));
                 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error",
-                "Error al actualizar la cita: " + e.getMessage());
+                messageSource.getMessage("cita.error.actualizar", null, locale) + ": " + e.getMessage());
         }
         
         return "redirect:/secretaria/citas";
     }
     
     @PostMapping("/eliminar")
-    public String eliminar(@RequestParam("idCita") Integer idCita, RedirectAttributes redirectAttributes) {
+    public String eliminar(
+            @RequestParam("idCita") Integer idCita, 
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
         try {
             Cita cita = citaService.getCitaPorId(idCita);
             
-            if (cita == null) {  // La cita no existe...
-            redirectAttributes.addFlashAttribute("error",
-                    messageSource.getMessage("cita.error01",
-                            null,
-                            Locale.getDefault()));
-        } else if (citaService.delete(cita)) {
-            // Si se borró...
-            redirectAttributes.addFlashAttribute("todoOk",
-                    messageSource.getMessage("mensaje.eliminado",
-                            null,
-                            Locale.getDefault()));
-        } else {
-            redirectAttributes.addFlashAttribute("error",
-                    messageSource.getMessage("cita.error03",
-                            null,
-                            Locale.getDefault()));
+            if (cita == null) {
+                redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("cita.error01", null, locale));
+            } else if (citaService.delete(cita)) {
+                redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("mensaje.eliminado", null, locale));
+            } else {
+                redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("cita.error03", null, locale));
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error",
-                "Error al eliminar la cita: " + e.getMessage());
+                messageSource.getMessage("cita.error.eliminar", null, locale) + ": " + e.getMessage());
         }
         
         return "redirect:/secretaria/citas";

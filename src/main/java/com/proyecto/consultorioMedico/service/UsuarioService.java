@@ -56,4 +56,15 @@ public class UsuarioService {
         String username = auth.getName();
         return usuarioRepository.findByUsernameNativo(username).orElse(null);
     }
+    
+    @Transactional
+    public boolean delete(Usuario usuario) {
+        try {
+            usuarioRepository.delete(usuario);
+            usuarioRepository.flush();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

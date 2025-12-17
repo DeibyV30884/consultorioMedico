@@ -45,8 +45,10 @@ public class UsuariosController {
     private PasswordEncoder passwordEncoder;
     
     @GetMapping("/nuevo")
-    public String mostrarFormularioRegistro(Model model) {
-        return "registro/nuevo"; }
+    public String mostrarFormularioRegistro(Model model, Locale locale) {
+        model.addAttribute("titulo", messageSource.getMessage("registro.titulo", null, locale));
+        return "registro/nuevo";
+    }
 
     @PostMapping("/crearUsuario")
     public String crearUsuario(
@@ -66,26 +68,30 @@ public class UsuariosController {
             return "registro/nuevo";
         }
     
-    boolean exito = registroService.crearUsuario(usuario, locale);
-    
-    if (exito) {
-        return "redirect:/registro/salida?tipo=registro&correo=" + usuario.getCorreo();
-    } else {
-        return "redirect:/registro/salida?tipo=errorRegistro&username=" + usuario.getUsername() + "&correo=" + usuario.getCorreo();
+        boolean exito = registroService.crearUsuario(usuario, locale);
+        
+        if (exito) {
+            return "redirect:/registro/salida?tipo=registro&correo=" + usuario.getCorreo();
+        } else {
+            return "redirect:/registro/salida?tipo=errorRegistro&username=" + usuario.getUsername() + "&correo=" + usuario.getCorreo();
+        }
     }
-}
     
     @GetMapping("/activacion/{usuario}/{id}")
     public String mostrarActivacion(
             Model model, 
+            Locale locale,
             @PathVariable(value = "usuario") String username, 
             @PathVariable(value = "id") String clave) {
         
         model = registroService.activar(model, username, clave);
         
-    if (model.containsAttribute("usuario") && model.getAttribute("usuario") != null) {
+        if (model.containsAttribute("usuario") && model.getAttribute("usuario") != null) {
+            model.addAttribute("titulo", messageSource.getMessage("registro.activar", null, locale));
             return "registro/activa";
         } else {
+            model.addAttribute("titulo", messageSource.getMessage("registro.activar.error", null, locale));
+            model.addAttribute("mensaje", messageSource.getMessage("registro.activar.error", null, locale));
             return "registro/salida";
         }
     }
@@ -95,11 +101,13 @@ public class UsuariosController {
             @RequestParam("idUsuario") Integer idUsuario,
             @RequestParam("password") String password,
             @RequestParam(value = "fechaNacimiento", required = false) String fechaNacimiento,
+            RedirectAttributes redirectAttributes,
             Locale locale) {
         
         try {
             Usuario usuario = usuarioService.getUsuarioPorId(idUsuario)
-                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                    .orElseThrow(() -> new IllegalArgumentException(
+                        messageSource.getMessage("usuario.no.encontrado", null, locale)));
             
             usuario.setPassword(passwordEncoder.encode(password));
             usuario.setActivo(true);
@@ -107,7 +115,7 @@ public class UsuariosController {
             
             Rol rolCliente = rolService.getRolByNombre("CLIENTE"); 
             if (rolCliente != null) {
-            rolService.asignarRolAUsuario(usuario, rolCliente);
+                rolService.asignarRolAUsuario(usuario, rolCliente);
             }
             
             Paciente paciente = new Paciente(); 
@@ -124,67 +132,83 @@ public class UsuariosController {
             
             pacienteService.save(paciente);
             
+            redirectAttributes.addFlashAttribute("mensaje", 
+                messageSource.getMessage("login.mensaje.registro.completo", null, locale));
             return "redirect:/login?registroExitoso=true";
             
         } catch (Exception e) {
-            return "registro/salida";
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("usuario.error.activar", null, locale));
+            return "redirect:/registro/salida?tipo=errorActivacion";
         }
     }
+    
     @GetMapping("/recordar")
-    public String mostrarFormularioRecordar (Model model){
+    public String mostrarFormularioRecordar(Model model, Locale locale) {
+        model.addAttribute("titulo", messageSource.getMessage("registro.recordar.us", null, locale));
         return "registro/recordar";
     }
     
-@PostMapping("/recordarUsuario")
-public String procesarRecordar(
-        @RequestParam("correo") String correo,
-        Locale locale) throws MessagingException {
-    
-    boolean exito = registroService.recordarUsuario(correo, locale);
-    
-    if (exito) {
-        return "redirect:/registro/salida?tipo=exito&correo=" + correo;
-    } else {
-        return "redirect:/registro/salida?tipo=error";
-    }
-}
-    
-@GetMapping("/salida")
-public String mostrarSalida(
-        Model model, 
-        Locale locale,
-        @RequestParam(required = false) String tipo,
-        @RequestParam(required = false) String correo,
-        @RequestParam(required = false) String username) {
-    
-    if ("exito".equals(tipo) && correo != null) {
-        model.addAttribute("titulo", 
-            messageSource.getMessage("registro.recordar.titulo.exito", null, locale));
-        String mensaje = String.format(
-            messageSource.getMessage("registro.mensaje.recordar.ok", null, locale), 
-            correo);
-        model.addAttribute("mensaje", mensaje);
-    } else if ("error".equals(tipo)) {
-        model.addAttribute("titulo", 
-            messageSource.getMessage("registro.recordar.titulo.exito", null, locale));
-        model.addAttribute("mensaje", 
-            messageSource.getMessage("registro.mensaje.correo.no.encontrado", null, locale));
-    } else if ("registro".equals(tipo) && correo != null) {
-        model.addAttribute("titulo", 
-            messageSource.getMessage("registro.activar", null, locale));
-        String mensaje = String.format(
-            messageSource.getMessage("registro.mensaje.activacion.ok", null, locale), 
-            correo);
-        model.addAttribute("mensaje", mensaje);
-    } else if ("errorRegistro".equals(tipo) && username != null && correo != null) {
-        model.addAttribute("titulo", 
-            messageSource.getMessage("registro.activar", null, locale));
-        String mensaje = String.format(
-            messageSource.getMessage("registro.mensaje.usuario.o.correo", null, locale), 
-            username, correo);
-        model.addAttribute("mensaje", mensaje);
+    @PostMapping("/recordarUsuario")
+    public String procesarRecordar(
+            @RequestParam("correo") String correo,
+            Locale locale) throws MessagingException {
+        
+        boolean exito = registroService.recordarUsuario(correo, locale);
+        
+        if (exito) {
+            return "redirect:/registro/salida?tipo=exito&correo=" + correo;
+        } else {
+            return "redirect:/registro/salida?tipo=error";
+        }
     }
     
-    return "registro/salida";
-}
+    @GetMapping("/salida")
+    public String mostrarSalida(
+            Model model, 
+            Locale locale,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String correo,
+            @RequestParam(required = false) String username) {
+        
+        if ("exito".equals(tipo) && correo != null) {
+            model.addAttribute("titulo", 
+                messageSource.getMessage("registro.recordar.titulo.exito", null, locale));
+            String mensaje = String.format(
+                messageSource.getMessage("registro.mensaje.recordar.ok", null, locale), 
+                correo);
+            model.addAttribute("mensaje", mensaje);
+        } else if ("error".equals(tipo)) {
+            model.addAttribute("titulo", 
+                messageSource.getMessage("registro.recordar.titulo.exito", null, locale));
+            model.addAttribute("mensaje", 
+                messageSource.getMessage("registro.mensaje.correo.no.encontrado", null, locale));
+        } else if ("registro".equals(tipo) && correo != null) {
+            model.addAttribute("titulo", 
+                messageSource.getMessage("registro.activar", null, locale));
+            String mensaje = String.format(
+                messageSource.getMessage("registro.mensaje.activacion.ok", null, locale), 
+                correo);
+            model.addAttribute("mensaje", mensaje);
+        } else if ("errorRegistro".equals(tipo) && username != null && correo != null) {
+            model.addAttribute("titulo", 
+                messageSource.getMessage("registro.activar", null, locale));
+            String mensaje = String.format(
+                messageSource.getMessage("registro.mensaje.usuario.o.correo", null, locale), 
+                username, correo);
+            model.addAttribute("mensaje", mensaje);
+        } else if ("errorActivacion".equals(tipo)) {
+            model.addAttribute("titulo", 
+                messageSource.getMessage("registro.activar.error", null, locale));
+            model.addAttribute("mensaje", 
+                messageSource.getMessage("usuario.error.activar", null, locale));
+        } else {
+            model.addAttribute("titulo", 
+                messageSource.getMessage("registro.salida.titulo.default", null, locale));
+            model.addAttribute("mensaje", 
+                messageSource.getMessage("registro.salida.mensaje.default", null, locale));
+        }
+        
+        return "registro/salida";
+    }
 }

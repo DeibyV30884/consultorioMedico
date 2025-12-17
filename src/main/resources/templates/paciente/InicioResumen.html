@@ -1,0 +1,95 @@
+<section th:fragment="ResumenPaciente" class="p-3" style="margin-bottom: 50px;">
+    <div class="container-fluid">
+        
+        <div class="row" style="min-height: 300px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                    <div class="card border border-warning shadow-sm rounded-3">
+                        <div class="card-header bg-dark text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-stethoscope"></i> [[#{etiqueta.UltimaCita}]]
+                            </h4>
+                        </div>
+
+                        <div class="card-body">
+                            <div th:if="${ultimaCita != null}">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong><i class="fas fa-calendar"></i> [[#{cita.fecha}]]:</strong> 
+                                           [[${#temporals.format(ultimaCita.fecha, 'dd/MM/yyyy')}]]</p>
+                                        <p><strong><i class="fas fa-clock"></i> [[#{cita.hora}]]:</strong> 
+                                           [[${#temporals.format(ultimaCita.hora, 'hh:mm a')}]]</p>
+                                        <p><strong><i class="fas fa-user-md"></i> [[#{cita.medico}]]:</strong> 
+                                           [[${ultimaCita.medico.nombre}]] [[${ultimaCita.medico.apellido1}]] [[${ultimaCita.medico.apellido2}]]</p>
+                                        <p><strong><i class="fas fa-notes-medical"></i> [[#{cita.tipo}]]:</strong> 
+                                           [[${ultimaCita.tipoConsulta}]]</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong><i class="fas fa-clipboard"></i> [[#{cita.observaciones}]]:</strong></p>
+                                        <p class="text-muted" th:text="${ultimaCita.observaciones != null ? ultimaCita.observaciones : 'Sin observaciones'}"></p>
+                                        
+                                        <p><strong><i class="fas fa-pills"></i> [[#{cita.tratamiento}]]:</strong></p>
+                                        <p class="text-muted" th:text="${ultimaCita.tratamiento != null ? ultimaCita.tratamiento : 'Sin tratamiento especificado'}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div th:if="${ultimaCita == null}" class="text-center p-4">
+                                <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">[[#{mensaje.sin.citas.previas}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="min-height: 300px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                    <div class="card border border-warning shadow-sm rounded-3">
+                        <div class="card-header bg-dark text-white">
+                            <h4 class="mb-0">
+                                <i class="fas fa-prescription-bottle-alt"></i> [[#{etiqueta.MisPrescripciones}]]
+                            </h4>
+                        </div>
+
+                        <div class="card-body">
+                            <div th:if="${prescripciones != null and !prescripciones.empty}">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle rounded-3 overflow-hidden">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th class="fw-semibold"><i class="fas fa-pills"></i> [[#{prescripcion.medicamento}]]</th>
+                                                <th class="fw-semibold"><i class="fas fa-syringe"></i> [[#{prescripcion.dosis}]]</th>
+                                                <th class="fw-semibold"><i class="fas fa-hourglass-half"></i> [[#{prescripcion.duracion}]]</th>
+                                                <th class="fw-semibold"><i class="fas fa-calendar-check"></i> [[#{prescripcion.fecha}]]</th>
+                                                <th class="fw-semibold"><i class="fas fa-user-md"></i> [[#{prescripcion.medico}]]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="p : ${prescripciones}">
+                                                <td>[[${p.medicamento}]]</td>
+                                                <td>[[${p.dosis}]]</td>
+                                                <td>[[${p.duracionDias}]] [[#{prescripcion.dias}]]</td>
+                                                <td>[[${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy')}]]</td>
+                                                <td>[[${p.cita.medico.nombre}]] [[${p.cita.medico.apellido1}]]</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div th:if="${prescripciones == null or prescripciones.empty}" class="text-center p-4">
+                                <i class="fas fa-prescription fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">[[#{mensaje.sin.prescripciones}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

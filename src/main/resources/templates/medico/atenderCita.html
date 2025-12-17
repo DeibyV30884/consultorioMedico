@@ -7,221 +7,329 @@
         <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
         <aside th:replace="~{medico/fragmentos :: sidebar}"></aside>
 
-        <main class="contenido p-4">
+        <main class="contenido p-3" style="margin-bottom: 50px;">
+            <div class="container-fluid">
+                
+                <!-- Alertas -->
+                <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show">
+                    <i class="fa-solid fa-circle-check"></i> [[${todoOk}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
 
-            <!-- Alertas -->
-            <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show">
-                <i class="fa-solid fa-circle-check"></i> [[${todoOk}]]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fa-solid fa-circle-exclamation"></i> [[${error}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
 
-            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-                <i class="fa-solid fa-circle-exclamation"></i> [[${error}]]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+                <div class="row" style="min-height: 704px;">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                        <div style="width: 100%; max-width: 1200px; padding: 20px;">
 
-            <div class="row">
-                <div class="col-md-12">
-
-                    <div class="row py-3 mb-3 bg-light">
-                        <div class="col-md-3 d-grid">
-                            <a th:href="@{'/medico/inicio/' + ${medico.idMedico}}" class="btn btn-primary">
-                                <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]] 
-                            </a>
-                        </div>
-                        <div class="col-md-6 text-center">
-                            <h3><i class="fa-solid fa-user-doctor"></i> [[#{cita.actual}]]</h3>
-                        </div>
-                    </div>
-
-                    <div class="card mb-3">
-                        <div class="card-header bg-info text-white">
-                            <h5><i class="fa-solid fa-user"></i> [[#{paciente.informacion}]]</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <b>[[#{paciente.nombre}]]</b><br>
-                                    <span th:text="${paciente.nombre + ' ' + paciente.apellido1 + ' ' + (paciente.apellido2 ?: '')}"></span>
-                                </div>
-                                <div class="col-md-2">
-                                    <b>[[#{paciente.correo}]]</b><br>
-                                    <span th:text="${paciente.correoElectronico ?: 'N/A'}"></span>
-                                </div>
-                                <div class="col-md-2">
-                                    <b>[[#{paciente.fechaNacimiento}]]</b><br>
-                                    <span th:if="${paciente.fechaNacimiento != null}" 
-                                          th:text="${#temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy')}"></span>
-                                    <span th:if="${paciente.fechaNacimiento == null}">N/A</span>
-                                </div>
-                                <div class="col-md-2">
-                                    <b>[[#{paciente.telefono}]]</b><br>
-                                    <span th:text="${paciente.telefono ?: 'N/A'}"></span>
-                                </div>
-                                <div class="col-md-3">
-                                    <b>[[#{paciente.ocupacion}]]</b><br>
-                                    <span th:text="${paciente.ocupacion ?: 'N/A'}"></span>
-                                </div>
+                            <div class="mb-3">
+                                <a th:href="@{'/medico/inicio/' + ${medico.idMedico}}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]] 
+                                </a>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Antecedentes del Paciente  -->
-                    <div class="card mb-3">
-                        <div class="card-header bg-secondary text-white">
-                            <h5><i class="fa-solid fa-notes-medical"></i> [[#{paciente.antecedentes}]]</h5>
-                        </div>
-                        <div class="card-body">
-                            <form sec:authorize="hasRole('MEDICO')" 
-                                  th:action="@{/medico/ver-expediente}" 
-                                  method="post" class="mb-3">
-                                <input type="hidden" name="idPaciente" th:value="${paciente.idPaciente}"/>
-                                <button type="submit" class="btn btn-secondary">
-                                    <i class="fa-solid fa-file-medical"></i>[[#{accion.verExpediene}]]
-                                </button>
-                            </form>
-                            
-                            <div class="row g-3">
-                                <!-- Antecedentes (solo lectura) -->
-                                <div class="col-md-6">
-                                    <label><strong>[[#{paciente.antecedentesHeredoFamiliares}]]</strong></label>
-                                    <textarea class="form-control" 
-                                              readonly
-                                              th:text="${paciente.antecedentesHeredoFamiliares ?: 'Sin información'}" 
-                                              rows="4"></textarea>
+                            <div class="card border border-warning">
+                                <div class="card-header bg-dark text-white text-center">
+                                    <h1 class="mb-0"><i class="fa-solid fa-user-doctor"></i> [[#{cita.actual}]]</h1>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label><strong>[[#{paciente.antecedentesPersonales}]]</strong></label>
-                                    <textarea class="form-control" 
-                                              readonly
-                                              th:text="${paciente.antecedentesPersonales ?: 'Sin información'}" 
-                                              rows="4"></textarea>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label><strong>[[#{paciente.antecedentesQuirurgicos}]]</strong></label>
-                                    <textarea class="form-control" 
-                                              readonly
-                                              th:text="${paciente.antecedentesQuirurgicos ?: 'Sin información'}" 
-                                              rows="4"></textarea>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label><strong>[[#{paciente.antecedentesGinecoObstetricos}]]</strong></label>
-                                    <textarea class="form-control" 
-                                              readonly
-                                              th:text="${paciente.antecedentesGinecoObstetricos ?: 'Sin información'}" 
-                                              rows="4"></textarea>
-                                </div>
-                            </div>
-                            
-                        </div>
-                    </div>
-
-                    <!-- Última Cita (si existe) -->
-                    <div th:if="${ultimaCita != null}" class="card mb-3">
-                        <div class="card-header bg-secondary text-white">
-                            <h5><i class="fa-solid fa-history"></i> [[#{cita.historial}]]</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <b>Fecha:</b><br>
-                                    <span th:text="${#temporals.format(ultimaCita.fechaHora, 'dd/MM/yyyy')}"></span>
-                                </div>
-                                <div class="col-md-5">
-                                    <b>Observaciones:</b>
-                                    <p class="border p-2 bg-light" th:text="${ultimaCita.observaciones ?: 'Sin observaciones'}"></p>
-                                </div>
-                                <div class="col-md-5">
-                                    <b>Tratamiento:</b>
-                                    <p class="border p-2 bg-light" th:text="${ultimaCita.tratamiento ?: 'Sin tratamiento'}"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Formulario de Consulta Actual -->
-                    <form method="POST" th:action="@{/medico/guardar-consulta}" 
-                          th:object="${cita}" class="was-validated">
-
-                        <input type="hidden" th:field="*{idCita}"/>
-                        <input type="hidden" th:field="*{fechaHora}"/>
-                        <input type="hidden" th:field="*{paciente.idPaciente}"/>
-                        <input type="hidden" th:field="*{medico.idMedico}"/>
-                        <!-- Solo incluir motivoCita si no es null -->
-                        <input type="hidden" th:field="*{motivoCita.idMotivoCita}" th:if="${cita.motivoCita != null}"/>
-
-                        <div class="card mb-3">
-                            <div class="card-header bg-success text-white">
-                                <h5><i class="fa-solid fa-stethoscope"></i> [[#{cita.actual}]]</h5>
-                            </div>
-                            <div class="card-body">
-
-                                <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label>[[#{cita.motivo}]]</label>
-                                        <select class="form-select" th:field="*{motivoCita.idMotivoCita}">
-                                            <option value="">Sin motivo especificado</option>
-                                            <option th:each="motivo : ${motivosCita}" 
-                                                    th:value="${motivo.idMotivoCita}" 
-                                                    th:text="${motivo.nombre}"
-                                                    th:selected="${cita.motivoCita != null && cita.motivoCita.idMotivoCita == motivo.idMotivoCita}">
-                                            </option>
-                                        </select>
+                                <div class="card-body p-4">
+                                    <h5 class="mb-3 text-dark border-bottom pb-2">
+                                        <i class="fa-solid fa-user"></i> [[#{paciente.informacion}]]
+                                    </h5>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="mb-1"><strong>[[#{paciente.nombre}]]</strong></label>
+                                            <p class="form-control-plaintext border-bottom" 
+                                               th:text="${paciente.nombre + ' ' + paciente.apellido1 + ' ' + (paciente.apellido2 ?: '')}"></p>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="mb-1"><strong>[[#{paciente.correo}]]</strong></label>
+                                            <p class="form-control-plaintext border-bottom" 
+                                               th:text="${paciente.correoElectronico ?: 'N/A'}"></p>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="mb-1"><strong>[[#{paciente.fechaNacimiento}]]</strong></label>
+                                            <p class="form-control-plaintext border-bottom">
+                                                <span th:if="${paciente.fechaNacimiento != null}" 
+                                                      th:text="${#temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy')}"></span>
+                                                <span th:if="${paciente.fechaNacimiento == null}">N/A</span>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="mb-1"><strong>[[#{paciente.telefono}]]</strong></label>
+                                            <p class="form-control-plaintext border-bottom" 
+                                               th:text="${paciente.telefono ?: 'N/A'}"></p>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="mb-1"><strong>[[#{paciente.ocupacion}]]</strong></label>
+                                            <p class="form-control-plaintext border-bottom" 
+                                               th:text="${paciente.ocupacion ?: 'N/A'}"></p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <b>[[#{cita.fecha}]]</b><br>
-                                        <span th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy HH:mm')}"></span>
+
+                                    <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                        <i class="fa-solid fa-notes-medical"></i> [[#{paciente.antecedentes}]]
+                                    </h5>
+                                    
+                                    <div class="mb-3">
+                                        <form sec:authorize="hasRole('MEDICO')" 
+                                              th:action="@{/medico/ver-expediente}" 
+                                              method="post">
+                                            <input type="hidden" name="idPaciente" th:value="${paciente.idPaciente}"/>
+                                            <button type="submit" class="btn btn-secondary">
+                                                <i class="fa-solid fa-file-medical"></i> [[#{accion.verExpediene}]]
+                                            </button>
+                                        </form>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label>[[#{cita.estado}]]</label>
-                                        <select class="form-select" th:field="*{estado}">
-                                            <option value="Pendiente">Pendiente</option>
-                                            <option value="Confirmada">Confirmada</option>
-                                            <option value="Completada">Completada</option>
-                                            <option value="Cancelada">Cancelada</option>
-                                        </select>
+                                    
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <label class="mb-2"><strong>[[#{paciente.antecedentesHeredoFamiliares}]]</strong></label>
+                                            <textarea class="form-control" 
+                                                      readonly
+                                                      th:text="${paciente.antecedentesHeredoFamiliares ?: 'Sin información'}" 
+                                                      rows="3"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="mb-2"><strong>[[#{paciente.antecedentesPersonales}]]</strong></label>
+                                            <textarea class="form-control" 
+                                                      readonly
+                                                      th:text="${paciente.antecedentesPersonales ?: 'Sin información'}" 
+                                                      rows="3"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="mb-2"><strong>[[#{paciente.antecedentesQuirurgicos}]]</strong></label>
+                                            <textarea class="form-control" 
+                                                      readonly
+                                                      th:text="${paciente.antecedentesQuirurgicos ?: 'Sin información'}" 
+                                                      rows="3"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="mb-2"><strong>[[#{paciente.antecedentesGinecoObstetricos}]]</strong></label>
+                                            <textarea class="form-control" 
+                                                      readonly
+                                                      th:text="${paciente.antecedentesGinecoObstetricos ?: 'Sin información'}" 
+                                                      rows="3"></textarea>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">
-                                        <b><i class="fa-solid fa-clipboard"></i> [[#{cita.observaciones}]]</b>
-                                    </label>
-                                    <textarea class="form-control" 
-                                              th:field="*{observaciones}" 
-                                              rows="6"
-                                              placeholder="Registre los hallazgos, síntomas y diagnóstico de la consulta"
-                                              ></textarea>
-                                </div>
+                                    <!-- Última Cita (si existe) -->
+                                    <div th:if="${ultimaCita != null}">
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fa-solid fa-history"></i> [[#{cita.historial}]]
+                                        </h5>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-md-2 mb-3">
+                                                <label class="mb-1"><strong>[[#{cita.fecha}]]:</strong></label>
+                                                <p class="form-control-plaintext border-bottom" 
+                                                   th:text="${#temporals.format(ultimaCita.fechaHora, 'dd/MM/yyyy')}"></p>
+                                            </div>
+                                            <div class="col-md-5 mb-3">
+                                                <label class="mb-1"><strong>[[#{cita.observaciones}]]:</strong></label>
+                                                <p class="border p-2 bg-light" 
+                                                   th:text="${ultimaCita.observaciones ?: 'Sin observaciones'}"></p>
+                                            </div>
+                                            <div class="col-md-5 mb-3">
+                                                <label class="mb-1"><strong>[[#{cita.tratamiento}]]:</strong></label>
+                                                <p class="border p-2 bg-light" 
+                                                   th:text="${ultimaCita.tratamiento ?: 'Sin tratamiento'}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                <div class="col-md-6">
-                                    <label class="form-label">
-                                        <b><i class="fa-solid fa-pills"></i> [[#{cita.tratamiento}]]</b>
-                                    </label>
-                                    <textarea class="form-control" 
-                                              th:field="*{tratamiento}" 
-                                              rows="6"
-                                              placeholder="Indique medicamentos, dosis, frecuencia y recomendaciones"
-                                              ></textarea>
+                                    <!-- Formulario de Consulta Actual -->
+                                    <form method="POST" th:action="@{/medico/guardar-consulta}" 
+                                          th:object="${cita}" class="was-validated">
+
+                                        <input type="hidden" th:field="*{idCita}"/>
+                                        <input type="hidden" th:field="*{fechaHora}"/>
+                                        <input type="hidden" th:field="*{paciente.idPaciente}"/>
+                                        <input type="hidden" th:field="*{medico.idMedico}"/>
+                                        <input type="hidden" th:field="*{motivoCita.idMotivoCita}" th:if="${cita.motivoCita != null}"/>
+
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fa-solid fa-stethoscope"></i> [[#{cita.actual}]]
+                                        </h5>
+
+                                        <div class="row mb-3">
+                                            <div class="col-md-4 mb-3">
+                                                <label class="mb-2" for="motivoCita">[[#{cita.motivo}]]</label>
+                                                <select class="form-select" id="motivoCita" th:field="*{motivoCita.idMotivoCita}">
+                                                    <option value="">[[#{cita.motivo.sin.especificar}]]</option>
+                                                    <option th:each="motivo : ${motivosCita}" 
+                                                            th:value="${motivo.idMotivoCita}" 
+                                                            th:text="${motivo.nombre}"
+                                                            th:selected="${cita.motivoCita != null && cita.motivoCita.idMotivoCita == motivo.idMotivoCita}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="mb-2"><strong>[[#{cita.fecha}]]</strong></label>
+                                                <p class="form-control-plaintext border-bottom" 
+                                                   th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy HH:mm')}"></p>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label class="mb-2" for="estado">[[#{cita.estado}]]</label>
+                                                <select class="form-select" id="estado" th:field="*{estado}">
+                                                    <option value="Pendiente">[[#{cita.estado.pendiente}]]</option>
+                                                    <option value="Confirmada">[[#{cita.estado.confirmada}]]</option>
+                                                    <option value="Completada">[[#{cita.estado.completada}]]</option>
+                                                    <option value="Cancelada">[[#{cita.estado.cancelada}]]</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label mb-2">
+                                                    <i class="fa-solid fa-clipboard"></i> [[#{cita.observaciones}]]
+                                                </label>
+                                                <textarea class="form-control" 
+                                                          th:field="*{observaciones}" 
+                                                          rows="5"
+                                                          th:placeholder="#{cita.observaciones.placeholder}"></textarea>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label mb-2">
+                                                    <i class="fa-solid fa-pills"></i> [[#{cita.tratamiento}]]
+                                                </label>
+                                                <textarea class="form-control" 
+                                                          th:field="*{tratamiento}" 
+                                                          rows="5"
+                                                          th:placeholder="#{cita.tratamiento.placeholder}"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center my-3">
+                                            <button type="submit" class="btn btn-secondary w-100">
+                                                <i class="fas fa-save"></i> [[#{accion.guardar}]]
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Sección de Prescripciones -->
+                                    <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                        <i class="fa-solid fa-prescription"></i> [[#{prescripcion.titulo}]]
+                                    </h5>
+                                    
+                                    <div class="mb-3">
+                                        <button type="button" class="btn btn-primary" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalAgregarPrescripcion">
+                                            <i class="fa-solid fa-plus"></i> [[#{prescripcion.agregar}]]
+                                        </button>
+                                    </div>
+
+                                    <div th:if="${prescripciones.isEmpty()}" class="text-center text-muted py-3 mb-3">
+                                        <i class="fa-solid fa-file-prescription fa-3x mb-2"></i>
+                                        <p>[[#{prescripcion.sin.registros}]]</p>
+                                    </div>
+
+                                    <div th:if="${!prescripciones.isEmpty()}" class="table-responsive mb-3">
+                                        <table class="table table-hover">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>[[#{prescripcion.tabla.medicamento}]]</th>
+                                                    <th>[[#{prescripcion.tabla.dosis}]]</th>
+                                                    <th>[[#{prescripcion.tabla.duracion}]]</th>
+                                                    <th>[[#{prescripcion.tabla.fecha}]]</th>
+                                                    <th class="text-center">[[#{prescripcion.tabla.acciones}]]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="prescripcion : ${prescripciones}">
+                                                    <td th:text="${prescripcion.medicamento}"></td>
+                                                    <td th:text="${prescripcion.dosis}"></td>
+                                                    <td th:text="${prescripcion.duracionDias}"></td>
+                                                    <td th:text="${prescripcion.fechaCreacion != null ? #temporals.format(prescripcion.fechaCreacion, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                                                    <td class="text-center">
+                                                        <form th:action="@{'/medico/eliminar-prescripcion/' + ${prescripcion.idPrescripcion}}" method="post">
+                                                            <input type="hidden" name="idCita" th:value="${cita.idCita}"/>
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
                                 </div>
-                            </div> 
+                            </div>
+
                         </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fas fa-save"></i> [[#{accion.guardar}]]
-                            </button>
-                        </div>
-
                     </div>
-                </form>
+                </div>
 
-            </div>
             </div>
         </main>
+
+        <!-- Modal para Agregar Prescripción -->
+        <div class="modal fade" id="modalAgregarPrescripcion" tabindex="-1" aria-labelledby="modalAgregarPrescripcionLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/medico/agregar-prescripcion}" method="post">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalAgregarPrescripcionLabel">
+                                <i class="fa-solid fa-prescription-bottle-medical"></i> [[#{prescripcion.nueva}]]
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="idCita" th:value="${cita.idCita}"/>
+                            
+                            <div class="mb-3">
+                                <label for="medicamento" class="form-label">[[#{modal.prescripcion.medicamento.label}]]</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="medicamento" 
+                                       name="medicamento" 
+                                       required
+                                       th:placeholder="#{modal.prescripcion.medicamento.placeholder}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dosis" class="form-label">[[#{modal.prescripcion.dosis.label}]]</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="dosis" 
+                                       name="dosis" 
+                                       required
+                                       th:placeholder="#{modal.prescripcion.dosis.placeholder}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="duracionDias" class="form-label">[[#{modal.prescripcion.duracion.label}]]</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="duracionDias" 
+                                       name="duracionDias" 
+                                       min="1" 
+                                       required
+                                       th:placeholder="#{modal.prescripcion.duracion.placeholder}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fa-solid fa-times"></i> [[#{modal.prescripcion.cancelar}]]
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-save"></i> [[#{modal.prescripcion.guardar}]]
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <footer th:replace="~{general/fragmentos :: footer}"></footer>
     </body>

@@ -6,6 +6,10 @@
     <body>
         <header th:replace="~{general/fragmentosUsuarios :: header}"/>
         <aside th:replace="~{medico/fragmentos :: sidebar}"/>
+        <main class="contenido p-4">
+            <section th:replace="~{medico/fragmentos :: perfil}"/>
+        </main>
+        <div th:replace="~{medico/fragmentos :: modalEliminarPerfil}"></div>
         <footer th:replace="~{general/fragmentos :: footer}"/>    
     </body>
 </html>

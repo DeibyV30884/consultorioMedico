@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"      
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
@@ -8,6 +9,7 @@
                 <main class="contenido p-4">
         <section th:replace="~{paciente/fragmentos :: perfil}"/>
                 </main>
+        <div th:replace="~{paciente/fragmentos :: modalEliminarPerfil}"></div>
         <footer th:replace="~{general/fragmentos :: footer}"/>    
     </body>
 </html>

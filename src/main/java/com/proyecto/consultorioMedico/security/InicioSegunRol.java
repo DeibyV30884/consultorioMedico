@@ -63,7 +63,7 @@ public class InicioSegunRol implements AuthenticationSuccessHandler {
             } else if (role.equals("ROLE_CLIENTE")) { 
                 Paciente paciente = pacienteService.getPacientePorIdUsuario(usuario.getIdUsuario());
                 if (paciente != null) {
-                    redirectUrl = "/paciente/tratamientos/" + paciente.getIdPaciente();
+                    redirectUrl = "/paciente/inicio/" + paciente.getIdPaciente();
                 } else {
                     System.out.println("Error, el suario no es valido" + username);
                     redirectUrl = "/";

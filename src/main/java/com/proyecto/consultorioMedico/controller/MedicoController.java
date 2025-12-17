@@ -3,16 +3,21 @@ package com.proyecto.consultorioMedico.controller;
 import com.proyecto.consultorioMedico.domain.Cita;
 import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.domain.Paciente;
+import com.proyecto.consultorioMedico.domain.Prescripcion;
 import com.proyecto.consultorioMedico.service.CitaService;
 import com.proyecto.consultorioMedico.service.MedicoService;
 import com.proyecto.consultorioMedico.service.MotivoCitaService;
 import com.proyecto.consultorioMedico.service.PacienteService;
+import com.proyecto.consultorioMedico.service.PrescripcionService;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import com.proyecto.consultorioMedico.domain.Medico;
 import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +47,12 @@ public class MedicoController {
     @Autowired
     private UsuarioService usuarioService;
     
+    @Autowired
+    private PrescripcionService prescripcionService;
+    
+    @Autowired
+    private MessageSource messageSource;
+    
     private boolean validarAcceso(Integer idMedico) {
         Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
         Medico medicoLogueado = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
@@ -50,7 +61,7 @@ public class MedicoController {
     }
 
     @GetMapping("/inicio")
-    public String inicio(Model model) {
+    public String inicio(Model model, Locale locale) {
         Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
         Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
         
@@ -58,7 +69,7 @@ public class MedicoController {
             return "redirect:/";
         }
         
-        model.addAttribute("titulo", "Panel Médico");
+        model.addAttribute("titulo", messageSource.getMessage("medico.panel", null, locale));
         model.addAttribute("medico", medico);
 
         List<Cita> citasProximas = citaService.buscarCitasHoy();
@@ -86,13 +97,13 @@ public class MedicoController {
     }
 
     @GetMapping("/inicio/{idMedico}")
-    public String inicioConId(@PathVariable Integer idMedico, Model model) {
+    public String inicioConId(@PathVariable Integer idMedico, Model model, Locale locale) {
         if (!validarAcceso(idMedico)) {
             return "redirect:/";
         }
         
         Medico medico = medicoService.getMedicoPorId(idMedico);
-        model.addAttribute("titulo", "Panel Médico");
+        model.addAttribute("titulo", messageSource.getMessage("medico.panel", null, locale));
         model.addAttribute("medico", medico);
         
         List<Cita> citasProximas = citaService.buscarCitasHoy();
@@ -120,7 +131,7 @@ public class MedicoController {
     }
 
     @GetMapping("/perfil")
-    public String perfil(Model model) {
+    public String perfil(Model model, Locale locale) {
         Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
         Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
         
@@ -128,25 +139,33 @@ public class MedicoController {
             return "redirect:/";
         }
         
-        model.addAttribute("titulo", "Perfil");
+        model.addAttribute("titulo", messageSource.getMessage("sidebar.perfil", null, locale));
         model.addAttribute("medico", medico);
+        model.addAttribute("usuario", usuarioLogueado);
         return "medico/perfil";
     }
     
     @GetMapping("/perfil/{idMedico}")
-    public String perfilConId(@PathVariable Integer idMedico, Model model) {
+    public String perfilConId(@PathVariable Integer idMedico, Model model, Locale locale) {
         if (!validarAcceso(idMedico)) {
             return "redirect:/";
         }
         
         Medico medico = medicoService.getMedicoPorId(idMedico);
-        model.addAttribute("titulo", "Perfil");
+        Usuario usuario = usuarioService.getUsuarioPorId(medico.getIdUsuario()).orElse(null);
+        
+        if (usuario == null) {
+            return "redirect:/";
+        }
+        
+        model.addAttribute("titulo", messageSource.getMessage("sidebar.perfil", null, locale));
         model.addAttribute("medico", medico);
+        model.addAttribute("usuario", usuario);
         return "medico/perfil";
     }
 
     @GetMapping("/expedientes")
-    public String expedientes(Model model) {
+    public String expedientes(Model model, Locale locale) {
         Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
         Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
         
@@ -154,7 +173,7 @@ public class MedicoController {
             return "redirect:/";
         }
         
-        model.addAttribute("titulo", "Expedientes");
+        model.addAttribute("titulo", messageSource.getMessage("sidebar.expedientes", null, locale));
         model.addAttribute("medico", medico);
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("paciente", new Paciente());
@@ -164,13 +183,13 @@ public class MedicoController {
     }
     
     @GetMapping("/expedientes/{idMedico}")
-    public String expedientesConId(@PathVariable Integer idMedico, Model model) {
+    public String expedientesConId(@PathVariable Integer idMedico, Model model, Locale locale) {
         if (!validarAcceso(idMedico)) {
             return "redirect:/";
         }
         
         Medico medico = medicoService.getMedicoPorId(idMedico);
-        model.addAttribute("titulo", "Expedientes");
+        model.addAttribute("titulo", messageSource.getMessage("sidebar.expedientes", null, locale));
         model.addAttribute("medico", medico);
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("paciente", new Paciente());
@@ -180,7 +199,10 @@ public class MedicoController {
     }
     
     @PostMapping("/expedientes/buscar")
-    public String buscarPacienteExpediente(@RequestParam(value = "texto") String texto, Model model) {
+    public String buscarPacienteExpediente(
+            @RequestParam(value = "texto") String texto, 
+            Model model,
+            Locale locale) {
         Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
         Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
         
@@ -194,13 +216,13 @@ public class MedicoController {
         model.addAttribute("pacientes", pacientesEncontrados);
         model.addAttribute("texto", texto);
         model.addAttribute("paciente", new Paciente());
-        model.addAttribute("titulo", "Expedientes");
+        model.addAttribute("titulo", messageSource.getMessage("sidebar.expedientes", null, locale));
         
         return "medico/expedientes";
     }
 
     @GetMapping("/atender-cita/{idCita}")
-    public String atenderCita(@PathVariable Integer idCita, Model model) {
+    public String atenderCita(@PathVariable Integer idCita, Model model, Locale locale) {
         Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
         Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
         
@@ -216,17 +238,26 @@ public class MedicoController {
         Paciente paciente = citaActual.getPaciente();
         Cita ultimaCita = citaService.getUltimaCitaCompletada(paciente.getIdPaciente());
         
+        List<Prescripcion> prescripciones = prescripcionService.getPrescripcionesPorCita(idCita);
+        
+        model.addAttribute("titulo", messageSource.getMessage("accion.atender", null, locale));
         model.addAttribute("medico", medico);
         model.addAttribute("cita", citaActual);
         model.addAttribute("paciente", paciente);
         model.addAttribute("ultimaCita", ultimaCita);
         model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
+        model.addAttribute("prescripciones", prescripciones);
+        model.addAttribute("nuevaPrescripcion", new Prescripcion());
         
         return "medico/atenderCita";
     }
 
     @PostMapping("/guardar-consulta")
-    public String guardarConsulta(Cita cita, Paciente paciente, RedirectAttributes redirectAttributes) {
+    public String guardarConsulta(
+            Cita cita, 
+            Paciente paciente, 
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
         try {
             Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
             Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
@@ -234,16 +265,16 @@ public class MedicoController {
             Optional<Cita> citaActualOpt = citaService.getCita(cita.getIdCita());
             
             if (citaActualOpt.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Cita no encontrada");
+                redirectAttributes.addFlashAttribute("error", 
+                    messageSource.getMessage("cita.error01", null, locale));
                 return medico != null ? "redirect:/medico/inicio/" + medico.getIdMedico() : "redirect:/medico/inicio";
             }
             
             Cita citaActual = citaActualOpt.get();
             
-            // Validar que el estado sea válido
             if (!EstadoCita.esValido(cita.getEstado())) {
                 redirectAttributes.addFlashAttribute("error",
-                    "Estado de cita inválido. Debe ser: Pendiente, Confirmada, Completada o Cancelada.");
+                    messageSource.getMessage("cita.error.estado.invalido", null, locale));
                 return medico != null ? "redirect:/medico/inicio/" + medico.getIdMedico() : "redirect:/medico/inicio";
             }
             
@@ -254,17 +285,85 @@ public class MedicoController {
                     
             citaService.save(citaActual);
             
-            redirectAttributes.addFlashAttribute("todoOk", "Consulta guardada exitosamente");
+            redirectAttributes.addFlashAttribute("todoOk", 
+                messageSource.getMessage("medico.consulta.guardada", null, locale));
             return medico != null ? "redirect:/medico/inicio/" + medico.getIdMedico() : "redirect:/medico/inicio";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("error", null, locale) + ": " + e.getMessage());
             e.printStackTrace();
             return "redirect:/medico/inicio";
         }
     }
+    
+    @PostMapping("/agregar-prescripcion")
+    public String agregarPrescripcion(
+            @RequestParam Integer idCita,
+            @RequestParam String medicamento,
+            @RequestParam String dosis,
+            @RequestParam Integer duracionDias,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+        try {
+            Optional<Cita> citaOpt = citaService.getCita(idCita);
+            
+            if (citaOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", 
+                    messageSource.getMessage("cita.error01", null, locale));
+                return "redirect:/medico/inicio";
+            }
+            
+            Prescripcion prescripcion = new Prescripcion();
+            prescripcion.setCita(citaOpt.get());
+            prescripcion.setMedicamento(medicamento);
+            prescripcion.setDosis(dosis);
+            prescripcion.setDuracionDias(duracionDias);
+            
+            prescripcionService.save(prescripcion);
+            
+            redirectAttributes.addFlashAttribute("todoOk", 
+                messageSource.getMessage("prescripcion.agregada", null, locale));
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("prescripcion.error.agregar", null, locale) + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return "redirect:/medico/atender-cita/" + idCita;
+    }
+    
+    @PostMapping("/eliminar-prescripcion/{idPrescripcion}")
+    public String eliminarPrescripcion(
+            @PathVariable Integer idPrescripcion,
+            @RequestParam Integer idCita,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+        try {
+            Optional<Prescripcion> prescripcionOpt = prescripcionService.getPrescripcion(idPrescripcion);
+            
+            if (prescripcionOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", 
+                    messageSource.getMessage("prescripcion.no.encontrada", null, locale));
+                return "redirect:/medico/atender-cita/" + idCita;
+            }
+            
+            prescripcionService.delete(prescripcionOpt.get());
+            redirectAttributes.addFlashAttribute("todoOk", 
+                messageSource.getMessage("prescripcion.eliminada", null, locale));
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("prescripcion.error.eliminar", null, locale) + ": " + e.getMessage());
+        }
+        
+        return "redirect:/medico/atender-cita/" + idCita;
+    }
 
     @PostMapping("/ver-expediente")
-    public String verExpediente(@RequestParam Integer idPaciente, Model model, RedirectAttributes redirectAttributes) {
+    public String verExpediente(
+            @RequestParam Integer idPaciente, 
+            Model model, 
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
         Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
         Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
         
@@ -277,17 +376,22 @@ public class MedicoController {
         Paciente paciente = pacienteService.getPaciente(pacienteTemp);
 
         if (paciente == null) {
-            redirectAttributes.addFlashAttribute("error", "Paciente no encontrado");
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("paciente.no.encontrado", null, locale));
             return "redirect:/medico/expedientes/" + medico.getIdMedico();
         }
 
+        model.addAttribute("titulo", messageSource.getMessage("accion.verExpediene", null, locale));
         model.addAttribute("medico", medico);
         model.addAttribute("paciente", paciente);
         return "medico/modificarExpediente";
     }
 
     @PostMapping("/guardarExpediente")
-    public String guardarExpediente(Paciente paciente, RedirectAttributes redirectAttributes) {
+    public String guardarExpediente(
+            Paciente paciente, 
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
         try {
             Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
             Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
@@ -300,24 +404,118 @@ public class MedicoController {
                 pacienteActual.setAntecedentesGinecoObstetricos(paciente.getAntecedentesGinecoObstetricos());
 
                 pacienteService.save(pacienteActual);
-                redirectAttributes.addFlashAttribute("todoOk", "Expediente actualizado exitosamente");
+            redirectAttributes.addFlashAttribute("todoOk", 
+                messageSource.getMessage("expediente.actualizado", null, locale));
             
             return medico != null ? "redirect:/medico/expedientes/" + medico.getIdMedico() : "redirect:/medico/expedientes";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al actualizar expediente");
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("expediente.error.actualizar", null, locale));
             return "redirect:/medico/expedientes";
         }
     }
     
     @PostMapping("/guardar/{idMedico}")
-    public String guardarMedico(@PathVariable Integer idMedico, Medico medico, Model model) {
-        if (!validarAcceso(idMedico)){
-            return  "redirect:/";
+    public String guardarMedico(
+            @PathVariable Integer idMedico, 
+            Medico medico,
+            @RequestParam(required = false) String correo,
+            @RequestParam(required = false) String telefono,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+        
+        if (!validarAcceso(idMedico)) {
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("e403.texto", null, locale));
+            return "redirect:/";
         }
         
-        medico.setIdMedico(idMedico);
-        medicoService.save(medico);
+        try {
+            Medico medicoExistente = medicoService.getMedicoPorId(idMedico);
+            
+            if (medicoExistente == null) {
+                redirectAttributes.addFlashAttribute("error", 
+                    messageSource.getMessage("medico.no.encontrado", null, locale));
+                return "redirect:/";
+            }
+
+            Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
+            
+            if (correo != null && !correo.trim().isEmpty()) {
+                if (!correo.equals(usuarioLogueado.getCorreo())) {
+                    if (usuarioService.existeCorreo(correo)) {
+                        redirectAttributes.addFlashAttribute("error", 
+                            messageSource.getMessage("controller.usuarios.registro.correo.en.sistema", null, locale));
+                        return "redirect:/medico/perfil/" + idMedico;
+                    }
+                }
+            }
+            
+            medico.setIdMedico(idMedico);
+            medico.setIdUsuario(medicoExistente.getIdUsuario());
+            
+            medicoService.save(medico);
+            
+            Usuario usuario = usuarioService.getUsuarioPorId(medicoExistente.getIdUsuario()).orElse(null);
+            
+            if (usuario != null) {
+                usuario.setNombre(medico.getNombre());
+                usuario.setApellido1(medico.getApellido1());
+                usuario.setApellido2(medico.getApellido2());
+                usuario.setCorreo(correo);
+                usuario.setTelefono(telefono);
+                usuarioService.save(usuario);
+            }
+            
+            redirectAttributes.addFlashAttribute("mensaje", 
+                messageSource.getMessage("perfil.actualizado.correctamente", null, locale));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", 
+                messageSource.getMessage("error.actualizar.perfil", null, locale) + ": " + e.getMessage());
+        }
+        
         return "redirect:/medico/perfil/" + idMedico;
     }
-    
+
+    @PostMapping("/desactivar/{idMedico}")
+    public String desactivarPerfil(
+            @PathVariable Integer idMedico,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+
+        if (!validarAcceso(idMedico)) {
+            return "redirect:/";
+        }
+
+        try {
+            Medico medico = medicoService.getMedicoPorId(idMedico);
+
+            if (medico == null) {
+                redirectAttributes.addFlashAttribute("error", 
+                    messageSource.getMessage("medico.no.encontrado", null, locale));
+                return "redirect:/";
+            }
+
+            Usuario usuario = usuarioService.getUsuarioPorId(medico.getIdUsuario()).orElse(null);
+
+            if (usuario != null) {
+                usuario.setActivo(false);
+                usuarioService.save(usuario);
+            }
+
+            SecurityContextHolder.clearContext();
+
+            redirectAttributes.addFlashAttribute("mensaje",
+                messageSource.getMessage("medico.cuenta.desactivada", null, locale));
+            return "redirect:/login?cuentaDesactivada=true";
+
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+            redirectAttributes.addFlashAttribute("error",
+                messageSource.getMessage("medico.error.desactivar", null, locale) + ": " + e.getMessage());
+            return "redirect:/login";
+        }
+    }
 }

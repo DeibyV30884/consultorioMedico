@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"      
@@ -6,6 +7,10 @@
     <body>
         <header th:replace="~{general/fragmentosUsuarios :: header}"/>
         <aside th:replace="~{secretaria/fragmentos :: sidebar}"/>
+        <main class="contenido p-4">
+            <section th:replace="~{secretaria/fragmentos :: perfil}"/>
+        </main>
+        <div th:replace="~{secretaria/fragmentos :: modalEliminarPerfil}"></div>
         <footer th:replace="~{general/fragmentos :: footer}"/>    
     </body>
 </html>

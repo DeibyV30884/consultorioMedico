@@ -6,6 +6,9 @@
     <body>
         <header th:replace="~{general/fragmentosUsuarios :: header}"/>
         <aside th:replace="~{paciente/fragmentos :: sidebar}"/>
+        <main class="contenido p-4">
+            <div th:replace="~{paciente/inicioResumen :: ResumenPaciente}"></div>
+        </main>
         <footer th:replace="~{general/fragmentos :: footer}"/>    
     </body>
 </html>
