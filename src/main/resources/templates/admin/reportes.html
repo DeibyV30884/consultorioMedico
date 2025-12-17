@@ -6,6 +6,54 @@
     <body>
         <header th:replace="~{general/fragmentosUsuarios :: header}"/>
         <aside th:replace="~{admin/fragmentos :: sidebar}"/>
+        <main class="contenido p-4">
+            <div class="container-fluid">
+                <div class="row mb-3">
+                    <div class="col">
+                        <h1><i class="fas fa-users"></i> Usuarios por Rol</h1>
+                    </div>
+                </div>
+
+                <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle"></i> [[${todoOk}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="row p-3">
+                    <div class="col-md-9">
+                        <div class="card shadow-sm rounded-3">
+                            <div class="card-body">
+                                <table class="table table-hover align-middle rounded-3 overflow-hidden">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>[[#{admin.usuarios.rol.admin}]]</th>
+                                            <th>[[#{admin.usuarios.rol.medico}]]</th>
+                                            <th>[[#{admin.usuarios.rol.secretaria}]]</th>
+                                            <th>[[#{admin.usuarios.rol.paciente}]]</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fs-5">[[${totalAdministradores}]]</td>
+                                            <td class="fs-5">[[${totalMedicos}]]</td>
+                                            <td class="fs-5">[[${totalSecretarias}]]</td>
+                                            <td class="fs-5">[[${totalPacientes}]]</td>
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </main>
         <footer th:replace="~{general/fragmentos :: footer}"/>    
     </body>
 </html>
