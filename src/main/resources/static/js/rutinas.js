@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('modalDescripcion').textContent = button.getAttribute('data-bs-descripcion');
         });
     }
-
+    
     const modalCancelar = document.getElementById('modalCancelar');
     if (modalCancelar) {
         modalCancelar.addEventListener('show.bs.modal', function (event) {

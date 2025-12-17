@@ -1,6 +1,7 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.service.CitaService;
 import java.util.List;
 import com.proyecto.consultorioMedico.service.PacienteService;
@@ -19,21 +20,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-
 @RequestMapping("/secretaria")
 public class SecretariaController {
 
     @Autowired
     private CitaService citaService;
-  
+
+    @Autowired
+    private MedicoService medicoService;
+
     @Autowired
     private PacienteService pacienteService;
     
     @Autowired
     private UsuarioService usuarioService;
-    
-    @Autowired
-    private MedicoService medicoService;
     
     @ModelAttribute("usuario")
     public Usuario agregarUsuarioLogueado() {
@@ -48,8 +48,35 @@ public class SecretariaController {
     @GetMapping("/inicio")
     public String inicio(Model model) {
         model.addAttribute("titulo", "Panel de Secretaría");
+        List<Cita> citas = citaService.buscarCitasHoy();
+
+        int total = citas.size();
+        int completas = 0;
+        int pendientes = 0;
+
+        for (Cita c : citas) {
+            if (EstadoCita.COMPLETADA.equals(c.getEstado())) {
+                completas++;
+            }
+            if (EstadoCita.PENDIENTE.equals(c.getEstado())) {
+                pendientes++;
+            }
+        }
+
+        model.addAttribute("total", total);
+        model.addAttribute("citasproximas", citas);
+        model.addAttribute("completas", completas);
+        model.addAttribute("pendientes", pendientes);
+
         return "secretaria/inicio";
     }
+
+    @GetMapping("/perfil")
+    public String perfil(Model model) {
+        model.addAttribute("titulo", "perfil");
+        return "secretaria/perfil";
+    }
+
     
     @GetMapping("/perfil/{id}")
     public String perfil(@PathVariable("id") Integer id, Model model) {
@@ -57,9 +84,9 @@ public class SecretariaController {
             return "redirect:/";
         }
         
-            model.addAttribute("titulo", "perfil" );
-            return "secretaria/perfil";  
-        } 
+        model.addAttribute("titulo", "perfil" );
+        return "secretaria/perfil";  
+    } 
     
     @GetMapping("/citas")
     public String citas(Model model) {
@@ -79,6 +106,7 @@ public class SecretariaController {
         model.addAttribute("pacientes", pacientes);
         model.addAttribute("paciente", new Paciente());
         model.addAttribute("titulo", "pacientes");
+        model.addAttribute("medicos", medicoService.getMedicos());
         return "secretaria/pacientes";
     }
     

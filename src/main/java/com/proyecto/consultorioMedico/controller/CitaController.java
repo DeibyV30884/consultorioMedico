@@ -1,6 +1,7 @@
 package com.proyecto.consultorioMedico.controller;
 
 import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.domain.Paciente;
 import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.CitaService;
@@ -19,6 +20,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +37,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CitaController {
 
     @Autowired
-    private CitaService citaService;//-> CRUD
+    private CitaService citaService;
 
+    @Autowired
+    private PacienteService pacienteService;
+
+    @Autowired
+    private MedicoService medicoService;
 
     @Autowired
     private MessageSource messageSource;
@@ -44,18 +51,12 @@ public class CitaController {
     @Autowired
     private UsuarioService usuarioService;
     
-    @Autowired
-    private MedicoService medicoService;
-    
-    @Autowired
-    private PacienteService pacienteService;
-    
     @ModelAttribute("usuario")
     public Usuario agregarUsuarioLogueado() {
         return usuarioService.getUsuarioLogueado();
     }
 
-    @GetMapping("/listado") 
+    @GetMapping("/listado")
     public String inicio(Model model) {
         var citas = citaService.getCitas();
         model.addAttribute("citas", citas);
@@ -88,7 +89,13 @@ public class CitaController {
             LocalDate fechaCita = LocalDate.parse(fecha);
             LocalTime horaCita = LocalTime.parse(hora);
             
-            boolean hayConflicto = citaService.validarConflictoHorario (idMedico, fechaCita, horaCita);
+            if (!EstadoCita.esValido(estado)) {
+                redirectAttributes.addFlashAttribute("error",
+                    "Estado de cita inválido. Tiene que ser: Pendiente, Confirmada, Completada o Cancelada.");
+                return "redirect:/secretaria/citasRegistro";
+            }
+            
+            boolean hayConflicto = citaService.validarConflictoHorario(idMedico, fechaCita, horaCita);
             
             if (hayConflicto) {
                 redirectAttributes.addFlashAttribute("error",
@@ -121,38 +128,53 @@ public class CitaController {
     }
     
     @PostMapping("/modificar")
-    public String modificar(Cita cita, Model model) {
-        cita = citaService.getCita(cita);
-        model.addAttribute("cita", cita);
-        return "secretaria/modifica";
+    public String modificar(@RequestParam("idCita") Integer idCita, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Cita cita = citaService.getCitaPorId(idCita);
+            
+            if (cita == null) {
+                redirectAttributes.addFlashAttribute("error", "Cita no encontrada");
+                return "redirect:/secretaria/citas";
+            }
+            
+            model.addAttribute("cita", cita);
+            model.addAttribute("medicos", medicoService.getMedicos());
+            model.addAttribute("pacientes", pacienteService.getPacientes());
+            
+            return "secretaria/modifica";
+            
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al cargar la cita: " + e.getMessage());
+            return "redirect:/secretaria/citas";
+        }
     }
     
-@GetMapping("/buscarPaciente")
-@ResponseBody
-public List<Map<String, Object>> buscarPaciente(@RequestParam String termino) {
-    List<Paciente> pacientes = pacienteService.buscarPorNombreOApellido(termino);
-    List<Map<String, Object>> resultado = new ArrayList<>();
-    
-    for (int i = 0; i < pacientes.size(); i++) {
-        Paciente paciente = pacientes.get(i);
-        Map<String, Object> pacienteMap = new HashMap<>();
-        Integer idPaciente = paciente.getIdPaciente();
-        String nombre = paciente.getNombre();
-        String apellido1 = paciente.getApellido1();
-        String apellido2 = paciente.getApellido2();
-        String nombreCompleto = nombre + " " + apellido1;
+    @GetMapping("/buscarPaciente")
+    @ResponseBody
+    public List<Map<String, Object>> buscarPaciente(@RequestParam String termino) {
+        List<Paciente> pacientes = pacienteService.buscarPorNombreOApellido(termino);
+        List<Map<String, Object>> resultado = new ArrayList<>();
         
-        if (apellido2 != null) {
-            nombreCompleto = nombreCompleto + " " + apellido2;
+        for (int i = 0; i < pacientes.size(); i++) {
+            Paciente paciente = pacientes.get(i);
+            Map<String, Object> pacienteMap = new HashMap<>();
+            Integer idPaciente = paciente.getIdPaciente();
+            String nombre = paciente.getNombre();
+            String apellido1 = paciente.getApellido1();
+            String apellido2 = paciente.getApellido2();
+            String nombreCompleto = nombre + " " + apellido1;
+            
+            if (apellido2 != null) {
+                nombreCompleto = nombreCompleto + " " + apellido2;
+            }
+            
+            pacienteMap.put("id", idPaciente);
+            pacienteMap.put("nombre", nombreCompleto);
+            resultado.add(pacienteMap);
         }
         
-        pacienteMap.put("id", idPaciente);
-        pacienteMap.put("nombre", nombreCompleto);
-        resultado.add(pacienteMap);
+        return resultado;
     }
-    
-    return resultado;
-}
     
     @PostMapping("/guardar")
     public String guardar(Cita citaFormulario, RedirectAttributes redirectAttributes) {
@@ -161,6 +183,12 @@ public List<Map<String, Object>> buscarPaciente(@RequestParam String termino) {
             
             if (citaReal == null) {
                 redirectAttributes.addFlashAttribute("error", "Cita no encontrada");
+                return "redirect:/secretaria/citas";
+            }
+            
+            if (!EstadoCita.esValido(citaFormulario.getEstado())) {
+                redirectAttributes.addFlashAttribute("error",
+                    "Estado de cita inválido. Debe ser: Pendiente, Confirmada, Completada o Cancelada.");
                 return "redirect:/secretaria/citas";
             }
             
@@ -189,10 +217,10 @@ public List<Map<String, Object>> buscarPaciente(@RequestParam String termino) {
             
             citaService.save(citaReal);
             
-    redirectAttributes.addFlashAttribute("todoOk",
-            messageSource.getMessage("mensaje.actualizado",
-                    null,
-                    Locale.getDefault()));
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("mensaje.actualizado",
+                            null,
+                            Locale.getDefault()));
                 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error",
@@ -203,9 +231,11 @@ public List<Map<String, Object>> buscarPaciente(@RequestParam String termino) {
     }
     
     @PostMapping("/eliminar")
-    public String eliminar(Cita cita, RedirectAttributes redirectAttributes) {
-        cita = citaService.getCita(cita);
-        if (cita == null) {  // La cita no existe...
+    public String eliminar(@RequestParam("idCita") Integer idCita, RedirectAttributes redirectAttributes) {
+        try {
+            Cita cita = citaService.getCitaPorId(idCita);
+            
+            if (cita == null) {  // La cita no existe...
             redirectAttributes.addFlashAttribute("error",
                     messageSource.getMessage("cita.error01",
                             null,
@@ -221,7 +251,12 @@ public List<Map<String, Object>> buscarPaciente(@RequestParam String termino) {
                     messageSource.getMessage("cita.error03",
                             null,
                             Locale.getDefault()));
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error",
+                "Error al eliminar la cita: " + e.getMessage());
         }
+        
         return "redirect:/secretaria/citas";
     }
 }

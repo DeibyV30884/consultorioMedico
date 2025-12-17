@@ -2,14 +2,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package com.proyecto.consultorioMedico.controller;
 
+import com.proyecto.consultorioMedico.domain.Cita;
 import com.proyecto.consultorioMedico.domain.Paciente;
 import com.proyecto.consultorioMedico.domain.Usuario;
+import com.proyecto.consultorioMedico.service.CitaService;
 import com.proyecto.consultorioMedico.service.PacienteService;
 import com.proyecto.consultorioMedico.service.UsuarioService;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -20,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.Locale;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -40,6 +42,9 @@ public class PacienteRegistroController {
     
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private CitaService citaService;
     
     @ModelAttribute("usuario")
     public Usuario agregarUsuarioLogueado() {
@@ -80,19 +85,29 @@ public class PacienteRegistroController {
 
     @PostMapping("/eliminar")
     public String eliminar(Paciente paciente, RedirectAttributes redirectAttributes) {
+        // Obtener el paciente completo
         paciente = pacienteService.getPaciente(paciente);
-        if (paciente == null) {  // La paciente no existe...
+        
+        if (paciente == null) {
             redirectAttributes.addFlashAttribute("error",
                     messageSource.getMessage("paciente.error01",
                             null,
                             Locale.getDefault()));
-        } else if (false) { // Esto se actualiza proximas semanas...
+            return "redirect:/secretaria/pacientes";
+        }
+        
+        List<Cita> citasDelPaciente = citaService.getCitasPorPaciente(paciente.getIdPaciente());
+        
+        if (citasDelPaciente != null && !citasDelPaciente.isEmpty()) {
             redirectAttributes.addFlashAttribute("error",
-                    messageSource.getMessage("paciente.error02",
-                            null,
-                            Locale.getDefault()));
-        } else if (pacienteService.delete(paciente)) {
-            // Si se borró...
+                    "No se puede eliminar el paciente porque tiene " + 
+                    citasDelPaciente.size() + " cita(s) asociada(s). " +
+                    "Elimine primero las citas del paciente.");
+            return "redirect:/secretaria/pacientes";
+        }
+        
+        // Si no hay citas, intentar eliminar el paciente
+        if (pacienteService.delete(paciente)) {
             redirectAttributes.addFlashAttribute("todoOk",
                     messageSource.getMessage("mensaje.eliminado",
                             null,
@@ -102,7 +117,7 @@ public class PacienteRegistroController {
                     messageSource.getMessage("paciente.error03",
                             null,
                             Locale.getDefault()));
-        }
+        }     
         return "redirect:/secretaria/pacientes";
     }
 

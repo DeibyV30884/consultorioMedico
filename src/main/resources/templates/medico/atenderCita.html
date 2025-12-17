@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentosUsuarios :: head}"/>
+    <body>
+        <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
+        <aside th:replace="~{medico/fragmentos :: sidebar}"></aside>
+
+        <main class="contenido p-4">
+
+
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="row py-3 mb-3 bg-light">
+                        <div class="col-md-3 d-grid">
+                            <a th:href="@{'/medico/inicio/' + ${medico.idMedico}}" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]] 
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <h3><i class="fa-solid fa-user-doctor"></i> [[#{cita.actual}]]</h3>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header bg-info text-white">
+                            <h5><i class="fa-solid fa-user"></i> [[#{paciente.informacion}]]</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <b>[[#{paciente.nombre}]]</b><br>
+                                        <span th:text="${paciente.nombre + ' ' + paciente.apellido1 + ' ' + (paciente.apellido2 ?: '')}"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <b>[[#{paciente.correo}]]</b><br>
+                                        <span th:text="${paciente.correoElectronico ?: 'N/A'}"></span>
+                                </div>
+                                <div class="col-md-2">
+                                    <b>[[#{paciente.fechaNacimiento}]]</b><br>
+                                        <span th:if="${paciente.fechaNacimiento != null}" 
+                                              th:text="${#temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy')}"></span>
+                                        <span th:if="${paciente.fechaNacimiento == null}">N/A</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <b>[[#{paciente.telefono}]]</b><br>
+                                        <span th:text="${paciente.telefono ?: 'N/A'}"></span>
+                                </div>
+                                <div class="col-md-3">
+                                    <b>[[#{paciente.ocupacion}]]</b><br>
+                                        <span th:text="${paciente.ocupacion ?: 'N/A'}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <div class="card mb-3">
+                        <div class="card-header bg-secondary text-white">
+                            <h5><i class="fa-solid fa-notes-medical"></i> [[#{paciente.antecedentes}]]</h5>
+                        </div>
+                        <div class="card-body">
+                            <form sec:authorize="hasRole('MEDICO')" 
+                                  th:action="@{/medico/ver-expediente}" 
+                                  method="post" class="mb-3">
+                                <input type="hidden" name="idPaciente" th:value="${paciente.idPaciente}"/>
+                                <button type="submit" class="btn btn-secondary">
+                                    <i class="fa-solid fa-file-medical"></i>[[#{accion.verExpediene}]]
+                                </button>
+                            </form>
+
+                            <div class="row g-3">
+                                
+                                <div class="col-md-6">
+                                    <label><strong>[[#{paciente.antecedentesHeredoFamiliares}]]</strong></label>
+                                    <textarea class="form-control" 
+                                              readonly
+                                              th:text="${paciente.antecedentesHeredoFamiliares ?: 'Sin información'}" 
+                                              rows="4"></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label><strong>[[#{paciente.antecedentesPersonales}]]</strong></label>
+                                    <textarea class="form-control" 
+                                              readonly
+                                              th:text="${paciente.antecedentesPersonales ?: 'Sin información'}" 
+                                              rows="4"></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label><strong>[[#{paciente.antecedentesQuirurgicos}]]</strong></label>
+                                    <textarea class="form-control" 
+                                              readonly
+                                              th:text="${paciente.antecedentesQuirurgicos ?: 'Sin información'}" 
+                                              rows="4"></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label><strong>[[#{paciente.antecedentesGinecoObstetricos}]]</strong></label>
+                                    <textarea class="form-control" 
+                                              readonly
+                                              th:text="${paciente.antecedentesGinecoObstetricos ?: 'Sin información'}" 
+                                              rows="4"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    
+                    <div th:if="${ultimaCita != null}" class="card mb-3">
+                        <div class="card-header bg-secondary text-white">
+                            <h5><i class="fa-solid fa-history"></i> [[#{cita.historial}]]</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <b>Fecha:</b><br>
+                                        <span th:text="${#temporals.format(ultimaCita.fechaHora, 'dd/MM/yyyy')}"></span>
+                                </div>
+                                <div class="col-md-5">
+                                    <b>[[#{cita.observaciones}]]</b>
+                                    <p class="border p-2 bg-light" th:text="${ultimaCita.observaciones ?: 'Sin observaciones'}"></p>
+                                </div>
+                                <div class="col-md-5">
+                                    <b>[[#{cita.tratamiento}]]</b>
+                                    <p class="border p-2 bg-light" th:text="${ultimaCita.tratamiento ?: 'Sin tratamiento'}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <form method="POST" th:action="@{/medico/guardar-consulta}" 
+                          th:object="${cita}" class="was-validated">
+
+                        <input type="hidden" th:field="*{idCita}"/>
+                        <input type="hidden" th:field="*{fechaHora}"/>
+                        <input type="hidden" th:field="*{paciente.idPaciente}"/>
+                        <input type="hidden" th:field="*{medico.idMedico}"/>                        
+
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                <h5><i class="fa-solid fa-stethoscope"></i> [[#{cita.actual}]]</h5>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>[[#{cita.motivo}]]</label>
+                                        <select class="form-select" th:field="*{tipoConsulta}">
+                                            <option value="General">[[#{cita.tipo.general}]]</option>
+                                            <option value="Especialidad">[[#{cita.tipo.especialidad}]]</option>
+                                            <option value="Seguimiento">[[#{cita.tipo.seguimiento}]]</option>
+                                            <option value="Urgencia">[[#{cita.tipo.urgencia}]]</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <b>[[#{cita.fecha}]]</b><br>
+                                            <span th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy HH:mm')}"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>[[#{cita.estado}]]</label>
+                                        <select class="form-select" th:field="*{estado}">
+                                            <option value="Pendiente">Pendiente</option>
+                                            <option value="Confirmada">Confirmada</option>
+                                            <option value="Completada">Completada</option>
+                                            <option value="Cancelada">Cancelada</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <b><i class="fa-solid fa-clipboard"></i> [[#{cita.observaciones}]]</b>
+                                        </label>
+                                        <textarea class="form-control" 
+                                                  th:field="*{observaciones}" 
+                                                  rows="6"
+                                                  placeholder="Registre los hallazgos, síntomas y diagnóstico de la consulta"
+                                                  ></textarea>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <b><i class="fa-solid fa-pills"></i> [[#{cita.tratamiento}]]</b>
+                                        </label>
+                                        <textarea class="form-control" 
+                                                  th:field="*{tratamiento}" 
+                                                  rows="6"
+                                                  placeholder="Indique medicamentos, dosis, frecuencia y recomendaciones"
+                                                  ></textarea>
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-save"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </main>
+
+        <footer th:replace="~{general/fragmentos :: footer}"></footer>
+    </body>
+</html>

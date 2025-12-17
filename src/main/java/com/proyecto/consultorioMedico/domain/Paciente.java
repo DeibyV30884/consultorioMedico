@@ -11,21 +11,21 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Table(name = "paciente")
 public class Paciente implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "id_paciente")
+    @Column(name = "id_paciente")
     private Integer idPaciente;
-    
+
     @Column(name = "id_usuario")
     private Integer idUsuario;
-    
-     @Column(name = "nombre", length = 50, nullable = false)
+
+    @Column(name = "nombre", length = 50, nullable = false)
     private String nombre;
-    
-   @Column(name = "apellido_1", length = 30, nullable = false)
+
+    @Column(name = "apellido_1", length = 30, nullable = false)
     private String apellido1;
 
     @Column(name = "apellido_2", length = 30)
