@@ -5,7 +5,6 @@ import com.proyecto.consultorioMedico.domain.EstadoCita;
 import com.proyecto.consultorioMedico.domain.Paciente;
 import com.proyecto.consultorioMedico.service.CitaService;
 import com.proyecto.consultorioMedico.service.MedicoService;
-import com.proyecto.consultorioMedico.service.MotivoCitaService;
 import com.proyecto.consultorioMedico.service.PacienteService;
 import java.util.List;
 import java.util.Optional;
@@ -32,9 +31,6 @@ public class MedicoController {
 
     @Autowired
     private MedicoService medicoService;
-
-    @Autowired
-    private MotivoCitaService motivoCitaService;
 
     @Autowired
     private PacienteService pacienteService;
@@ -159,7 +155,6 @@ public class MedicoController {
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("paciente", new Paciente());
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         return "medico/expedientes";
     }
     
@@ -175,7 +170,6 @@ public class MedicoController {
         model.addAttribute("pacientes", pacienteService.getPacientes());
         model.addAttribute("paciente", new Paciente());
         model.addAttribute("medicos", medicoService.getMedicos());
-        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         return "medico/expedientes";
     }
     
@@ -220,7 +214,6 @@ public class MedicoController {
         model.addAttribute("cita", citaActual);
         model.addAttribute("paciente", paciente);
         model.addAttribute("ultimaCita", ultimaCita);
-        model.addAttribute("motivosCita", motivoCitaService.getMotivoCitas());
         
         return "medico/atenderCita";
     }
@@ -247,10 +240,9 @@ public class MedicoController {
                 return medico != null ? "redirect:/medico/inicio/" + medico.getIdMedico() : "redirect:/medico/inicio";
             }
             
-            citaActual.setObservaciones(cita.getObservaciones());
+            //citaActual.setObservaciones(cita.getObservaciones());
             citaActual.setTratamiento(cita.getTratamiento());
             citaActual.setEstado(cita.getEstado());
-            citaActual.setMotivoCita(cita.getMotivoCita());
                     
             citaService.save(citaActual);
             

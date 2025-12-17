@@ -117,6 +117,7 @@ CREATE TABLE administrador (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
+  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_administrador),
@@ -129,21 +130,11 @@ CREATE TABLE secretaria (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
+  apellido_2 VARCHAR(30),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_secretaria),
   FOREIGN KEY fk_secretaria_usuario (id_usuario) REFERENCES usuario(id_usuario))
-  ENGINE = InnoDB;
-
--- Tabla de citas motivo
-CREATE TABLE motivo_cita (
-  id_motivo_cita INT NOT NULL AUTO_INCREMENT,
-  nombre VARCHAR(100) NOT NULL,
-  descripcion VARCHAR(255),
-  activo BOOLEAN DEFAULT TRUE,
-  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id_motivo_cita))
   ENGINE = InnoDB;
 
 -- Tabla de citas
@@ -151,12 +142,10 @@ CREATE TABLE cita (
   id_cita INT NOT NULL AUTO_INCREMENT,
   id_paciente INT NOT NULL,
   id_medico INT NOT NULL,
-  id_motivo_cita INT NULL,
   fecha DATE NOT NULL,
   hora TIME NOT NULL,
-  estado VARCHAR(20) NOT NULL,
+  estado ENUM('Pendiente', 'Confirmada', 'Cancelada', 'Completada') NOT NULL,
   tratamiento TEXT,
-  observaciones TEXT,
   tipo_consulta VARCHAR(50),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -166,9 +155,8 @@ CREATE TABLE cita (
   INDEX ndx_fecha_hora (id_medico, fecha, hora),
   FOREIGN KEY fk_cita_paciente (id_paciente) REFERENCES paciente(id_paciente),
   FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico),
-  FOREIGN KEY fk_cita_motivo (id_motivo_cita) REFERENCES motivo_cita(id_motivo_cita),
-  UNIQUE KEY uk_medico_fecha_hora (id_medico, fecha, hora))
-  ENGINE = InnoDB;
+  UNIQUE KEY uk_medico_fecha_hora (id_medico, fecha, hora)
+) ENGINE = InnoDB;
 
 -- Tabla de registro clínico
 CREATE TABLE registro_clinico (
@@ -274,14 +262,6 @@ INSERT INTO paciente (id_usuario, nombre, apellido_1, apellido_2, fecha_nacimien
 (NULL, 'Ana', 'Venegas', 'Castro', '1992-03-18', 'Femenino', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltera'),
 (NULL, 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'Masculino', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
 
--- Inserción de motivos de cita
-INSERT INTO motivo_cita (nombre, descripcion) VALUES
-('Consulta General', 'Consulta médica general'),
-('Control', 'Control de seguimiento'),
-('Urgencia', 'Atención de urgencia'),
-('Chequeo', 'Chequeo médico preventivo'),
-('Resultados', 'Revisión de resultados de exámenes');
-
 -- Inserción de citas
 INSERT INTO cita (id_paciente, id_medico, fecha, hora, estado, tipo_consulta) VALUES
 (1, 1, '2025-12-15', '08:00:00', 'Pendiente', 'Consulta Gral.'),
@@ -337,7 +317,7 @@ INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES
 INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
 ('/medico/**', 1, TRUE),
 ('/paciente/ver/**', 1, TRUE),
-('/medico/pacientes/**', 1, TRUE),
+('/cita/ver/**', 1, TRUE),
 ('/registro-clinico/**', 1, TRUE),
 ('/prescripcion/**', 1, TRUE);
 

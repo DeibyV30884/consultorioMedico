@@ -7,7 +7,6 @@ import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.CitaService;
 import com.proyecto.consultorioMedico.service.MedicoService;
 import com.proyecto.consultorioMedico.service.PacienteService;
-import com.proyecto.consultorioMedico.service.MotivoCitaService;
 import com.proyecto.consultorioMedico.service.UsuarioService;
 import java.util.Locale;
 import java.time.LocalDate;
@@ -45,9 +44,6 @@ public class CitaController {
 
     @Autowired
     private MedicoService medicoService;
-
-    @Autowired
-    private MotivoCitaService motivoCitaService;
 
     @Autowired
     private MessageSource messageSource;
