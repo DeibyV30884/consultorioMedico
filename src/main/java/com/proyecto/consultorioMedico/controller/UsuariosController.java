@@ -97,22 +97,25 @@ public class UsuariosController {
     }
     
     @PostMapping("/activar")
-    public String activar(
-            @RequestParam("idUsuario") Integer idUsuario,
-            @RequestParam("password") String password,
-            @RequestParam(value = "fechaNacimiento", required = false) String fechaNacimiento,
-            RedirectAttributes redirectAttributes,
-            Locale locale) {
+public String activar(
+        @RequestParam("idUsuario") Integer idUsuario,
+        @RequestParam("password") String password,
+        @RequestParam(value = "fechaNacimiento", required = false) String fechaNacimiento,
+        RedirectAttributes redirectAttributes,
+        Locale locale) {
+    
+    try {
+        Usuario usuario = usuarioService.getUsuarioPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException(
+                    messageSource.getMessage("usuario.no.encontrado", null, locale)));
         
-        try {
-            Usuario usuario = usuarioService.getUsuarioPorId(idUsuario)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                        messageSource.getMessage("usuario.no.encontrado", null, locale)));
-            
-            usuario.setPassword(passwordEncoder.encode(password));
-            usuario.setActivo(true);
-            usuarioService.save(usuario);
-            
+        usuario.setPassword(passwordEncoder.encode(password));
+        usuario.setActivo(true);
+        usuarioService.save(usuario);
+        
+        boolean tieneRoles = !usuario.getRoles().isEmpty();
+        
+        if (!tieneRoles) {
             Rol rolCliente = rolService.getRolByNombre("CLIENTE"); 
             if (rolCliente != null) {
                 rolService.asignarRolAUsuario(usuario, rolCliente);
@@ -131,17 +134,18 @@ public class UsuariosController {
             }
             
             pacienteService.save(paciente);
-            
-            redirectAttributes.addFlashAttribute("mensaje", 
-                messageSource.getMessage("login.mensaje.registro.completo", null, locale));
-            return "redirect:/login?registroExitoso=true";
-            
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", 
-                messageSource.getMessage("usuario.error.activar", null, locale));
-            return "redirect:/registro/salida?tipo=errorActivacion";
         }
+        
+        redirectAttributes.addFlashAttribute("mensaje", 
+            messageSource.getMessage("login.mensaje.registro.completo", null, locale));
+        return "redirect:/login?registroExitoso=true";
+        
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("error", 
+            messageSource.getMessage("usuario.error.activar", null, locale));
+        return "redirect:/registro/salida?tipo=errorActivacion";
     }
+}
     
     @GetMapping("/recordar")
     public String mostrarFormularioRecordar(Model model, Locale locale) {

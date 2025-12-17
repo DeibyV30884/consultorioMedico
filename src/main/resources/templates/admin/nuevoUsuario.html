@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"      
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentosUsuarios :: head}"/>
+    <body>
+        <header th:replace="~{general/fragmentosUsuarios :: header}"/>
+        <aside th:replace="~{admin/fragmentos :: sidebar}"/>
+        
+        <main class="contenido p-3" style="margin-bottom: 50px;">
+            <div class="container-fluid">
+                <div class="row" style="min-height: 704px;">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                        <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                            
+                            <div class="card border border-warning">
+                                <div class="card-header bg-dark text-white text-center">
+                                    <h1 class="mb-0">
+                                        <i class="fas fa-user-plus"></i> [[#{admin.usuarios.nuevo}]]
+                                    </h1>
+                                </div>
+                                
+                                <div class="card-body p-4">
+                                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                                        <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    
+                                    <form th:action="@{/admin/usuarios/crear}" method="post">
+                                        
+                                        <h5 class="mb-3 text-dark border-bottom pb-2">
+                                            <i class="fas fa-id-card"></i> [[#{paciente.seccion.personal}]]
+                                        </h5>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="nombre" class="form-label mb-2">
+                                                    <i class="fas fa-user"></i> [[#{paciente.nombre}]] <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text" 
+                                                       class="form-control" 
+                                                       id="nombre" 
+                                                       name="nombre" 
+                                                       required 
+                                                       maxlength="50"/>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="apellido1" class="form-label mb-2">
+                                                    <i class="fas fa-id-card"></i> [[#{paciente.apellido1}]] <span class="text-danger">*</span>
+                                                </label>
+                                                <input type="text" 
+                                                       class="form-control" 
+                                                       id="apellido1" 
+                                                       name="apellido1" 
+                                                       required 
+                                                       maxlength="30"/>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="apellido2" class="form-label mb-2">
+                                                <i class="fas fa-id-card"></i> [[#{paciente.apellido2}]] <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="apellido2" 
+                                                   name="apellido2" 
+                                                   required 
+                                                   maxlength="30"/>
+                                        </div>
+                                        
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fas fa-envelope"></i> [[#{paciente.seccion.contacto}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="correo" class="form-label mb-2">
+                                                <i class="fas fa-envelope"></i> [[#{paciente.correo}]] <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="email" 
+                                                   class="form-control" 
+                                                   id="correo" 
+                                                   name="correo" 
+                                                   required 
+                                                   maxlength="75"/>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="username" class="form-label mb-2">
+                                                <i class="fas fa-user-circle"></i> [[#{admin.usuarios.username}]]
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="username" 
+                                                   name="username" 
+                                                   pattern="[a-zA-Z0-9_]{3,20}"
+                                                   title="[[#{admin.usuarios.username.validacion}]]"
+                                                   maxlength="20"/>
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="telefono" class="form-label mb-2">
+                                                <i class="fas fa-phone"></i> [[#{paciente.telefono}]]
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   id="telefono" 
+                                                   name="telefono" 
+                                                   maxlength="25"/>
+                                        </div>
+                                        
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fas fa-user-tag"></i> [[#{admin.usuarios.rol}]]
+                                        </h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="rol" class="form-label mb-2">
+                                                [[#{admin.usuarios.seleccionar.rol}]] <span class="text-danger">*</span>
+                                            </label>
+                                            <select class="form-select" id="rol" name="rol" required>
+                                                <option value="">[[#{admin.usuarios.seleccione.opcion}]]</option>
+                                                <option value="MEDICO">[[#{admin.usuarios.rol.medico}]]</option>
+                                                <option value="SECRETARIA">[[#{admin.usuarios.rol.secretaria}]]</option>
+                                                <option value="CLIENTE">[[#{admin.usuarios.rol.paciente}]]</option>
+                                                <option value="ADMIN">[[#{admin.usuarios.rol.admin}]]</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> <strong>[[#{atencion}]]:</strong>
+                                            <ul class="mb-0 mt-2">
+                                                <li>[[#{admin.usuarios.info.1}]]</li>
+                                                <li>[[#{admin.usuarios.info.2}]]</li>
+                                                <li>[[#{admin.usuarios.info.3}]]</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="text-center mt-4">
+                                            <a th:href="@{/admin/usuarios}" class="btn btn-secondary me-2">
+                                                <i class="fas fa-times"></i> [[#{accion.cancelar}]]
+                                            </a>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> [[#{accion.guardar}]]
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer th:replace="~{general/fragmentos :: footer}"/>    
+    </body>
+</html>

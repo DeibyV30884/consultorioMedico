@@ -3,8 +3,18 @@ package com.proyecto.consultorioMedico.controller;
 import com.proyecto.consultorioMedico.domain.Admin;
 import com.proyecto.consultorioMedico.domain.Usuario;
 import com.proyecto.consultorioMedico.service.AdminService;
+import com.proyecto.consultorioMedico.service.AdminUsuariosService;
+import com.proyecto.consultorioMedico.service.AdminUsuariosService.UsuarioConRol;
 import com.proyecto.consultorioMedico.service.UsuarioService;
+import com.proyecto.consultorioMedico.service.CitaService;
+import com.proyecto.consultorioMedico.service.MedicoService;
+import com.proyecto.consultorioMedico.service.PacienteService;
+import com.proyecto.consultorioMedico.domain.Cita;
+import com.proyecto.consultorioMedico.domain.Medico;
+import com.proyecto.consultorioMedico.domain.Paciente;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +41,18 @@ public class AdminController {
     private AdminService adminService;
     
     @Autowired
+    private AdminUsuariosService adminUsuariosService;
+    
+    @Autowired
+    private CitaService citaService;
+    
+    @Autowired
+    private MedicoService medicoService;
+    
+    @Autowired
+    private PacienteService pacienteService;
+    
+    @Autowired
     private MessageSource messageSource;
     
     @ModelAttribute("usuario")
@@ -53,8 +75,158 @@ public class AdminController {
     
     @GetMapping("/usuarios")
     public String usuarios(Model model, Locale locale) {
+        List<UsuarioConRol> usuarios = adminUsuariosService.getAllUsuariosConRol();
+        
         model.addAttribute("titulo", messageSource.getMessage("sidebar.usuarios", null, locale));
+        model.addAttribute("usuarios", usuarios);
+        model.addAttribute("totalUsuarios", usuarios.size());
         return "admin/usuarios";
+    }
+    
+    @GetMapping("/usuarios/nuevo")
+    public String nuevoUsuario(Model model, Locale locale) {
+        model.addAttribute("titulo", messageSource.getMessage("admin.usuarios.nuevo", null, locale));
+        return "admin/nuevoUsuario";
+    }
+    
+    @PostMapping("/usuarios/crear")
+    public String crearUsuario(
+            @RequestParam String nombre,
+            @RequestParam String apellido1,
+            @RequestParam String apellido2,
+            @RequestParam String correo,
+            @RequestParam(required = false) String telefono,
+            @RequestParam String rol,
+            @RequestParam(required = false) String username, // Nuevo parámetro
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+
+        try {
+            if (usuarioService.existeCorreo(correo)) {
+                redirectAttributes.addFlashAttribute("error",
+                        messageSource.getMessage("controller.usuarios.registro.correo.en.sistema", null, locale));
+                return "redirect:/admin/usuarios/nuevo";
+            }
+
+            if (username != null && !username.trim().isEmpty() && usuarioService.existeUsername(username.trim())) {
+                redirectAttributes.addFlashAttribute("error",
+                        messageSource.getMessage("controller.usuarios.registro.usuario.en.sistema", null, locale));
+                return "redirect:/admin/usuarios/nuevo";
+            }
+
+            adminUsuariosService.crearUsuario(nombre, apellido1, apellido2, correo, telefono, rol, username);
+
+            redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("admin.usuario.creado", null, locale));
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/usuarios/nuevo";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("admin.usuario.error.crear", null, locale) + ": " + e.getMessage());
+            return "redirect:/admin/usuarios/nuevo";
+        }
+
+        return "redirect:/admin/usuarios";
+    }
+    
+    @PostMapping("/usuarios/actualizar/{idUsuario}")
+    public String actualizarUsuario(
+            @PathVariable Integer idUsuario,
+            @RequestParam String nombre,
+            @RequestParam String apellido1,
+            @RequestParam String apellido2,
+            @RequestParam String correo,
+            @RequestParam(required = false) String telefono,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+        
+        try {
+            Usuario usuarioExistente = usuarioService.getUsuarioPorId(idUsuario).orElse(null);
+            
+            if (usuarioExistente == null) {
+                redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("usuario.no.encontrado", null, locale));
+                return "redirect:/admin/usuarios";
+            }
+            
+            if (!correo.equals(usuarioExistente.getCorreo()) && usuarioService.existeCorreo(correo)) {
+                redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("controller.usuarios.registro.correo.en.sistema", null, locale));
+                return "redirect:/admin/usuarios/editar/" + idUsuario;
+            }
+            
+            adminUsuariosService.actualizarUsuario(idUsuario, nombre, apellido1, apellido2, correo, telefono);
+            
+            redirectAttributes.addFlashAttribute("todoOk",
+                messageSource.getMessage("admin.usuario.actualizado", null, locale));
+                
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error",
+                messageSource.getMessage("admin.usuario.error.actualizar", null, locale) + ": " + e.getMessage());
+        }
+        
+        return "redirect:/admin/usuarios";
+    }
+    
+    @PostMapping("/usuarios/eliminar")
+    public String eliminarUsuario(
+            @RequestParam Integer idUsuario,
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
+        
+        try {
+            Usuario usuario = usuarioService.getUsuarioPorId(idUsuario).orElse(null);
+            
+            if (usuario == null) {
+                redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("usuario.no.encontrado", null, locale));
+                return "redirect:/admin/usuarios";
+            }
+            
+            List<String> mensajesError = new ArrayList<>();
+            
+            Medico medico = medicoService.getMedicoPorIdUsuario(idUsuario);
+            if (medico != null) {
+                List<Cita> citas = citaService.getCitasPorMedico(medico.getIdMedico());
+                if (citas != null && !citas.isEmpty()) {
+                    mensajesError.add(messageSource.getMessage("admin.medico.tiene.citas", null, locale));
+                }
+            }
+            
+            Paciente paciente = pacienteService.getPacientePorIdUsuario(idUsuario);
+            if (paciente != null) {
+                List<Cita> citas = citaService.getCitasPorPaciente(paciente.getIdPaciente());
+                if (citas != null && !citas.isEmpty()) {
+                    mensajesError.add(messageSource.getMessage("admin.paciente.tiene.citas", null, locale));
+                }
+            }
+            
+            if (!mensajesError.isEmpty()) {
+                String mensaje = messageSource.getMessage("admin.usuario.no.eliminar", null, locale) + ": " +
+                               String.join(", ", mensajesError);
+                redirectAttributes.addFlashAttribute("error", mensaje);
+                return "redirect:/admin/usuarios";
+            }
+            
+            if (adminUsuariosService.eliminarUsuario(idUsuario)) {
+                redirectAttributes.addFlashAttribute("todoOk",
+                    messageSource.getMessage("admin.usuario.eliminado", null, locale));
+            } else {
+                redirectAttributes.addFlashAttribute("error",
+                    messageSource.getMessage("admin.usuario.error.eliminar", null, locale));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error",
+                messageSource.getMessage("admin.usuario.error.eliminar", null, locale) + ": " + e.getMessage());
+        }
+        
+        return "redirect:/admin/usuarios";
     }
     
     @GetMapping("/perfil")
@@ -181,8 +353,8 @@ public class AdminController {
                     messageSource.getMessage("e403.texto", null, locale));
                 return "redirect:/";
             }
-
             
+
             Usuario usuario = usuarioService.getUsuarioPorId(administrador.getIdUsuario()).orElse(null);
 
             if (usuario != null) {

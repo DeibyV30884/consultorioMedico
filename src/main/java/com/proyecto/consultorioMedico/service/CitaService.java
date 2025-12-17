@@ -100,4 +100,9 @@ public class CitaService {
         return citas.isEmpty() ? null : citas.get(0);
     }
     
+    @Transactional(readOnly = true)
+    public List<Cita> getCitasPorMedico(Integer idMedico) {
+        return citaRepository.findByMedicoId(idMedico);
+    }
+    
 }
