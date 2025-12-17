@@ -120,12 +120,12 @@
                                     <b>Fecha:</b><br>
                                         <span th:text="${#temporals.format(ultimaCita.fechaHora, 'dd/MM/yyyy')}"></span>
                                 </div>
-<!--                                <div class="col-md-5">
-                                    <b>Observaciones:</b>
-                                    <p class="border p-2 bg-light" th:text="${ultimaCita.observaciones ?: 'Sin observaciones'}"></p>
-                                </div>-->
                                 <div class="col-md-5">
-                                    <b>Tratamiento:</b>
+                                    <b>[[#{cita.observaciones}]]</b>
+                                    <p class="border p-2 bg-light" th:text="${ultimaCita.observaciones ?: 'Sin observaciones'}"></p>
+                                </div>
+                                <div class="col-md-5">
+                                    <b>[[#{cita.tratamiento}]]</b>
                                     <p class="border p-2 bg-light" th:text="${ultimaCita.tratamiento ?: 'Sin tratamiento'}"></p>
                                 </div>
                             </div>
@@ -150,8 +150,7 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <label>[[#{cita.motivo}]]</label>
-                                        <select class="form-select" th:field="*{estado}">
-                                            <option value="">[[#{cita.tipo.seleccionar}]]</option>
+                                        <select class="form-select" th:field="*{tipoConsulta}">
                                             <option value="General">[[#{cita.tipo.general}]]</option>
                                             <option value="Especialidad">[[#{cita.tipo.especialidad}]]</option>
                                             <option value="Seguimiento">[[#{cita.tipo.seguimiento}]]</option>
@@ -174,7 +173,7 @@
                                 </div>
 
                                 <div class="row g-3">
-<!--                                    <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <label class="form-label">
                                             <b><i class="fa-solid fa-clipboard"></i> [[#{cita.observaciones}]]</b>
                                         </label>
@@ -183,7 +182,7 @@
                                                   rows="6"
                                                   placeholder="Registre los hallazgos, síntomas y diagnóstico de la consulta"
                                                   ></textarea>
-                                    </div>-->
+                                    </div>
 
                                     <div class="col-md-6">
                                         <label class="form-label">

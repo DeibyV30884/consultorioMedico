@@ -146,6 +146,7 @@ CREATE TABLE cita (
   hora TIME NOT NULL,
   estado ENUM('Pendiente', 'Confirmada', 'Cancelada', 'Completada') NOT NULL,
   tratamiento TEXT,
+  observaciones TEXT,
   tipo_consulta VARCHAR(50),
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

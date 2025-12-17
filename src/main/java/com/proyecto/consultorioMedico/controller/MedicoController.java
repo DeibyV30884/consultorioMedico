@@ -219,7 +219,7 @@ public class MedicoController {
     }
 
     @PostMapping("/guardar-consulta")
-    public String guardarConsulta(Cita cita, Paciente paciente, RedirectAttributes redirectAttributes) {
+    public String guardarConsulta(Cita cita, RedirectAttributes redirectAttributes) {
         try {
             Usuario usuarioLogueado = usuarioService.getUsuarioLogueado();
             Medico medico = medicoService.getMedicoPorIdUsuario(usuarioLogueado.getIdUsuario());
@@ -240,17 +240,21 @@ public class MedicoController {
                 return medico != null ? "redirect:/medico/inicio/" + medico.getIdMedico() : "redirect:/medico/inicio";
             }
             
-            //citaActual.setObservaciones(cita.getObservaciones());
+            citaActual.setObservaciones(cita.getObservaciones());
+            citaActual.setTipoConsulta(cita.getTipoConsulta());
             citaActual.setTratamiento(cita.getTratamiento());
             citaActual.setEstado(cita.getEstado());
                     
             citaService.save(citaActual);
             
             redirectAttributes.addFlashAttribute("todoOk", "Consulta guardada exitosamente");
+            
+            
             return medico != null ? "redirect:/medico/inicio/" + medico.getIdMedico() : "redirect:/medico/inicio";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error: " + e.getMessage());
             e.printStackTrace();
+            
             return "redirect:/medico/inicio";
         }
     }

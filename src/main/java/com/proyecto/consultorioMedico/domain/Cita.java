@@ -30,11 +30,7 @@ public class Cita implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_medico", nullable = false)
     private Medico medico;
-    
-//    @ManyToOne
-//    @JoinColumn(name = "id_motivo_cita", nullable = true)
-//    private MotivoCita motivoCita;
-    
+      
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
     
@@ -47,8 +43,8 @@ public class Cita implements Serializable {
     @Column(name = "tratamiento", columnDefinition = "TEXT")
     private String tratamiento;
     
-//    @Column(name = "observaciones", columnDefinition = "TEXT")
-//    private String observaciones;
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observaciones;
     
     @Column(name = "tipo_consulta", length = 50)
     private String tipoConsulta;
