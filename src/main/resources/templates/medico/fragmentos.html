@@ -28,6 +28,157 @@
             </nav>
         </aside>
         
+<section th:fragment="perfil" class="p-3" style="margin-bottom: 50px;">
+    <div class="container-fluid">
+        
+        <div class="row" style="min-height: 704px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 bg-white d-flex align-items-center justify-content-center">
+                <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                    
+                    <div class="card border border-warning">
+                        <div class="card-header bg-dark text-white text-center">
+                            <h1 class="mb-0"><i class="fas fa-user-md"></i> [[#{medico.perfil}]]</h1>
+                        </div>
+
+                        <div class="card-body p-4">
+                            
+                            <div th:if="${mensaje}" class="alert alert-success mt-3">
+                                <i class="fas fa-check-circle"></i> [[${mensaje}]]
+                            </div>
+                            
+                            <div th:if="${error}" class="alert alert-danger mt-3">
+                                <i class="fas fa-exclamation-circle"></i> [[${error}]]
+                            </div>
+                            
+                            <form method="POST" 
+                                  th:action="@{'/medico/guardar/' + ${medico.idMedico}}" 
+                                  th:object="${medico}">
+                                
+                                <input type="hidden" th:field="*{idMedico}"/>
+                                <input type="hidden" th:field="*{idUsuario}"/>
+                                
+                                <h5 class="mb-3 text-dark border-bottom pb-2">
+                                    <i class="fas fa-id-card"></i> [[#{medico.seccion.personal}]]
+                                </h5>
+                                
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="nombre"><i class="fas fa-user"></i> [[#{medico.nombre}]]</label>
+                                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required maxlength="50" />
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="apellido1"><i class="fas fa-id-card"></i> [[#{medico.apellido1}]]</label>
+                                    <input type="text" class="form-control" id="apellido1" th:field="*{apellido1}" required maxlength="30" />
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="apellido2"><i class="fas fa-id-card"></i> [[#{medico.apellido2}]]</label>
+                                    <input type="text" class="form-control" id="apellido2" th:field="*{apellido2}" maxlength="30" />
+                                </div>
+                                
+                                <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                    <i class="fas fa-stethoscope"></i> [[#{medico.seccion.profesional}]]
+                                </h5>
+                                
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="especialidad"><i class="fas fa-certificate"></i> [[#{medico.especialidad}]]</label>
+                                    <input type="text" class="form-control" id="especialidad" th:field="*{especialidad}" maxlength="50" />
+                                </div>
+
+                                <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                    <i class="fas fa-envelope"></i> [[#{paciente.seccion.contacto}]]
+                                </h5>
+
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="correo"><i class="fas fa-envelope"></i> [[#{paciente.correo}]]</label>
+                                    <input type="email" class="form-control" id="correo" name="correo" 
+                                           th:value="${usuario.correo}" required maxlength="75" />
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="telefono"><i class="fas fa-phone"></i> [[#{paciente.telefono}]]</label>
+                                    <input type="text" class="form-control" id="telefono" name="telefono" 
+                                           th:value="${usuario.telefono}" maxlength="25" />
+                                </div>
+                                
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-info-circle"></i> <strong>[[#{atencion}]]:</strong> [[#{medico.nota.perfil}]]
+                                </div>
+                                
+                                <div class="text-center my-3">
+                                    <button class="btn btn-secondary w-100" type="submit">
+                                        <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                    </button>
+                                </div>
+
+                                <div class="text-center my-3">
+                                    <button type="button" class="btn btn-danger w-100" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#modalEliminarPerfil">
+                                        <i class="fas fa-trash"></i> [[#{medico.eliminar.perfil}]]
+                                    </button>
+                                </div>                                        
+                            </form>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section th:fragment="modalEliminarPerfil">
+    <div class="modal fade" id="modalEliminarPerfil" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{'/medico/desactivar/' + ${medico.idMedico}}" 
+                      method="post">
+
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            [[#{modal.eliminar.perfil.titulo}]]
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" 
+                                data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>[[#{modal.eliminar.perfil.advertencia}]]</strong>
+                        </div>
+
+                        <p>[[#{modal.eliminar.perfil.pregunta}]]</p>
+
+                        <ul class="text-danger">
+                            <li>[[#{modal.eliminar.perfil.punto1}]]</li>
+                            <li>[[#{modal.eliminar.perfil.punto2}]]</li>
+                            <li>[[#{modal.eliminar.perfil.punto3}]]</li>
+                        </ul>
+
+                        <p class="mt-3">
+                            <strong>[[#{modal.eliminar.perfil.confirmacion}]]</strong>
+                        </p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" 
+                                data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> [[#{modal.cancelar}]]
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> [[#{modal.eliminar.confirmar}]]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
         
         
     </body>

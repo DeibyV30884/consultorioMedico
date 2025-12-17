@@ -52,10 +52,11 @@ public class PacienteRegistroController {
     }
 
     @GetMapping("/listado") // https:localhost/paciente/listado
-    public String inicio(Model model) {
+    public String inicio(Model model, Locale locale) {
         var pacientes = pacienteService.getPacientes();
         model.addAttribute("pacientes", pacientes);
         model.addAttribute("totalPacientes", pacientes.size());
+        model.addAttribute("titulo", messageSource.getMessage("paciente.listado", null, locale));
         return "/secretaria/pacientes"; //las vistas que yo voy a crear en el html
     }
 
@@ -69,7 +70,8 @@ public class PacienteRegistroController {
     @PostMapping("/guardar")
     public String guardar(Paciente paciente,
             @RequestParam(required = false) MultipartFile imagenFile,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            Locale locale) {
         if (paciente.getFechaCreacion() == null) {
             paciente.setFechaCreacion(LocalDateTime.now());
         }
@@ -77,57 +79,49 @@ public class PacienteRegistroController {
         pacienteService.save(paciente);
 
         redirectAttributes.addFlashAttribute("todoOk",
-                messageSource.getMessage("mensaje.actualizado",
-                        null,
-                        Locale.getDefault()));
+                messageSource.getMessage("mensaje.actualizado", null, locale));
         return "redirect:/secretaria/pacientes";
     }
 
     @PostMapping("/eliminar")
-    public String eliminar(Paciente paciente, RedirectAttributes redirectAttributes) {
+    public String eliminar(Paciente paciente, RedirectAttributes redirectAttributes, Locale locale) {
         // Obtener el paciente completo
         paciente = pacienteService.getPaciente(paciente);
         
         if (paciente == null) {
             redirectAttributes.addFlashAttribute("error",
-                    messageSource.getMessage("paciente.error01",
-                            null,
-                            Locale.getDefault()));
+                    messageSource.getMessage("paciente.no.encontrado", null, locale));
             return "redirect:/secretaria/pacientes";
         }
         
         List<Cita> citasDelPaciente = citaService.getCitasPorPaciente(paciente.getIdPaciente());
         
         if (citasDelPaciente != null && !citasDelPaciente.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error",
-                    "No se puede eliminar el paciente porque tiene " + 
-                    citasDelPaciente.size() + " cita(s) asociada(s). " +
-                    "Elimine primero las citas del paciente.");
+            String mensaje = messageSource.getMessage("paciente.error.eliminar.citas", 
+                    new Object[]{citasDelPaciente.size()}, locale);
+            redirectAttributes.addFlashAttribute("error", mensaje);
             return "redirect:/secretaria/pacientes";
         }
         
         // Si no hay citas, intentar eliminar el paciente
         if (pacienteService.delete(paciente)) {
             redirectAttributes.addFlashAttribute("todoOk",
-                    messageSource.getMessage("mensaje.eliminado",
-                            null,
-                            Locale.getDefault()));
+                    messageSource.getMessage("mensaje.eliminado", null, locale));
         } else {
             redirectAttributes.addFlashAttribute("error",
-                    messageSource.getMessage("paciente.error03",
-                            null,
-                            Locale.getDefault()));
+                    messageSource.getMessage("paciente.error.eliminar", null, locale));
         }     
         return "redirect:/secretaria/pacientes";
     }
 
     @PostMapping("/queryNombre")
     public String consultaPorNombre(
-            @RequestParam(value = "texto") String texto, Model model) {
+            @RequestParam(value = "texto") String texto, Model model, Locale locale) {
         var pacientes = pacienteService.buscarPaciente(texto);
         model.addAttribute("texto", texto);
         model.addAttribute("pacientes", pacientes);
         model.addAttribute("paciente", new Paciente());
+        model.addAttribute("titulo", messageSource.getMessage("paciente.listado", null, locale));
         return "/secretaria/pacientes"; //las vistas que yo voy a crear en el html
     }
 }

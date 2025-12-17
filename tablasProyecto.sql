@@ -117,7 +117,7 @@ CREATE TABLE administrador (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
-  apellido_2 VARCHAR(30),
+  apellido_2 VARCHAR(30) NOT NULL,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_administrador),
@@ -130,11 +130,22 @@ CREATE TABLE secretaria (
   id_usuario INT NOT NULL UNIQUE,
   nombre VARCHAR(50) NOT NULL,
   apellido_1 VARCHAR(30) NOT NULL,
-  apellido_2 VARCHAR(30),
+  apellido_2 VARCHAR(30) NOT NULL,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_secretaria),
   FOREIGN KEY fk_secretaria_usuario (id_usuario) REFERENCES usuario(id_usuario))
+  ENGINE = InnoDB;
+
+-- Tabla de citas motivo
+CREATE TABLE motivo_cita (
+  id_motivo_cita INT NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  descripcion VARCHAR(255),
+  activo BOOLEAN DEFAULT TRUE,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_motivo_cita))
   ENGINE = InnoDB;
 
 -- Tabla de citas
@@ -142,9 +153,10 @@ CREATE TABLE cita (
   id_cita INT NOT NULL AUTO_INCREMENT,
   id_paciente INT NOT NULL,
   id_medico INT NOT NULL,
+  id_motivo_cita INT NULL,
   fecha DATE NOT NULL,
   hora TIME NOT NULL,
-  estado ENUM('Pendiente', 'Confirmada', 'Cancelada', 'Completada') NOT NULL,
+  estado VARCHAR(20) NOT NULL,
   tratamiento TEXT,
   observaciones TEXT,
   tipo_consulta VARCHAR(50),
@@ -156,56 +168,21 @@ CREATE TABLE cita (
   INDEX ndx_fecha_hora (id_medico, fecha, hora),
   FOREIGN KEY fk_cita_paciente (id_paciente) REFERENCES paciente(id_paciente),
   FOREIGN KEY fk_cita_medico (id_medico) REFERENCES medico(id_medico),
-  UNIQUE KEY uk_medico_fecha_hora (id_medico, fecha, hora)
-) ENGINE = InnoDB;
-
--- Tabla de registro clínico
-CREATE TABLE registro_clinico (
-  id_registro INT NOT NULL AUTO_INCREMENT,
-  id_paciente INT NOT NULL,
-  id_medico INT NOT NULL,
-  id_cita INT NULL,
-  fecha DATE,
-  motivo_consulta TEXT,
-  diagnostico TEXT,
-  plan_tratamiento TEXT,
-  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id_registro),
-  INDEX ndx_paciente (id_paciente),
-  INDEX ndx_cita (id_cita),
-  FOREIGN KEY fk_registro_paciente (id_paciente) REFERENCES paciente(id_paciente),
-  FOREIGN KEY fk_registro_medico (id_medico) REFERENCES medico(id_medico),
-  FOREIGN KEY fk_registro_cita (id_cita) REFERENCES cita(id_cita))
+  FOREIGN KEY fk_cita_motivo (id_motivo_cita) REFERENCES motivo_cita(id_motivo_cita),
+  UNIQUE KEY uk_medico_fecha_hora (id_medico, fecha, hora))
   ENGINE = InnoDB;
 
--- Tabla de medicamentos
-CREATE TABLE medicamento (
-  id_medicamento INT NOT NULL AUTO_INCREMENT,
-  codigo VARCHAR(50) UNIQUE,
-  nombre VARCHAR(100) NOT NULL,
-  principio_activo VARCHAR(100),
-  presentacion VARCHAR(100),
-  stock_actual INT UNSIGNED,
-  stock_minimo INT UNSIGNED,
-  fecha_vencimiento DATE,
-  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id_medicamento))
-  ENGINE = InnoDB;
-
--- Tabla de prescripciones
+-- Tabla de prescripciones (ahora referencia directamente a cita)
 CREATE TABLE prescripcion (
   id_prescripcion INT NOT NULL AUTO_INCREMENT,
-  id_registro_clinico INT NOT NULL,
-  id_medicamento INT NOT NULL,
+  id_cita INT NOT NULL,
+  medicamento TEXT,
   dosis VARCHAR(100),
   duracion_dias INT,
   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id_prescripcion),
-  FOREIGN KEY fk_prescripcion_registro (id_registro_clinico) REFERENCES registro_clinico(id_registro),
-  FOREIGN KEY fk_prescripcion_medicamento (id_medicamento) REFERENCES medicamento(id_medicamento))
+  FOREIGN KEY fk_prescripcion_cita (id_cita) REFERENCES cita(id_cita))
   ENGINE = InnoDB;
 
 -- Tabla de constantes de la aplicación
@@ -226,8 +203,10 @@ INSERT INTO usuario (username, password, nombre, apellido_1, apellido_2, correo,
 ('admin', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Carlos', 'Rodriguez','Ramírez', 'admin@consultorio.com', '8888-8888', TRUE),-- 1234
 ('dr.perez', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Juan', 'Pérez','Ramírez','jperez@consultorio.com', '8777-7777', TRUE),-- 1234
 ('secretaria', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Ana', 'Gutierres','López', 'anag2004@gmail.com', '0909-3490', TRUE),-- 1234
-('paciente1', '$2a$10$r1JSQWLy0ezvORD.zrlyu.pqbmYJha0O7yMujUbXEuMOXTvx.h4cq', 'Erick', 'Johnson','Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE);-- 1111
-
+('paciente1', '$2a$10$r1JSQWLy0ezvORD.zrlyu.pqbmYJha0O7yMujUbXEuMOXTvx.h4cq', 'Erick', 'Johnson','Johnson', 'ejohnson@gmail.com', '8555-5555', TRUE),-- 1111
+('dr.martinez', '$2a$10$fdww1uEuuEynom5qBwEV.OjKl.vjr7jC3/noBaOxEjqL7zFH70ule', 'Laura', 'Martinez','Vargas', 'lmartinez@consultorio.com', '8888-1234', TRUE),-- 1234
+('paciente2', '$2a$10$r1JSQWLy0ezvORD.zrlyu.pqbmYJha0O7yMujUbXEuMOXTvx.h4cq', 'Maria', 'Lopez','Gonzalez', 'mlopez@gmail.com', '8666-7777', TRUE),-- 1111
+('paciente3', '$2a$10$r1JSQWLy0ezvORD.zrlyu.pqbmYJha0O7yMujUbXEuMOXTvx.h4cq', 'Roberto', 'Sanchez','Mora', 'rsanchez@gmail.com', '8444-3333', TRUE);-- 1111
 
 -- Inserción de roles
 INSERT INTO rol (nombre, descripcion) VALUES 
@@ -241,7 +220,10 @@ INSERT INTO usuario_rol (id_usuario, id_rol) VALUES
 (1, 3), -- admin es ADMINISTRADOR
 (2, 1), -- dr.perez es MEDICO
 (3, 4), -- secretaria es SECRETARIA
-(4, 2); -- paciente1 es CLIENTE
+(4, 2), -- paciente1 es CLIENTE
+(5, 1), -- dr.martinez es MEDICO
+(6, 2), -- paciente2 es CLIENTE
+(7, 2); -- paciente3 es CLIENTE
 
 -- Inserción de administrador
 INSERT INTO administrador (id_usuario, nombre, apellido_1, apellido_2) VALUES
@@ -249,32 +231,69 @@ INSERT INTO administrador (id_usuario, nombre, apellido_1, apellido_2) VALUES
 
 -- Inserción de médicos
 INSERT INTO medico (id_usuario, nombre, apellido_1, apellido_2, especialidad) VALUES
-(2, 'Juan', 'Pérez', 'Ramírez', 'Medicina General');
+(2, 'Juan', 'Pérez', 'Ramírez', 'Medicina General'),
+(5, 'Laura', 'Martinez', 'Vargas', 'Cardiología');
 
 -- Inserción de secretaria
 INSERT INTO secretaria (id_usuario, nombre, apellido_1, apellido_2) VALUES
 (3, 'Ana', 'Gutierres', 'Pérez');
 
 -- Inserción de pacientes
-INSERT INTO paciente (id_usuario, nombre, apellido_1, apellido_2, fecha_nacimiento, genero, correo_electronico, telefono, ocupacion, estado_civil) VALUES
-(4, 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'Masculino', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero'),
-(NULL, 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'Femenino', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casada'),
-(NULL, 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'Masculino', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado'),
-(NULL, 'Ana', 'Venegas', 'Castro', '1992-03-18', 'Femenino', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltera'),
-(NULL, 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'Masculino', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado');
+INSERT INTO paciente (id_usuario, nombre, apellido_1, apellido_2, fecha_nacimiento, genero, correo_electronico, telefono, ocupacion, estado_civil, antecedentes_personales, antecedentes_heredo_familiares) VALUES
+(4, 'Erick', 'Johnson', 'Johnson', '1990-05-15', 'Masculino', 'ejohnson@gmail.com', '8555-5555', 'Ingeniero', 'Soltero', 'Hipertensión controlada', 'Padre con diabetes tipo 2'),
+(6, 'Maria', 'Lopez', 'Gonzalez', '1995-03-20', 'Femenino', 'mlopez@gmail.com', '8666-7777', 'Abogada', 'Casada', 'Alergia a la penicilina', 'Madre con hipertensión'),
+(7, 'Roberto', 'Sanchez', 'Mora', '1982-11-08', 'Masculino', 'rsanchez@gmail.com', '8444-3333', 'Arquitecto', 'Divorciado', 'Fumador ocasional', 'Abuelo con problemas cardíacos'),
+(NULL, 'Karen', 'Fernandez', 'Mora', '1985-08-22', 'Femenino', 'kfernandez@gmail.com', '8666-6666', 'Docente', 'Casada', 'Asma leve', 'Sin antecedentes relevantes'),
+(NULL, 'Carlos', 'Rodriguez', 'Salas', '1978-12-10', 'Masculino', 'crodriguez@gmail.com', '8444-4444', 'Contador', 'Casado', 'Gastritis crónica', 'Padre con cáncer de próstata'),
+(NULL, 'Ana', 'Venegas', 'Castro', '1992-03-18', 'Femenino', 'avenegas@gmail.com', '8333-3333', 'Diseñadora', 'Soltera', NULL, 'Madre con migraña crónica'),
+(NULL, 'Juan', 'Ramirez', 'Solano', '1988-07-25', 'Masculino', 'jramirez@gmail.com', '8222-2222', 'Empresario', 'Divorciado', 'Colesterol alto', 'Hermano con obesidad'),
+(NULL, 'Patricia', 'Mora', 'Jimenez', '1991-06-12', 'Femenino', 'pmora@gmail.com', '8111-1111', 'Enfermera', 'Soltera', 'Tiroides bajo control', 'Abuela con diabetes'),
+(NULL, 'Diego', 'Castro', 'Vargas', '1986-09-30', 'Masculino', 'dcastro@gmail.com', '8999-9999', 'Chef', 'Casado', 'Reflujo gastroesofágico', 'Padre con hipertensión'),
+(NULL, 'Sofia', 'Gomez', 'Rojas', '1993-01-15', 'Femenino', 'sgomez@gmail.com', '8777-8888', 'Psicóloga', 'Soltera', 'Ansiedad', 'Madre con depresión');
 
--- Inserción de citas
-INSERT INTO cita (id_paciente, id_medico, fecha, hora, estado, tipo_consulta) VALUES
-(1, 1, '2025-12-15', '08:00:00', 'Pendiente', 'Consulta Gral.'),
-(2, 1, '2025-12-15', '09:00:00', 'Confirmada', 'Consulta Gral.'),
-(3, 1, '2025-12-15', '10:00:00', 'Pendiente', 'Control');
+-- Inserción de motivos de cita
+INSERT INTO motivo_cita (nombre, descripcion) VALUES
+('Consulta General', 'Consulta médica general'),
+('Control', 'Control de seguimiento'),
+('Urgencia', 'Atención de urgencia'),
+('Chequeo', 'Chequeo médico preventivo'),
+('Resultados', 'Revisión de resultados de exámenes'),
+('Vacunación', 'Aplicación de vacunas'),
+('Certificado Médico', 'Emisión de certificado médico'),
+('Control de Presión', 'Monitoreo de presión arterial'),
+('Control de Diabetes', 'Seguimiento de diabetes');
 
--- Inserción de medicamentos
-INSERT INTO medicamento (codigo, nombre, principio_activo, presentacion, stock_actual, stock_minimo) VALUES
-('MED-001', 'Acetaminofen 500mg', 'Acetaminofen', 'Tabletas', 100, 20),
-('MED-002', 'Ibuprofeno 400mg', 'Ibuprofeno', 'Tabletas', 80, 15),
-('MED-003', 'Amoxicilina 500mg', 'Amoxicilina', 'Cápsulas', 60, 10),
-('MED-004', 'Omeprazol 20mg', 'Omeprazol', 'Cápsulas', 50, 10);
+-- Inserción de citas (variedad de estados y fechas)
+INSERT INTO cita (id_paciente, id_medico, id_motivo_cita, fecha, hora, estado, tipo_consulta, tratamiento, observaciones) VALUES
+-- Citas del Dr. Pérez
+(1, 1, 1, '2025-12-15', '08:00:00', 'Pendiente', 'Consulta General', NULL, NULL),
+(2, 1, 4, '2025-12-15', '09:00:00', 'Confirmada', 'Chequeo', NULL, 'Paciente solicita chequeo anual'),
+(3, 1, 2, '2025-12-15', '10:00:00', 'Pendiente', 'Control', NULL, NULL),
+(4, 1, 8, '2025-12-16', '08:00:00', 'Confirmada', 'Control de Presión', 'Continuar con medicamento actual', 'Presión controlada'),
+(5, 1, 1, '2025-12-16', '09:30:00', 'Pendiente', 'Consulta General', NULL, NULL),
+(6, 1, 7, '2025-12-17', '11:00:00', 'Confirmada', 'Certificado Médico', NULL, 'Para trabajo'),
+(7, 1, 5, '2025-12-18', '08:30:00', 'Pendiente', 'Resultados', NULL, 'Revisar exámenes de laboratorio'),
+(1, 1, 2, '2025-12-10', '09:00:00', 'Completada', 'Control', 'Losartán 50mg 1 vez al día', 'Presión arterial estable'),
+(2, 1, 1, '2025-12-08', '10:00:00', 'Completada', 'Consulta General', 'Reposo y abundantes líquidos', 'Gripe común'),
+(8, 1, 9, '2025-12-19', '14:00:00', 'Confirmada', 'Control de Diabetes', NULL, 'Control trimestral'),
+
+-- Citas de la Dra. Martinez
+(3, 2, 1, '2025-12-15', '08:30:00', 'Confirmada', 'Consulta General', NULL, NULL),
+(9, 2, 8, '2025-12-16', '10:00:00', 'Pendiente', 'Control de Presión', NULL, 'Primera consulta cardiológica'),
+(10, 2, 4, '2025-12-17', '09:00:00', 'Confirmada', 'Chequeo', NULL, 'Chequeo cardiológico preventivo'),
+(4, 2, 2, '2025-12-18', '11:00:00', 'Pendiente', 'Control', NULL, NULL),
+(5, 2, 5, '2025-12-19', '08:00:00', 'Confirmada', 'Resultados', NULL, 'Electrocardiograma de seguimiento'),
+(3, 2, 8, '2025-12-09', '09:00:00', 'Completada', 'Control de Presión', 'Enalapril 10mg 1 vez al día', 'Hipertensión leve detectada'),
+(9, 2, 1, '2025-12-11', '10:30:00', 'Cancelada', 'Consulta General', NULL, 'Cancelada por paciente');
+
+-- Inserción de prescripciones
+INSERT INTO prescripcion (id_cita, medicamento, dosis, duracion_dias) VALUES
+-- Prescripciones de citas completadas
+(8, 'Losartán', '50mg cada 24 horas', 30),
+(9, 'Paracetamol', '500mg cada 8 horas', 5),
+(9, 'Loratadina', '10mg cada 24 horas', 5),
+(16, 'Enalapril', '10mg cada 24 horas', 30),
+(16, 'Ácido Acetilsalicílico', '100mg cada 24 horas', 30);
 
 -- Rutas públicas (sin rol)
 INSERT INTO ruta (ruta, requiere_rol) VALUES 
@@ -318,7 +337,7 @@ INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES
 INSERT INTO ruta (ruta, id_rol, requiere_rol) VALUES 
 ('/medico/**', 1, TRUE),
 ('/paciente/ver/**', 1, TRUE),
-('/cita/ver/**', 1, TRUE),
+('/medico/pacientes/**', 1, TRUE),
 ('/registro-clinico/**', 1, TRUE),
 ('/prescripcion/**', 1, TRUE);
 

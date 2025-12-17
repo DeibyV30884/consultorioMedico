@@ -7,131 +7,141 @@
         <header th:replace="~{general/fragmentosUsuarios :: header}"></header>
         <aside th:replace="~{medico/fragmentos :: sidebar}"></aside>
         
-        <main class="contenido p-4">
-            
-            <!-- Alertas -->
-            <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show">
-                <i class="fa-solid fa-circle-check"></i> [[${todoOk}]]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <main class="contenido p-3" style="margin-bottom: 50px;">
+            <div class="container-fluid">
+                <div class="row" style="min-height: 704px;">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-16 bg-white d-flex align-items-center justify-content-center">
+                        <div style="width: 100%; max-width: 1200px; padding: 20px;">
+                            
+                            <!-- Alertas -->
+                            <div th:if="${todoOk}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fa-solid fa-circle-check"></i> [[${todoOk}]]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
 
-            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-                <i class="fa-solid fa-circle-exclamation"></i> [[${error}]]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10">
-                    
-                    <form method="POST" th:action="@{/medico/guardarExpediente}" 
-                          th:object="${paciente}" class="was-validated">
-                        
-                        <input type="hidden" th:field="*{idPaciente}"/>
-                        
-                        <div class="row py-4 mb-4 bg-light">
-                            <div class="col-md-4 d-grid">
-                                <a th:href="@{'/medico/expedientes/' + ${medico.idMedico}}" class="btn btn-primary">
-                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
-                                </a>
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fa-solid fa-circle-exclamation"></i> [[${error}]]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
-                            <div class="col-md-4 d-grid">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="card mb-3">
-                            <div class="card-header bg-info text-white">
-                                <h4><i class="fa-solid fa-user"></i> [[#{paciente.informacion}]]</h4>
-                            </div>
-                            <div class="card-body row g-3">
-                                
-                                <!-- Datos básicos (SOLO LECTURA) -->
-                                <div class="col-md-4">
-                                    <label>[[#{cita.paciente}]]</label>
-                                    <input type="text" class="form-control" 
-                                           th:value="${paciente.nombre} + ' ' + ${paciente.apellido1} + ' ' + ${paciente.apellido2 ?: ''}" readonly/>
+
+                            <!-- Card Principal -->
+                            <div class="card border border-warning">
+                                <div class="card-header bg-dark text-white text-center">
+                                    <h1 class="mb-0"><i class="fa-solid fa-file-medical"></i> [[#{expediente.modificar}]]</h1>
                                 </div>
-                                                                                                                               
-                                <div class="col-md-4">
-                                    <label>[[#{paciente.fechaNacimiento}]]</label>
-                                    <input type="text" class="form-control" 
-                                           th:value="${paciente.fechaNacimiento != null ? #temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy') : 'N/A'}" 
-                                           readonly/>
+
+                                <div class="card-body p-4">
+                                    
+                                    <form method="POST" th:action="@{/medico/guardarExpediente}" 
+                                          th:object="${paciente}" class="was-validated">
+                                        
+                                        <input type="hidden" th:field="*{idPaciente}"/>
+                                        
+                                        <!-- Botones de acción -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-6 d-grid">
+                                                <a th:href="@{'/medico/expedientes/' + ${medico.idMedico}}" class="btn btn-secondary">
+                                                    <i class="fas fa-arrow-left"></i> [[#{accion.regresar}]]
+                                                </a>
+                                            </div>
+                                            <div class="col-md-6 d-grid">
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="fas fa-check"></i> [[#{accion.guardar}]]
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Información del Paciente -->
+                                        <h5 class="mb-3 text-dark border-bottom pb-2">
+                                            <i class="fa-solid fa-user"></i> [[#{paciente.informacion}]]
+                                        </h5>
+                                        
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-md-4">
+                                                <label class="form-label">[[#{cita.paciente}]]</label>
+                                                <input type="text" class="form-control" 
+                                                       th:value="${paciente.nombre} + ' ' + ${paciente.apellido1} + ' ' + ${paciente.apellido2 ?: ''}" readonly/>
+                                            </div>
+                                                                                                                                       
+                                            <div class="col-md-4">
+                                                <label class="form-label">[[#{paciente.fechaNacimiento}]]</label>
+                                                <input type="text" class="form-control" 
+                                                       th:value="${paciente.fechaNacimiento != null ? #temporals.format(paciente.fechaNacimiento, 'dd/MM/yyyy') : 'N/A'}" 
+                                                       readonly/>
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <label class="form-label">[[#{paciente.telefono}]]</label>
+                                                <input type="text" class="form-control" 
+                                                       th:value="${paciente.telefono ?: 'N/A'}" 
+                                                       readonly/>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label class="form-label">[[#{paciente.correo}]]</label>
+                                                <input type="text" class="form-control" 
+                                                       th:value="${paciente.correoElectronico ?: 'N/A'}" 
+                                                       readonly/>
+                                            </div>
+                                            
+                                            <div class="col-md-3">
+                                                <label class="form-label">[[#{paciente.genero}]]</label>
+                                                <input type="text" class="form-control" 
+                                                       th:value="${paciente.genero ?: 'N/A'}" 
+                                                       readonly/>
+                                            </div>
+                                            
+                                            <div class="col-md-3">
+                                                <label class="form-label">[[#{paciente.estadoCivil}]]</label>
+                                                <input type="text" class="form-control" 
+                                                       th:value="${paciente.estadoCivil ?: 'N/A'}" 
+                                                       readonly/>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Antecedentes -->
+                                        <h5 class="mb-3 mt-4 text-dark border-bottom pb-2">
+                                            <i class="fa-solid fa-notes-medical"></i> [[#{paciente.antecedentes}]]
+                                        </h5>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">[[#{paciente.antecedentesHeredoFamiliares}]]</label>
+                                                <textarea class="form-control" 
+                                                          th:field="*{antecedentesHeredoFamiliares}" 
+                                                          rows="4"></textarea>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label class="form-label">[[#{paciente.antecedentesPersonales}]]</label>
+                                                <textarea class="form-control" 
+                                                          th:field="*{antecedentesPersonales}" 
+                                                          rows="4"></textarea>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label class="form-label">[[#{paciente.antecedentesQuirurgicos}]]</label>
+                                                <textarea class="form-control" 
+                                                          th:field="*{antecedentesQuirurgicos}" 
+                                                          rows="4"></textarea>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label class="form-label">[[#{paciente.antecedentesGinecoObstetricos}]]</label>
+                                                <textarea class="form-control" 
+                                                          th:field="*{antecedentesGinecoObstetricos}" 
+                                                          rows="4"></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                    </form>
+                                    
                                 </div>
-                                
-                                <div class="col-md-3">
-                                    <label>[[#{paciente.telefono}]]</label>
-                                    <input type="text" class="form-control" 
-                                           th:value="${paciente.telefono ?: 'N/A'}" 
-                                           readonly/>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label>[[#{paciente.correo}]]</label>
-                                    <input type="text" class="form-control" 
-                                           th:value="${paciente.correoElectronico ?: 'N/A'}" 
-                                           readonly/>
-                                </div>
-                                
-                                <div class="col-md-3">
-                                    <label>[[#{paciente.genero}]]</label>
-                                    <input type="text" class="form-control" 
-                                           th:value="${paciente.genero ?: 'N/A'}" 
-                                           readonly/>
-                                </div>
-                                
-                                <div class="col-md-3">
-                                    <label>[[#{paciente.estadoCivil}]]</label>
-                                    <input type="text" class="form-control" 
-                                           th:value="${paciente.estadoCivil ?: 'N/A'}" 
-                                           readonly/>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        
-                        <div class="card mb-3">
-                            <div class="card-header bg-primary text-white">
-                                <h4><i class="fa-solid fa-notes-medical"></i> [[#{paciente.antecedentes}]]</h4>
                             </div>
                             
-                            <div class="card-body row g-3">
-                                
-                                <!-- Antecedentes EDITABLES -->
-                                <div class="col-md-6">
-                                    <label>[[#{paciente.antecedentesHeredoFamiliares}]]</label>
-                                    <textarea class="form-control" 
-                                              th:field="*{antecedentesHeredoFamiliares}" 
-                                              rows="4"></textarea>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label>[[#{paciente.antecedentesPersonales}]]</label>
-                                    <textarea class="form-control" 
-                                              th:field="*{antecedentesPersonales}" 
-                                              rows="4"></textarea>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label>[[#{paciente.antecedentesQuirurgicos}]]</label>
-                                    <textarea class="form-control" 
-                                              th:field="*{antecedentesQuirurgicos}" 
-                                              rows="4"></textarea>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label>[[#{paciente.antecedentesGinecoObstetricos}]]</label>
-                                    <textarea class="form-control" 
-                                              th:field="*{antecedentesGinecoObstetricos}" 
-                                              rows="4"></textarea>
-                                </div>
-                                
-                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </main>
