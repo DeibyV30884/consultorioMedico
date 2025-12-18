@@ -68,7 +68,7 @@
                                     
                                     <!-- Listado de Citas -->
                                     <h5 class="mb-3 text-dark border-bottom pb-2">
-                                        <i class="fa-solid fa-list"></i> Citas Registradas
+                                        <i class="fa-solid fa-list"></i> [[#{cita.registro}]]
                                     </h5>
 
                                     <div th:if="${citas != null and !citas.empty}" class="table-responsive">
@@ -179,7 +179,7 @@
                                         </div>
 
                                         <h5 class="mb-3 text-dark border-bottom pb-2">
-                                            <i class="fa-solid fa-calendar-alt"></i> Datos de la Cita
+                                            <i class="fa-solid fa-calendar-alt"></i> [[#{cita.datos.cita}]]
                                         </h5>
 
                                         <div class="row g-3">

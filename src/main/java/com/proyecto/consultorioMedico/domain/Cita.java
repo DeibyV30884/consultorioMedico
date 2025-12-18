@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -35,6 +36,7 @@ public class Cita implements Serializable {
     @JoinColumn(name = "id_motivo_cita")
     private MotivoCita motivoCita;
       
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
     
