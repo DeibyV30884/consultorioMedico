@@ -138,6 +138,51 @@
                                     </form>
                                     
                                 </div>
+                                <div class="card-body">
+                                <div th:if="${citas != null and !citas.empty}">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    
+                                                    <th>[[#{cita.numero}]]</th>
+                                                    <th>[[#{cita.fecha}]]</th>
+                                                    <th>[[#{cita.hora}]]</th>
+                                                    <th>[[#{cita.medico.nombre}]]</th>
+                                                    <th>[[#{cita.tipo}]]</th>
+                                                    <th>[[#{cita.estado}]]</th>
+                                                    <th>[[#{cita.tratamiento}]]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="c : ${citas}">
+                                                    
+                                                    <td>[[${c.idCita}]]</td>
+                                                    <td>[[${#temporals.format(c.fecha, 'dd/MM/yyyy')}]]</td>
+                                                    <td>[[${#temporals.format(c.hora, 'hh:mm a')}]]</td>
+                                                    <td>[[${c.medico.nombre}]] [[${c.medico.apellido1}]]</td>
+                                                    
+                                                    <td>[[${c.tipoConsulta}]]</td>
+                                                    <td>
+                                                        <span th:class="${'badge ' + 
+                                                            (c.estado == 'Pendiente' ? 'bg-warning text-dark' : 
+                                                             c.estado == 'Confirmada' ? 'bg-success' : 
+                                                             c.estado == 'Completada' ? 'bg-info' : 'bg-danger')}">
+                                                            [[${c.estado}]]
+                                                        </span>
+                                                    </td>
+                                                    <td>[[${c.tratamiento}]]</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div th:if="${citas == null or citas.empty}" class="text-center p-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">[[#{cita.sin.citas}]]</h5>
+                                </div>
+                            </div>
                             </div>
                             
                         </div>

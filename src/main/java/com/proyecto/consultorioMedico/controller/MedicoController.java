@@ -381,9 +381,14 @@ public class MedicoController {
             return "redirect:/medico/expedientes/" + medico.getIdMedico();
         }
 
+        
+        Paciente pacienteCita = pacienteService.getPacientePorId(idPaciente);
+        List<Cita> citas = citaService.getCitasPorPaciente(idPaciente);
+        
         model.addAttribute("titulo", messageSource.getMessage("accion.verExpediene", null, locale));
         model.addAttribute("medico", medico);
         model.addAttribute("paciente", paciente);
+         model.addAttribute("citas", citas);
         return "medico/modificarExpediente";
     }
 
