@@ -203,7 +203,7 @@ public class AdminController {
             if (medico != null) {
                 List<Cita> citas = citaService.getCitasPorMedico(medico.getIdMedico());
                 if (citas != null && !citas.isEmpty()) {
-                    mensajesError.add(messageSource.getMessage("admin.medico.tiene.citas", null, locale));
+                    mensajesError.add(messageSource.getMessage("admin.usuarios.advertencia.eliminar", null, locale));
                 }
             }
 
@@ -211,7 +211,7 @@ public class AdminController {
             if (paciente != null) {
                 List<Cita> citas = citaService.getCitasPorPaciente(paciente.getIdPaciente());
                 if (citas != null && !citas.isEmpty()) {
-                    mensajesError.add(messageSource.getMessage("admin.paciente.tiene.citas", null, locale));
+                    mensajesError.add(messageSource.getMessage("admin.usuarios.advertencia.eliminar", null, locale));
                 }
             }
 
